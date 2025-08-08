@@ -29,6 +29,11 @@ S_EVENT = \
 	$(SRC_DIR)/Signal.cpp \
 	$(SRC_DIR)/EventManager.cpp \
 
+S_CLIENT = \
+	$(SRC_DIR)/Client.cpp \
+	$(SRC_DIR)/ClientManager.cpp \
+
+
 
 SRCS = \
 	$(S_NET) \
@@ -36,6 +41,7 @@ SRCS = \
 	$(S_TOOL) \
 	$(S_EXCEPTIONS) \
 	$(S_EVENT) \
+	$(S_CLIENT) \
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
 
