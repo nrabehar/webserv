@@ -21,11 +21,21 @@ S_TOOL = \
 	$(SRC_DIR)/String.cpp \
 	$(SRC_DIR)/Checker.cpp \
 
+S_SERVER = \
+	$(SRC_DIR)/Server.cpp \
+	$(SRC_DIR)/Socket.cpp \
+
+S_SIGNAL = \
+	$(SRC_DIR)/Signal.cpp \
+
+
 SRCS = \
 	$(SRC_DIR)/Webserv.cpp \
 	$(S_CONF) \
 	$(S_TOOL) \
 	$(S_EXCEPTIONS) \
+	$(S_SERVER) \
+	$(S_SIGNAL) \
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
 
