@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 14:43:47 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 14:45:55 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/08 17:39:32 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,14 @@ private:
 	Config _conf;
 	bool _running;
 	std::vector<Socket> _sockets;
+	EventManager _event_manager;
 
 public:
 	~WebServ();
 	WebServ(const std::string &);
 
 	void run();
-	Socket &createSocket(const Server &);
+	void createSocket(const Server &);
 
 private:
 	WebServ();

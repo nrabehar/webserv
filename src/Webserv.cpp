@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 10:35:15 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 15:13:07 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/08 20:53:48 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,31 +20,27 @@ WebServ::WebServ(const std::string &configPath) : _conf(configPath), _running(fa
 	_conf.printConfig();
 }
 
-Socket &WebServ::createSocket(const Server &server)
+void WebServ::createSocket(const Server &server)
 {
 	const std::vector<size_t> ports = server.getPorts();
 	const std::vector<std::string> hosts = server.getHosts();
+	_sockets.reserve(_sockets.size() + ports.size());
 	for (size_t i = 0; i < ports.size(); ++i)
+	{
 		_sockets.push_back(Socket(ports[i], hosts[i], server));
-	return (_sockets.back());
+		_sockets.back().setup();
+		_event_manager.addSocket(&_sockets.back());
+	}
 }
 
 void WebServ::run()
 {
 	const std::vector<Server> &servers = _conf.getServers();
 	std::vector<Server>::const_iterator it;
-	EventManager event_manager;
 	for (it = servers.begin(); it != servers.end(); ++it)
-	{
-		Socket &socket = createSocket(*it);
-		event_manager.addSocket(&socket);
-	}
-	_running = true;
-	for (; _running && !Signal::shouldStop();)
-	{
-		int revent = event_manager.wait();
-		(void)revent;
-	}
+		createSocket(*it);
+	for (; !Signal::shouldStop();)
+		_event_manager.handleEvent();
 	std::cout << "Server: Shutting down..." << std::endl;
 }
 
