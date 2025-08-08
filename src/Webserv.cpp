@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 10:35:15 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 15:05:15 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/08 15:13:07 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,10 +33,17 @@ void WebServ::run()
 {
 	const std::vector<Server> &servers = _conf.getServers();
 	std::vector<Server>::const_iterator it;
+	EventManager event_manager;
 	for (it = servers.begin(); it != servers.end(); ++it)
-		createSocket(*it);
+	{
+		Socket &socket = createSocket(*it);
+		event_manager.addSocket(&socket);
+	}
+	_running = true;
 	for (; _running && !Signal::shouldStop();)
 	{
+		int revent = event_manager.wait();
+		(void)revent;
 	}
 	std::cout << "Server: Shutting down..." << std::endl;
 }
