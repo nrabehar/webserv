@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 10:56:20 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 14:45:02 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/08 19:56:15 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 #include <stdexcept>
 #include <netdb.h>
 #include <cstring>
+#include <fcntl.h>
 
 class Socket
 {
@@ -37,10 +38,14 @@ public:
 	int getFd() const;
 	const Server &getServer() const;
 
+	void setup();
+
+	int acceptConnection();
+
 	bool operator==(int fd);
 
 private:
-	void setup();
+	void setNonBlock(int fd);
 	Socket();
 };
 
