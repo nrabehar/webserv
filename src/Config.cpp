@@ -6,12 +6,11 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 10:23:10 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 11:47:55 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/08 14:48:04 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
-#include "String.hpp"
 
 Config::~Config() {}
 
@@ -61,7 +60,7 @@ void Config::validateHostPort()
 	std::map<std::string, size_t> _hp;
 	for (size_t i = 0; i < servers.size(); ++i)
 	{
-		const ServerConfig &server = servers[i];
+		const Server &server = servers[i];
 		const std::vector<std::string> &hosts = server.getHosts();
 		const std::vector<size_t> &ports = server.getPorts();
 
@@ -80,7 +79,7 @@ void Config::validateHostPort()
 	}
 }
 
-void Config::validateServer(const ServerConfig &server)
+void Config::validateServer(const Server &server)
 {
 	const std::vector<std::size_t> &ports = server.getPorts();
 	for (size_t i = 0; i < ports.size(); ++i)
@@ -100,7 +99,7 @@ void Config::validateLocation(const Location &location)
 			throw ValidationException("Invalid HTTP method: " + location.getMethods()[i]);
 }
 
-const std::vector<ServerConfig> &Config::getServers() const
+const std::vector<Server> &Config::getServers() const
 {
 	if (servers.empty())
 		throw WException("No servers configured");
@@ -122,7 +121,7 @@ void Config::printConfig() const
 	}
 }
 
-void Config::printServerConfig(const ServerConfig &server) const
+void Config::printServerConfig(const Server &server) const
 {
 	std::cout << "  Root: " << server.getRoot() << std::endl;
 

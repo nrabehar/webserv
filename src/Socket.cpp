@@ -6,13 +6,13 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:18:05 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 14:10:04 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/08 14:45:02 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Socket.hpp"
 
-Socket::Socket(size_t port, const std::string &host, const ServerConfig &server)
+Socket::Socket(size_t port, const std::string &host, const Server &server)
 		: _fd(-1), _port(port), _host(host), _server(server)
 {
 	_fd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
@@ -29,7 +29,7 @@ Socket::~Socket()
 }
 
 int Socket::getFd() const { return _fd; }
-const ServerConfig &Socket::getServer() const { return _server; }
+const Server &Socket::getServer() const { return _server; }
 
 void Socket::setup()
 {
@@ -50,3 +50,5 @@ void Socket::setup()
 	if (listen(_fd, 128))
 		throw WException("Unable to listen: " + _host + ":" + toString(_port));
 }
+
+bool Socket::operator==(int fd) { return _fd == fd; }

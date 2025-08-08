@@ -1,47 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Socket.hpp                                         :+:      :+:    :+:   */
+/*   Webserv.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/29 10:56:20 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 14:45:02 by nrabehar         ###   ########.fr       */
+/*   Created: 2025/08/08 14:43:47 by nrabehar          #+#    #+#             */
+/*   Updated: 2025/08/08 14:45:55 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SOCKET_HPP
-#define SOCKET_HPP
+#ifndef WEBSERV_HPP
+#define WEBSERV_HPP
 
 #include "Config.hpp"
-#include "unistd.h"
-#include <sys/socket.h>
-#include <netinet/in.h>
-#include <arpa/inet.h>
-#include <stdexcept>
-#include <netdb.h>
-#include <cstring>
 
-class Socket
+#include "Socket.hpp"
+
+#include "Signal.hpp"
+
+#include "EventManager.hpp"
+
+class WebServ
 {
 private:
-	int _fd;
-	const size_t _port;
-	const std::string _host;
-	const Server &_server;
+	Config _conf;
+	bool _running;
+	std::vector<Socket> _sockets;
 
 public:
-	Socket(size_t port, const std::string &host, const Server &server);
-	~Socket();
+	~WebServ();
+	WebServ(const std::string &);
 
-	int getFd() const;
-	const Server &getServer() const;
-
-	bool operator==(int fd);
+	void run();
+	Socket &createSocket(const Server &);
 
 private:
-	void setup();
-	Socket();
+	WebServ();
+	WebServ(const WebServ &);
+	WebServ &operator=(const WebServ &);
 };
 
 #endif

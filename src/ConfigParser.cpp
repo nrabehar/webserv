@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 10:42:08 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 11:45:11 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/08 14:45:02 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ void Config::parseConfigFile()
 	}
 }
 
-ServerConfig Config::parseServer(std::istringstream &stream)
+Server Config::parseServer(std::istringstream &stream)
 {
-	ServerConfig server;
+	Server server;
 	std::string token;
 
 	if (!(stream >> token) || token != "{")

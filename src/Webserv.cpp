@@ -6,12 +6,40 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 10:35:15 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 14:23:41 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/08 15:05:15 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
-#include <iostream>
+#include "Webserv.hpp"
+
+WebServ::~WebServ() {}
+
+WebServ::WebServ(const std::string &configPath) : _conf(configPath), _running(false)
+{
+	_conf.validate();
+	_conf.printConfig();
+}
+
+Socket &WebServ::createSocket(const Server &server)
+{
+	const std::vector<size_t> ports = server.getPorts();
+	const std::vector<std::string> hosts = server.getHosts();
+	for (size_t i = 0; i < ports.size(); ++i)
+		_sockets.push_back(Socket(ports[i], hosts[i], server));
+	return (_sockets.back());
+}
+
+void WebServ::run()
+{
+	const std::vector<Server> &servers = _conf.getServers();
+	std::vector<Server>::const_iterator it;
+	for (it = servers.begin(); it != servers.end(); ++it)
+		createSocket(*it);
+	for (; _running && !Signal::shouldStop();)
+	{
+	}
+	std::cout << "Server: Shutting down..." << std::endl;
+}
 
 int main(int ac, char **av)
 {
@@ -20,7 +48,7 @@ int main(int ac, char **av)
 		try
 		{
 			Signal::setup();
-			Server server(av[1]);
+			WebServ server(av[1]);
 			server.run();
 		}
 		catch (const std::exception &e)
