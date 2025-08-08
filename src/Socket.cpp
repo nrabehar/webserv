@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:18:05 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 19:56:22 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/08 22:59:32 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@ Socket::Socket(size_t port, const std::string &host, const Server &server)
 Socket::~Socket()
 {
 	if (_fd >= 0)
+	{
 		close(_fd);
+		std::cout << "Close socket: " << _fd << std::endl;
+	}
 	_fd = -1;
 }
 

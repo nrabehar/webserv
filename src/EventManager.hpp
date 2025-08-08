@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 14:29:15 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 22:25:52 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 02:08:04 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,13 +18,29 @@
 #include <vector>
 #include <poll.h>
 #include <sys/poll.h>
+
+class IEventHandler
+{
+public:
+	virtual ~IEventHandler() {}
+	virtual void onRead(int fd) = 0;
+	virtual void onWrite(int fd) = 0;
+	virtual void onError(int fd) = 0;
+};
+
+struct	EventInfo
+{
+	int	fd;
+	int	revents;
+};
+
 class EventManager
 {
 private:
 	std::vector<struct pollfd> _pfds;
 	std::map<int, Socket *> _sockets;
+	IEventHandler *_handler;
 	static const int POLL_TIMEOUT = 1000;
-	int _n_events;
 	struct fdMatcher
 	{
 		int _target_fd;
@@ -38,12 +54,14 @@ public:
 
 	void addSocket(Socket *socket);
 	void addClient(int fd);
-	void removeSocket(int fd);
+	void removeHandled(int fd);
 	bool hasReadEvent(int fd) const;
 	bool hasWriteEvent(int fd) const;
 	bool hasErrorEvent(int fd) const;
 
-	void handleEvent();
+	void setHandler(IEventHandler *handler);
+
+	std::vector<EventInfo> handleEvent();
 
 	Socket *getSocket(int fd);
 

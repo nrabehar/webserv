@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/08 14:35:29 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 21:26:04 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 02:34:23 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,10 @@
 EventManager::EventManager() {}
 EventManager::~EventManager() {}
 
+void EventManager::setHandler(IEventHandler *handler) { _handler = handler; }
+
 EventManager::fdMatcher::fdMatcher(int fd) : _target_fd(fd) {}
+
 bool EventManager::fdMatcher::operator()(const struct pollfd &pfd) const
 {
 	return pfd.fd == _target_fd;
@@ -44,12 +47,16 @@ void EventManager::addClient(int fd)
 	_sockets[fd] = NULL;
 }
 
-void EventManager::removeSocket(int fd)
+void EventManager::removeHandled(int fd)
 {
-	_pfds.erase(std::remove_if(
-									_pfds.begin(), _pfds.end(),
-									fdMatcher(fd)),
-							_pfds.end());
+	std::vector<struct pollfd>::iterator it;
+	for (it = _pfds.begin(); it != _pfds.end(); ++it)
+	{
+		if ((*it).fd == fd)
+			break;
+	}
+	if (it != _pfds.end())
+		_pfds.erase(it);
 	_sockets.erase(fd);
 }
 
@@ -58,7 +65,7 @@ int EventManager::waitEvents()
 	if (_pfds.empty())
 		return (0);
 	int n_events = poll(&_pfds[0], _pfds.size(), POLL_TIMEOUT);
-	if (n_events < 0)
+	if (n_events < 0 && errno != EINTR)
 		throw WException("Poll error: " + toString(strerror(errno)));
 	return (n_events);
 }
@@ -102,47 +109,25 @@ Socket *EventManager::getSocket(int fd)
 	return (it != _sockets.end() ? it->second : NULL);
 }
 
-void EventManager::handleEvent()
+std::vector<EventInfo> EventManager::handleEvent()
 {
-	std::vector<int> to_removes;
-	std::vector<int> clients;
+	std::vector<EventInfo> events;
 
-	waitEvents();
+	if (!_handler || waitEvents() <= 0)
+		return events;
+
 	for (size_t i = 0; i < _pfds.size(); ++i)
 	{
 		struct pollfd &pfd = _pfds[i];
 		if (pfd.revents == 0)
 			continue;
-		Socket *sock = getSocket(pfd.fd);
-		bool is_server = (sock != NULL);
-		if (hasReadEvent(pfd.fd))
-		{
-			if (is_server)
-			{
-				std::cout << "Pollin" << std::endl;
-				int client_fd = sock->acceptConnection();
-				std::cout << "Accepted client: " << client_fd << std::endl;
-				if (client_fd > 0)
-					clients.push_back(client_fd);
-				std::cout << "Added client: " << client_fd << std::endl;
-			}
-			else
-				std::cout << "Handle client Request" << std::endl;
-		}
-		else if (hasWriteEvent(pfd.fd))
-		{
-			std::cout << "Wait for response" << std::endl;
-		}
-		else if (hasErrorEvent(pfd.fd))
-		{
-			std::cout << "Error request" << std::endl;
-			if (!is_server)
-				to_removes.push_back(pfd.fd);
-		}
+
+		EventInfo	event;
+		event.fd = pfd.fd;
+		event.revents = pfd.revents;
+
+		events.push_back(event);
 		pfd.revents = 0;
 	}
-	for (size_t i = 0; i < clients.size(); ++i)
-		addClient(clients[i]);
-	for (size_t i = 0; i < to_removes.size(); ++i)
-		removeSocket(to_removes[i]);
+	return (events);
 }
