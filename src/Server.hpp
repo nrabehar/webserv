@@ -1,38 +1,40 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Webserv.cpp                                        :+:      :+:    :+:   */
+/*   Server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/07/29 10:35:15 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 14:23:41 by nrabehar         ###   ########.fr       */
+/*   Created: 2025/08/08 12:45:05 by nrabehar          #+#    #+#             */
+/*   Updated: 2025/08/08 14:26:10 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "Server.hpp"
-#include <iostream>
+#ifndef SERVER_HPP
+#define SERVER_HPP
 
-int main(int ac, char **av)
+#include "Config.hpp"
+#include "Socket.hpp"
+#include "Signal.hpp"
+
+class Server
 {
-	if (ac == 2)
-	{
-		try
-		{
-			Signal::setup();
-			Server server(av[1]);
-			server.run();
-		}
-		catch (const std::exception &e)
-		{
-			std::cerr << "Error: " << e.what() << std::endl;
-			return 1;
-		}
-	}
-	else
-	{
-		std::cerr << "Usage: " << av[0] << " <config_file>" << std::endl;
-		return 1;
-	}
-	return 0;
-}
+private:
+	Config _conf;
+	bool _running;
+	std::vector<Socket> _sockets;
+
+public:
+	~Server();
+	Server(const std::string &);
+
+	void run();
+	Socket &createSocket(const ServerConfig &);
+
+private:
+	Server();
+	Server(const Server &);
+	Server &operator=(const Server &);
+};
+
+#endif
