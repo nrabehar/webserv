@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 02:50:30 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 05:16:30 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 05:27:07 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,6 @@ HttpServer::HttpServer(const Config &config)
 
 HttpServer::~HttpServer()
 {
-	stop();
 	delete _net_manager;
 	delete _con_manager;
 }
@@ -36,18 +35,6 @@ void HttpServer::start()
 		_net_manager->createSocket(servers[i]);
 
 	std::cout << "HttpServer: Started successfully" << std::endl;
-}
-
-void HttpServer::stop()
-{
-	std::cout << "HttpServer: Stopping..." << std::endl;
-
-	if (_net_manager)
-		_net_manager->cleanup();
-	if (_con_manager)
-		_con_manager->cleanup();
-
-	std::cout << "HttpServer: Stopped" << std::endl;
 }
 
 void HttpServer::listen()

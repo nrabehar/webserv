@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 03:16:34 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 05:15:06 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 05:24:06 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,8 +66,6 @@ void NetworkManager::cleanup()
 	for (size_t i = 0; i < _pending_closes.size(); ++i)
 	{
 		int fd = _pending_closes[i];
-		close(fd);
-		std::cout << "NetworkManager: Closed fd " << fd << std::endl;
 		_event_manager.removeHandled(fd);
 	}
 	_pending_closes.clear();

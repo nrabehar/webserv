@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 02:47:36 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 04:26:02 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 05:27:11 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@ class	HttpServer
 
 		void	start();
 		void	listen();
-		void	stop();
 
 	private:
 

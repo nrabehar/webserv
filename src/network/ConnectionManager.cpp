@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 03:26:07 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 05:17:40 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 05:24:16 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ void ConnectionManager::cleanup()
 	for (size_t i = 0; i < _pending_closes.size(); ++i)
 	{
 		int fd = _pending_closes[i];
-		std::cout << "ConnectionManager: Removing client fd " << fd << std::endl;
 		_client_manager.removeClient(fd);
 	}
 	_pending_closes.clear();

@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 10:35:15 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 05:18:29 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 05:26:56 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,8 +30,6 @@ void WebServ::run()
 
 	for (; !Signal::shouldStop();)
 		_http_server->listen();
-
-	_http_server->stop();
 }
 
 int main(int ac, char **av)
