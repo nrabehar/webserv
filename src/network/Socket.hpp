@@ -6,15 +6,16 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 10:56:20 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 19:56:15 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 04:48:17 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef SOCKET_HPP
 #define SOCKET_HPP
 
-#include "Config.hpp"
-#include "unistd.h"
+#include "../tools/WException.hpp"
+#include "../conf/Server.hpp"
+#include <unistd.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
@@ -22,6 +23,7 @@
 #include <netdb.h>
 #include <cstring>
 #include <fcntl.h>
+#include <cerrno>
 
 class Socket
 {

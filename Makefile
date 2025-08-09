@@ -1,6 +1,5 @@
 NAME = webserv
 
-# Directories
 SRC_DIR = src
 OBJ_DIR = obj
 
@@ -8,40 +7,42 @@ CPP = c++
 CPPFLAGS = -Wall -Wextra -Werror -std=c++98
 
 S_CONF = \
-	$(SRC_DIR)/Config.cpp \
-	$(SRC_DIR)/Location.cpp \
-	$(SRC_DIR)/Server.cpp \
-
-S_EXCEPTIONS = \
-	$(SRC_DIR)/WException.cpp \
-
+	$(SRC_DIR)/conf/Config.cpp \
+	$(SRC_DIR)/conf/Location.cpp \
+	$(SRC_DIR)/conf/Server.cpp \
+	$(SRC_DIR)/conf/ConfigParser.cpp \
 
 S_TOOL = \
-	$(SRC_DIR)/ConfigParser.cpp \
-	$(SRC_DIR)/String.cpp \
-	$(SRC_DIR)/Checker.cpp \
+	$(SRC_DIR)/tools/String.cpp \
+	$(SRC_DIR)/tools/Checker.cpp \
+	$(SRC_DIR)/tools/WException.cpp \
 
 S_NET = \
-	$(SRC_DIR)/Webserv.cpp \
-	$(SRC_DIR)/Socket.cpp \
+	$(SRC_DIR)/network/Socket.cpp \
+	$(SRC_DIR)/network/NetworkManager.cpp \
+	$(SRC_DIR)/network/ConnectionManager.cpp \
 
 S_EVENT = \
-	$(SRC_DIR)/Signal.cpp \
-	$(SRC_DIR)/EventManager.cpp \
+	$(SRC_DIR)/event/Signal.cpp \
+	$(SRC_DIR)/event/EventManager.cpp \
 
 S_CLIENT = \
-	$(SRC_DIR)/Client.cpp \
-	$(SRC_DIR)/ClientManager.cpp \
+	$(SRC_DIR)/client/Client.cpp \
+	$(SRC_DIR)/client/ClientManager.cpp \
 
+S_HTTP = \
+	$(SRC_DIR)/http/HttpServer.cpp \
 
 
 SRCS = \
+	$(SRC_DIR)/Webserv.cpp \
 	$(S_NET) \
 	$(S_CONF) \
 	$(S_TOOL) \
 	$(S_EXCEPTIONS) \
 	$(S_EVENT) \
 	$(S_CLIENT) \
+	$(S_HTTP) \
 
 OBJS = $(addprefix $(OBJ_DIR)/, $(SRCS:.cpp=.o))
 

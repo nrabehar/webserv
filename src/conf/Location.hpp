@@ -6,14 +6,14 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 10:09:57 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 11:48:04 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 04:46:42 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LOCATION_HPP
 #define LOCATION_HPP
 
-#include "Checker.hpp"
+#include "../tools/Checker.hpp"
 #include <iostream>
 #include <vector>
 #include <map>

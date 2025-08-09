@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 12:18:05 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 22:59:32 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 04:47:47 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,10 +35,10 @@ void Socket::setup()
 
 	_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_fd < 0)
-		throw WException("Unable to create socket: " + std::string(strerror(errno)));
+		throw WException("Unable to create socket");
 
 	if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0)
-		throw WException("Cannot set SO_REUSEADDR:  " + std::string(strerror(errno)));
+		throw WException("Cannot set SO_REUSEADDR:  ");
 
 	setNonBlock(_fd);
 
@@ -62,10 +62,10 @@ void Socket::setNonBlock(int fd)
 {
 	int flags = fcntl(fd, F_GETFL, 0);
 	if (flags == -1)
-		throw WException("fcntl F_GETFL failed: " + std::string(strerror(errno)));
+		throw WException("fcntl F_GETFL failed: ");
 
 	if (fcntl(_fd, F_SETFL, flags | O_NONBLOCK) == -1)
-		throw WException("fcntl F_SETFL failed: " + std::string(strerror(errno)));
+		throw WException("fcntl F_SETFL failed: ");
 }
 
 int Socket::acceptConnection()

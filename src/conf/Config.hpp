@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 10:14:13 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 14:48:17 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 04:47:11 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 #define CONFIG_HPP
 
 #include "Server.hpp"
-#include "WException.hpp"
-#include "String.hpp"
+#include "../tools/WException.hpp"
+#include "../tools/String.hpp"
 #include <fstream>
 #include <map>
 #include <vector>

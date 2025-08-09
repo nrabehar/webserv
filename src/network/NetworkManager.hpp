@@ -1,39 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Webserv.hpp                                        :+:      :+:    :+:   */
+/*   NetworkManager.hpp                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/08 14:43:47 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 04:27:06 by nrabehar         ###   ########.fr       */
+/*   Created: 2025/08/09 03:02:14 by nrabehar          #+#    #+#             */
+/*   Updated: 2025/08/09 04:16:52 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef WEBSERV_HPP
-#define WEBSERV_HPP
+#ifndef	NETWORK_MANAGER_HPP
+#define	NETWORK_MANAGER_HPP
 
-#include "http/HttpServer.hpp"
-#include "event/Signal.hpp"
+#include "../event/EventManager.hpp"
 
-class WebServ
+class	NetworkManager
 {
+
 	private:
-		Config _conf;
-		HttpServer	*_http_server;
+
+		EventManager	_event_manager;
+		std::vector<Socket> _sockets;
+		std::vector<int> _pending_closes;
 
 	public:
 
-		~WebServ();
-		WebServ(const std::string &);
+		NetworkManager();
+		~NetworkManager();
 
-		void 	run();
+		void	createSocket(const Server &server);
+		std::vector<EventInfo>	getEvents();
 
-	private:
+		int	accept(int fd);
+		bool	isServer(int fd);
 
-		WebServ();
-		WebServ(const WebServ &);
-		WebServ &operator=(const WebServ &);
+		void	disconnect(int fd);
+		void	cleanup();
+
 };
+
 
 #endif
