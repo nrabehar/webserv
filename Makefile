@@ -69,4 +69,9 @@ run: $(NAME) clean
 	@clear
 	@./$(NAME) conf/webserv.conf
 
-.PHONY: all clean fclean re
+leak: $(NAME) clean
+	@clear
+	@valgrind --show-leak-kinds=all --leak-check=full --track-origins=yes --track-fds=yes ./$(NAME) conf/webserv.conf
+
+
+.PHONY: all clean fclean re leak
