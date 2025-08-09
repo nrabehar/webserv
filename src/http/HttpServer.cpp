@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 02:50:30 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 05:27:07 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 08:07:13 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,14 @@
 HttpServer::HttpServer(const Config &config)
 		: _config(config),
 			_net_manager(NULL),
-			_con_manager(NULL) {}
+			_con_manager(NULL),
+			_req_manager(NULL) {}
 
 HttpServer::~HttpServer()
 {
 	delete _net_manager;
 	delete _con_manager;
+	delete _req_manager;
 }
 
 void HttpServer::start()
@@ -29,6 +31,7 @@ void HttpServer::start()
 
 	_net_manager = new NetworkManager();
 	_con_manager = new ConnectionManager();
+	_req_manager = new RequestManager();
 
 	const std::vector<Server> &servers = _config.getServers();
 	for (size_t i = 0; i < servers.size(); ++i)
@@ -72,8 +75,21 @@ void HttpServer::readRequest(int fd)
 	}
 	else
 	{
-		_net_manager->disconnect(fd);
-		_con_manager->disconnect(fd);
+		char buffer[1024];
+		ssize_t bytes = _con_manager->readClientData(fd, buffer, sizeof(buffer));
+		if (bytes > 0)
+		{
+			_req_manager->addReqData(fd, buffer, bytes);
+
+			if (_req_manager->isReqComplete(fd))
+				std::cout << "Buffer [" << bytes << "]:\n\n"
+									<< buffer << std::endl;
+		}
+		else
+		{
+			_net_manager->disconnect(fd);
+			_con_manager->disconnect(fd);
+		}
 	}
 }
 

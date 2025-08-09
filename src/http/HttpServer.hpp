@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 02:47:36 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 05:27:11 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 08:00:49 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "../conf/Config.hpp"
 #include "../network/NetworkManager.hpp"
 #include "../network/ConnectionManager.hpp"
+#include "RequestManager.hpp"
 
 class	HttpServer
 {
@@ -23,6 +24,7 @@ class	HttpServer
 		const Config&	_config;
 		NetworkManager	*_net_manager;
 		ConnectionManager	*_con_manager;
+		RequestManager	*_req_manager;
 
 
 	public:

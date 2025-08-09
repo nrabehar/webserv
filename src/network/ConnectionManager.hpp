@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 03:22:08 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 04:47:17 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 07:31:30 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "../client/ClientManager.hpp"
 #include <vector>
+#include <sys/socket.h>
 
 class	ConnectionManager
 {
@@ -34,6 +35,9 @@ class	ConnectionManager
 		void	cleanup();
 
 		Client	*getClient(int fd);
+
+		ssize_t	readClientData(int fd, char *buffer, ssize_t size);
+		ssize_t	sendClientData(int fd, const char *data, ssize_t size);
 
 	private:
 

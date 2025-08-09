@@ -32,6 +32,8 @@ S_CLIENT = \
 
 S_HTTP = \
 	$(SRC_DIR)/http/HttpServer.cpp \
+	$(SRC_DIR)/http/HttpRequest.cpp \
+	$(SRC_DIR)/http/RequestManager.cpp \
 
 
 SRCS = \
