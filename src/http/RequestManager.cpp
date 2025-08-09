@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 07:52:09 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 08:27:58 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 08:37:40 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,7 @@ bool RequestManager::isReqComplete(int fd) const
 	if (it == _reqs.end())
 		return false;
 	std::string buf = it->second._req_buf;
-	size_t end_pos = buf.find_last_of("\r\n\r\n");
+	size_t end_pos = buf.find("\r\n\r\n");
 	return (end_pos != std::string::npos);
 }
 
