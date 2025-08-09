@@ -6,11 +6,12 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 03:16:34 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 04:40:27 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 05:15:06 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "NetworkManager.hpp"
+#include <unistd.h>
 
 NetworkManager::NetworkManager() {}
 NetworkManager::~NetworkManager() {}
@@ -50,6 +51,11 @@ bool NetworkManager::isServer(int fd)
 	return _event_manager.getSocket(fd) != NULL;
 }
 
+void NetworkManager::addClient(int fd)
+{
+	_event_manager.addClient(fd);
+}
+
 void NetworkManager::disconnect(int fd)
 {
 	_pending_closes.push_back(fd);
@@ -58,6 +64,11 @@ void NetworkManager::disconnect(int fd)
 void NetworkManager::cleanup()
 {
 	for (size_t i = 0; i < _pending_closes.size(); ++i)
-		disconnect(_pending_closes[i]);
+	{
+		int fd = _pending_closes[i];
+		close(fd);
+		std::cout << "NetworkManager: Closed fd " << fd << std::endl;
+		_event_manager.removeHandled(fd);
+	}
 	_pending_closes.clear();
 }

@@ -6,13 +6,16 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 10:35:15 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 04:28:54 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 05:18:29 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Webserv.hpp"
 
-WebServ::~WebServ() {}
+WebServ::~WebServ()
+{
+	delete _http_server;
+}
 
 WebServ::WebServ(const std::string &configPath) : _conf(configPath)
 {

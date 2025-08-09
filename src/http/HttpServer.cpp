@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 02:50:30 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 04:52:30 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 05:16:30 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,17 @@ void HttpServer::start()
 	std::cout << "HttpServer: Started successfully" << std::endl;
 }
 
-void HttpServer::stop() {}
+void HttpServer::stop()
+{
+	std::cout << "HttpServer: Stopping..." << std::endl;
+
+	if (_net_manager)
+		_net_manager->cleanup();
+	if (_con_manager)
+		_con_manager->cleanup();
+
+	std::cout << "HttpServer: Stopped" << std::endl;
+}
 
 void HttpServer::listen()
 {
@@ -68,7 +78,10 @@ void HttpServer::readRequest(int fd)
 	{
 		int c_fd = _net_manager->accept(fd);
 		if (c_fd > 0)
+		{
 			_con_manager->connect(c_fd);
+			_net_manager->addClient(c_fd);
+		}
 	}
 	else
 	{

@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 01:24:47 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 02:41:19 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 05:08:50 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@ ClientManager::~ClientManager()
 	std::map<int, Client *>::iterator it;
 	for (it = _clients.begin(); it != _clients.end(); ++it)
 		delete (*it).second;
+	_clients.clear();
 }
 
 void ClientManager::addClient(int fd)

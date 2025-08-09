@@ -6,14 +6,14 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/29 10:17:36 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/08 11:48:00 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 05:15:06 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Config.hpp"
 
 Location::Location()
-	:_maxBodySize(0) {}
+	: _autoIndex(false), _hasRedirect(false), _maxBodySize(0) {}
 Location::~Location() {}
 
 Location::Location(const Location &src)
@@ -39,7 +39,11 @@ void Location::setCgi(const std::string &cgi) { _cgi = cgi; }
 void Location::setUploadPath(const std::string &path) { _uploadPath = path; }
 void Location::setIndexs(std::vector<std::string> &index) { _indexs = index; }
 void Location::setMethods(std::vector<std::string> &method) { _methods = method; }
-void Location::setRedirect(int code, const std::string &uri) { _redirect = std::make_pair(code, uri); }
+void Location::setRedirect(int code, const std::string &uri)
+{
+	_redirect = std::make_pair(code, uri);
+	_hasRedirect = true;
+}
 void Location::setAutoIndex(bool autoIndex) { _autoIndex = autoIndex; }
 void Location::setMaxBodySize(size_t size) { _maxBodySize = size; }
 
@@ -73,6 +77,7 @@ void Location::setProperty(const std::string &key, const std::string &value)
 			if (!isNumeric(parts[0]))
 				throw ParseException("Invalid redirect code: " + parts[0]);
 			_redirect = std::make_pair(std::atoi(parts[0].c_str()), parts[1]);
+			_hasRedirect = true;
 		}
 		else
 			throw ParseException("Invalid redirect arguments: " + value);

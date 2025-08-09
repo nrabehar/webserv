@@ -6,7 +6,7 @@
 /*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/08/09 03:02:14 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 04:16:52 by nrabehar         ###   ########.fr       */
+/*   Updated: 2025/08/09 05:15:06 by nrabehar         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ class	NetworkManager
 
 		int	accept(int fd);
 		bool	isServer(int fd);
+		void	addClient(int fd);
 
 		void	disconnect(int fd);
 		void	cleanup();
