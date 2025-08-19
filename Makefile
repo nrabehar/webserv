@@ -30,6 +30,8 @@ SRC_TOOLS = \
 	String.cpp \
 	Checker.cpp \
 	WException.cpp \
+	Logger.cpp \
+	Utils.cpp \
 
 SRC_NETWORK = \
 	Socket.cpp \

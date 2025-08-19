@@ -1,5 +1,7 @@
 #include <iostream>
 #include "./server/Webserv.hpp"
+#include "./tools/Logger.hpp"
+#include "./tools/String.hpp"
 
 int main(int ac, char **av)
 {
