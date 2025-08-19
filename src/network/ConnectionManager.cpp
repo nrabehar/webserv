@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   ConnectionManager.cpp                              :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: nrabehar <nrabehar@student.42antananari    +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/08/09 03:26:07 by nrabehar          #+#    #+#             */
-/*   Updated: 2025/08/09 07:34:39 by nrabehar         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "ConnectionManager.hpp"
 
 ConnectionManager::ConnectionManager() {}
