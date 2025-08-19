@@ -1,8 +1,8 @@
 #ifndef WEBSERV_HPP
 #define WEBSERV_HPP
 
-#include "http/HttpServer.hpp"
-#include "event/Signal.hpp"
+#include "../http/HttpServer.hpp"
+#include "../event/Signal.hpp"
 
 class WebServ
 {
