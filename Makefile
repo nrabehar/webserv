@@ -25,6 +25,7 @@ CONF_SRCS = $(addprefix $(CONF_DIR)/, $(CONF_SRC))
 
 CORE_DIR = core
 CORE_SRC = \
+	Location.cpp \
 	Webserv.cpp \
 
 CORE_SRCS = $(addprefix $(CORE_DIR)/, $(CORE_SRC))
@@ -32,6 +33,7 @@ CORE_SRCS = $(addprefix $(CORE_DIR)/, $(CORE_SRC))
 TOOLS_DIR = tools
 TOOLS_SRC = \
 	Logger.cpp \
+	Utils.cpp \
 
 TOOLS_SRCS = $(addprefix $(TOOLS_DIR)/, $(TOOLS_SRC))
 

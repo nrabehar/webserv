@@ -2,6 +2,7 @@
 #define UTILS_HPP 1
 
 #include "Logger.hpp"
+#include <vector>
 
 class Utils
 {
@@ -34,6 +35,8 @@ class Utils
       DBG(METHOD_NAME + " completed.");
       return (__value);
     }
+    static std::vector<std::string> extractBlocks(const std::string &, const std::string &);
+    static size_t findMatchingBracket(const std::string &, size_t);
 };
 
 #define TOSTRING(value) Utils::toString(value)

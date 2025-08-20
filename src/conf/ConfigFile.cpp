@@ -5,6 +5,13 @@ ConfigFile::~ConfigFile()
   DBG(METHOD_NAME + " called.");
 }
 
+void ConfigFile::createServerBlocks()
+{
+  DBG(METHOD_NAME + " called.");
+  // This function should parse the content and fill _server_blocks.
+  LOG("Server blocks created successfully.");
+}
+
 ConfigFile::ConfigFile(const std::string & name) : _name(name), _content("")
 {
   DBG(METHOD_NAME + " called.");
@@ -27,6 +34,7 @@ ConfigFile::ConfigFile(const std::string & name) : _name(name), _content("")
     throw std::runtime_error("Config file is empty: " + _name);
   }
   LOG("Config file content loaded successfully.");
+  createServerBlocks();
 }
 
 const std::string & ConfigFile::getName() const
@@ -39,4 +47,10 @@ const std::string & ConfigFile::getContent() const
 {
   DBG(METHOD_NAME + " called.");
   return (_content);
+}
+
+const std::vector<std::string> & ConfigFile::getServerBlocks() const
+{
+  DBG(METHOD_NAME + " called.");
+  return (_server_blocks);
 }

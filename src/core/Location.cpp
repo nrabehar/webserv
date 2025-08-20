@@ -19,7 +19,7 @@ const std::vector<std::string> & Location::get(const std::string & key) const
     WRN("Key is empty.");
     return (__empty_vector);
   }
-  std::map<std::string, std::vector<std::string>>::const_iterator it;
+  std::map<std::string, std::vector<std::string> >::const_iterator it;
   it = _data.find(key);
   if (it != _data.end())
   {

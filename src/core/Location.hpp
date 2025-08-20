@@ -3,11 +3,12 @@
 
 #include <map>
 #include <vector>
+#include "Logger.hpp"
 
 class Location
 {
   private:
-    std::map<std::string, std::vector<std::string>> _data;
+    std::map<std::string, std::vector<std::string> > _data;
   public:
     Location();
     ~Location();
