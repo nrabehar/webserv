@@ -32,11 +32,10 @@ void Logger::log(const std::string & msg, LogLevel level)
   }
 }
 
-void Logger::debug(bool mode)
+void Logger::debugMode(bool mode)
 {
   _debug_mode = mode;
 }
-
 
 std::string & Logger::getMethodName(const std::string & pretty_function)
 {
@@ -54,4 +53,18 @@ std::string & Logger::getMethodName(const std::string & pretty_function)
   __end = pretty_function.rfind("(") - __begin;
   __method_name = pretty_function.substr(__begin,__end) + "()";
   return (__method_name);
+}
+
+std::string & Logger::getDateTime()
+{
+  std::tm *__tm;
+  std::time_t __now;
+  char __buffer[24];
+  static std::string __current_time;
+
+  __now = std::time(NULL);
+  __tm = std::localtime(&__now);
+  std::strftime(__buffer, sizeof(__buffer), "%Y-%m-%d - %H:%M:%S", __tm);
+  __current_time = __buffer;
+  return (__current_time);
 }
