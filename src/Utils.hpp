@@ -3,7 +3,6 @@
 
 #include "Logger.hpp"
 
-
 class Utils
 {
   private:
