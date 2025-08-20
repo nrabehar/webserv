@@ -1,0 +1,9 @@
+{
+	"explorer.fileNesting.enabled": true,
+	"explorer.fileNesting.expand": false,
+	"explorer.fileNesting.patterns": {
+		"*.cpp": "${capture}.hpp, ${capture}.tpp, ${capture}.ipp, ${capture}.h",
+	},
+	"editor.insertSpaces": true,
+	"editor.tabSize": 2,
+}

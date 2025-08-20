@@ -17,6 +17,8 @@ MAIN_SRC = $(DIRSRC)/main.cpp
 LOGFILE = webserv.log
 
 SRC = \
+	Logger.cpp \
+	Utils.cpp \
 
 SRCS = $(addprefix $(DIRSRC)/, $(SRC))
 OBJ = $(SRC:%.cpp=%.o)
