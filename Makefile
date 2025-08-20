@@ -16,8 +16,28 @@ MAIN_SRC = $(DIRSRC)/main.cpp
 
 LOGFILE = webserv.log
 
-SRC = \
+CONF_DIR = conf
+CONF_SRC = \
+	ConfigFile.cpp \
+
+CONF_SRCS = $(addprefix $(CONF_DIR)/, $(CONF_SRC))
+
+TOOLS_DIR = tools
+TOOLS_SRC = \
 	Logger.cpp \
+
+TOOLS_SRCS = $(addprefix $(TOOLS_DIR)/, $(TOOLS_SRC))
+
+SUBDIRS = \
+	$(CONF_DIR) \
+	$(TOOLS_DIR) \
+
+INCLUDES = $(addprefix -I./$(DIRSRC)/, $(SUBDIRS))
+CXXFLAGS += $(INCLUDES)
+
+SRC = \
+	$(CONF_SRCS) \
+	$(TOOLS_SRCS) \
 
 SRCS = $(addprefix $(DIRSRC)/, $(SRC))
 OBJ = $(SRC:%.cpp=%.o)
