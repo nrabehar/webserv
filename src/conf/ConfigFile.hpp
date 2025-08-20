@@ -8,17 +8,17 @@
 class ConfigFile
 {
   private:
-    std::string _filename;
+    std::string _name;
     std::string _content;
   public:
-    ConfigFile(const std::string & filename);
+    ConfigFile(const std::string &);
     ~ConfigFile();
-    const std::string & getFilename() const;
+    const std::string & getName() const;
     const std::string & getContent() const;
   private:
     ConfigFile();
-    ConfigFile(const ConfigFile & src);
-    ConfigFile &operator=(const ConfigFile & src);
+    ConfigFile(const ConfigFile &);
+    ConfigFile &operator=(const ConfigFile &);
 };
 
 #endif // CONFIGFILE_HPP

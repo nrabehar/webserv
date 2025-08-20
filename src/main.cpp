@@ -1,4 +1,4 @@
-#include "ConfigFile.hpp"
+#include "Webserv.hpp"
 
 int main(int ac, char **av)
 {
@@ -19,7 +19,7 @@ int main(int ac, char **av)
   LOG("Starting application.");
   try
   {
-    ConfigFile config(config_file_name);
+    Webserv webserv(config_file_name);
   }
   catch (const std::exception & e)
   {

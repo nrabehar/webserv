@@ -8,8 +8,8 @@ class Utils
   private:
     Utils();
     ~Utils();
-    Utils(const Utils & src);
-    Utils & operator=(const Utils & src);
+    Utils(const Utils &);
+    Utils & operator=(const Utils &);
   public:
     template <typename T> static std::string & toString(const T & value)
     {

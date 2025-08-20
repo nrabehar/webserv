@@ -10,14 +10,14 @@ class Logger
   private:
     Logger();
     ~Logger();
-    Logger(const Logger & src);
-    Logger & operator=(const Logger & src);
+    Logger(const Logger &);
+    Logger & operator=(const Logger &);
   public:
     enum LogLevel { INFO, DEBUG, WARNING, ERROR };
-    static void log(const std::string & msg, LogLevel level = INFO);
+    static void log(const std::string &, LogLevel level = INFO);
     static void debugMode(bool mode = false);
     static std::string & getDateTime();
-    static std::string & getMethodName(const std::string & pretty_function);
+    static std::string & getMethodName(const std::string &);
 };
 
 #define LOG(msg) Logger::log(msg, Logger::INFO)

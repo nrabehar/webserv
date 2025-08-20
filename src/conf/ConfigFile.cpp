@@ -3,44 +3,40 @@
 ConfigFile::~ConfigFile()
 {
   DBG(METHOD_NAME + " called.");
-  DBG(METHOD_NAME + " completed.");
 }
 
-ConfigFile::ConfigFile(const std::string & filename) : _filename(filename), _content("")
+ConfigFile::ConfigFile(const std::string & name) : _name(name), _content("")
 {
   DBG(METHOD_NAME + " called.");
-  if (_filename.empty())
+  if (_name.empty())
   {
     throw std::invalid_argument("Filename cannot be empty.");
   }
-  std::ifstream file(_filename.c_str());
+  std::ifstream file(_name.c_str());
   if (!file.is_open())
   {
-    throw std::runtime_error("Could not open file: " + _filename);
+    throw std::runtime_error("Could not open file: " + _name);
   }
   std::stringstream buffer;
   buffer << file.rdbuf();
   _content = buffer.str();
   file.close();
-  LOG("Config file loaded from: " + _filename);
+  LOG("Config file loaded from: " + _name);
   if (_content.empty())
   {
-    throw std::runtime_error("Config file is empty: " + _filename);
+    throw std::runtime_error("Config file is empty: " + _name);
   }
   LOG("Config file content loaded successfully.");
-  DBG(METHOD_NAME + " completed.");
 }
 
-const std::string & ConfigFile::getFilename() const
+const std::string & ConfigFile::getName() const
 {
   DBG(METHOD_NAME + " called.");
-  DBG(METHOD_NAME + " completed.");
-  return (_filename);
+  return (_name);
 }
 
 const std::string & ConfigFile::getContent() const
 {
   DBG(METHOD_NAME + " called.");
-  DBG(METHOD_NAME + " completed.");
   return (_content);
 }
