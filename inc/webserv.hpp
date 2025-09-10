@@ -16,6 +16,7 @@
 #include <memory>
 #include <stdexcept>
 #include <exception>
+#include <utility>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/socket.h>
@@ -25,17 +26,35 @@
 
 /* Enumeration */
 
-enum ECheck {
-	CHK_OK,
+enum EStatusCode {
+	ST_OK = 200,
+	ST_CREATED = 201,
+	ST_ACCEPTED = 202,
+	ST_NO_CONTENT = 204,
+	ST_MOVED_PERMANENTLY = 301,
+	ST_FOUND = 302,
+	ST_SEE_OTHER = 303,
+	ST_NOT_MODIFIED = 304,
+	ST_BAD_REQUEST = 400,
+	ST_UNAUTHORIZED = 401,
+	ST_FORBIDDEN = 403,
+	ST_NOT_FOUND = 404,
+	ST_METHOD_NOT_ALLOWED = 405,
+	ST_INTERNAL_SERVER_ERROR = 500,
+	ST_NOT_IMPLEMENTED = 501,
+	ST_BAD_GATEWAY = 502,
+	ST_SERVICE_UNAVAILABLE = 503,
 
-	CHK_FILE_NOT_FOUND,
-	CHK_FILE_NAME_EMPTY,
-	CHK_FILE_NO_READ_PERMISSION,
-	CHK_FILE_NO_WRITE_PERMISSION,
-	CHK_FILE_NO_EXECUTE_PERMISSION,
-	CHK_FILE_CONTENT_EMPTY,
-
+	ST_NO_READ_PERMISSION = 99,
+	ST_NO_WRITE_PERMISSION = 98,
+	ST_NO_EXECUTE_PERMISSION = 97,
+	ST_EMPTY_NAME = 96,
+	ST_EMPTY_CONTENT = 95,
 };
+
+typedef EStatusCode ECheck;
+typedef EStatusCode EErrorCode;
+typedef EStatusCode EFileStatus;
 
 /* Interfaces */
 
@@ -47,6 +66,10 @@ enum ECheck {
 
 /* Concrete classes */
 
+#include "./server/Location.hpp"
+#include "./server/Server.hpp"
+
+#include "./conf/ConfigParser.hpp"
 #include "./conf/ConfigFile.hpp"
 #include "./conf/Config.hpp"
 

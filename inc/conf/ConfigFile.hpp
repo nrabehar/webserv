@@ -10,7 +10,7 @@ class ConfigFile : public AFile, public IError
 
 		~ConfigFile();
 		ConfigFile(const std::string &);
-		void reportError(ECheck);
+		void reportError(EFileStatus);
 
 	private:
 

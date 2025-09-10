@@ -27,6 +27,7 @@ CLIENTSRC = \
 CONFSRC = \
 	Config.cpp \
 	ConfigFile.cpp \
+	ConfigParser.cpp \
 
 HANDLERSRC = \
 
@@ -35,6 +36,8 @@ HTTPSRC = \
 NETWORKSRC = \
 
 SERVERSRC = \
+	Location.cpp \
+	Server.cpp \
 
 TOOLSSRC = \
 	AFile.cpp \

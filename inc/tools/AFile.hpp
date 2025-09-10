@@ -18,7 +18,7 @@ class AFile: public ILoader, public IChecker
 		virtual const std::string & getName() const;
 		virtual const std::string & getContent() const;
 		virtual bool load() __attribute__((warn_unused_result));
-		virtual ECheck validate() const __attribute__((warn_unused_result));
+		virtual EFileStatus check() const __attribute__((warn_unused_result));
 		virtual bool openFile() __attribute__((warn_unused_result));
 
 	private:

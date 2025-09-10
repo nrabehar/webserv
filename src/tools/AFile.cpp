@@ -30,15 +30,15 @@ bool AFile::load() {
 	return (true);
 }
 
-ECheck AFile::validate() const {
+EFileStatus AFile::check() const {
 	struct stat buf;
 	if (stat(_name.c_str(), &buf) != 0)
-		return (CHK_FILE_NOT_FOUND);
+		return (ST_NOT_FOUND);
 	if (access(_name.c_str(), R_OK) != 0)
-		return (CHK_FILE_NO_READ_PERMISSION);
+		return (ST_NO_READ_PERMISSION);
 	if (_name.empty())
-		return (CHK_FILE_NAME_EMPTY);
-	return (CHK_OK);
+		return (ST_EMPTY_NAME);
+	return (ST_OK);
 }
 
 const std::ifstream & AFile::getStream() const {

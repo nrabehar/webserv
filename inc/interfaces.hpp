@@ -7,21 +7,21 @@ class IError
 {
 	public:
 		virtual ~IError() {};
-		virtual void reportError(ECheck) = 0;
+		virtual void reportError(EErrorCode) = 0;
 };
 
 class IChecker
 {
 	public:
 		virtual ~IChecker() {};
-		virtual ECheck validate() const = 0;
+		virtual ECheck check() const = 0;
 };
 
 class IParser
 {
 	public:
 		virtual ~IParser() {};
-		virtual bool parse(const std::string & = "") = 0;
+		virtual void parse(const std::string & = "") = 0;
 };
 
 class ILoader
