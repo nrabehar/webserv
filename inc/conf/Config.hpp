@@ -9,12 +9,14 @@ class Config
 	private:
 
 		ConfigFile _file;
+		ConfigParser _parser;
 
 	public:
 
 		Config(const std::string &);
 		~Config();
 		ConfigFile & getFile();
+		ConfigParser & getParser();
 
 	private:
 

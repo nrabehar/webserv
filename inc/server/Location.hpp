@@ -39,7 +39,9 @@ class Location: public IParser, public IChecker, public IError
 		EErrorCode check() const __attribute__((warn_unused_result));
 		void reportError(EErrorCode);
 
-	//@todo add necessary setters
+		void setAutoindex(bool);
+		void setMaxBodySize(size_t);
+		void setRoot(const std::string &);
 
 };
 

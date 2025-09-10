@@ -64,3 +64,7 @@ const std::vector<std::string>& Location::getIndex() const { return (_index); }
 const std::vector<std::string>& Location::getMethod() const { return (_method); }
 const std::map<EStatusCode, std::string> & Location::getRedirect() const { return (_redirect); }
 const std::vector<std::pair<std::string, std::string> > & Location::getCgi() const { return (_cgi); }
+
+void Location::setAutoindex(bool autoindex) { _autoindex = autoindex; }
+void Location::setMaxBodySize(size_t max_body_size) { _max_body_size = max_body_size; }
+void Location::setRoot(const std::string & root) { _root = root; }
