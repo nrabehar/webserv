@@ -5,15 +5,6 @@ AFile::~AFile() {
 }
 
 AFile::AFile(const std::string & name) : _name(name), _stream(), _content() {
-	if (validate() != VALIDATOR_OK) {
-		throw std::runtime_error("Failed to validate file: " + _name);
-	}
-	if (openFile() == false) {
-		throw std::runtime_error("Failed to open file: " + _name);
-	}
-	if (load() == false) {
-		throw std::runtime_error("Failed to load file: " + _name);
-	}
 }
 
 bool AFile::openFile() {
@@ -39,15 +30,15 @@ bool AFile::load() {
 	return (true);
 }
 
-EValidator AFile::validate() const {
+ECheck AFile::validate() const {
 	struct stat buf;
 	if (stat(_name.c_str(), &buf) != 0)
-		return (VALIDATOR_FILE_NOT_FOUND);
+		return (CHK_FILE_NOT_FOUND);
 	if (access(_name.c_str(), R_OK) != 0)
-		return (VALIDATOR_FILE_NO_READ_PERMISSION);
+		return (CHK_FILE_NO_READ_PERMISSION);
 	if (_name.empty())
-		return (VALIDATOR_FILE_NAME_EMPTY);
-	return (VALIDATOR_OK);
+		return (CHK_FILE_NAME_EMPTY);
+	return (CHK_OK);
 }
 
 const std::ifstream & AFile::getStream() const {

@@ -23,51 +23,23 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 
-/* Forward declarations */
-
-class AFile;
-
 /* Enumeration */
 
-enum EValidator {
-	VALIDATOR_OK,
-	VALIDATOR_FILE_NOT_FOUND,
-	VALIDATOR_FILE_NAME_EMPTY,
-	VALIDATOR_FILE_NO_READ_PERMISSION,
-	VALIDATOR_FILE_NO_WRITE_PERMISSION,
-	VALIDATOR_FILE_NO_EXECUTE_PERMISSION,
-	VALIDATOR_FILE_CONTENT_EMPTY,
+enum ECheck {
+	CHK_OK,
+
+	CHK_FILE_NOT_FOUND,
+	CHK_FILE_NAME_EMPTY,
+	CHK_FILE_NO_READ_PERMISSION,
+	CHK_FILE_NO_WRITE_PERMISSION,
+	CHK_FILE_NO_EXECUTE_PERMISSION,
+	CHK_FILE_CONTENT_EMPTY,
+
 };
 
 /* Interfaces */
 
-class IValidator
-{
-	public:
-		virtual ~IValidator() {};
-		virtual EValidator validate() const = 0;
-};
-
-class IParser
-{
-	public:
-		virtual ~IParser() {};
-		virtual bool parse(const std::string & = "") = 0;
-};
-
-class ILoader
-{
-	public:
-		virtual ~ILoader() {};
-		virtual bool load() = 0;
-};
-
-class IHandler
-{
-	public:
-		virtual ~IHandler() {};
-		virtual bool handle() = 0;
-};
+#include "interfaces.hpp"
 
 /* Abstract classes */
 

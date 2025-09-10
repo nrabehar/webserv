@@ -1,10 +1,10 @@
 #ifndef AFILE_HPP
 #define AFILE_HPP 1
 
-class AFile: public ILoader, public IValidator
+class AFile: public ILoader, public IChecker
 {
 
-	private:
+	protected:
 
 		std::string _name;
 		std::ifstream _stream;
@@ -18,7 +18,8 @@ class AFile: public ILoader, public IValidator
 		virtual const std::string & getName() const;
 		virtual const std::string & getContent() const;
 		virtual bool load() __attribute__((warn_unused_result));
-		virtual EValidator validate() const __attribute__((warn_unused_result));
+		virtual ECheck validate() const __attribute__((warn_unused_result));
+		virtual bool openFile() __attribute__((warn_unused_result));
 
 	private:
 
@@ -26,7 +27,6 @@ class AFile: public ILoader, public IValidator
 		AFile(const AFile &);
 		AFile & operator=(const AFile &);
 		virtual void closeFile();
-		virtual bool openFile() __attribute__((warn_unused_result));
 
 };
 

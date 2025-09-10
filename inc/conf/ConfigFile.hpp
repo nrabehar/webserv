@@ -3,15 +3,21 @@
 
 #include "../webserv.hpp"
 
-class ConfigFile : public AFile
+class ConfigFile : public AFile, public IError
 {
+
 	public:
+
 		~ConfigFile();
 		ConfigFile(const std::string &);
+		void reportError(ECheck);
+
 	private:
+
 		ConfigFile();
 		ConfigFile(const ConfigFile &);
 		ConfigFile & operator=(const ConfigFile &);
+
 };
 
 #endif // CONFIGFILE_HPP
