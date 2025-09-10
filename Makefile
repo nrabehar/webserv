@@ -25,6 +25,8 @@ CGISRC = \
 CLIENTSRC = \
 
 CONFSRC = \
+	Config.cpp \
+	ConfigFile.cpp \
 
 HANDLERSRC = \
 
@@ -35,6 +37,7 @@ NETWORKSRC = \
 SERVERSRC = \
 
 TOOLSSRC = \
+	AFile.cpp \
 
 CGISRCS = $(addprefix $(DIRCGI)/, $(CGISRC))
 CLIENTSRCS = $(addprefix $(DIRCLIENT)/, $(CLIENTSRC))
@@ -65,7 +68,8 @@ SRC = \
 	$(SERVERSRCS) \
 	$(TOOLSSRCS) \
 
-INC = -I./$(DIRINC)
+INCFILE = webserv.hpp
+INC = -I./$(DIRINC) --include $(DIRINC)/$(INCFILE)
 CPPFLAGS += $(INC)
 
 SRCS = $(addprefix $(DIRSRC)/, $(SRC))
