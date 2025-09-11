@@ -73,11 +73,30 @@ void Location::parse(const std::string &block)
 			throw std::runtime_error("Location::parse: unexpected end of line after '" + token + "'");
 		}
 	}
+	EErrorCode err = check();
+	if (err != ST_OK)
+		reportError(err);
 }
 
 EErrorCode Location::check() const
 {
-	// @todo Implementation of the check function
+	if (_uri.empty() || _uri[0] != '/')
+		return (ST_BAD_URI);
+
+	for (size_t i = 0; i < _cgi.size(); ++i)
+		if (_cgi[i].extension.empty() || _cgi[i].path.empty())
+			return (ST_BAD_CGI);
+
+	for (size_t i = 0; i < _method.size(); ++i)
+	{
+		std::string method = String::toUpper(_method[i]);
+		if (method != "GET" && method != "POST"
+				&& method != "DELETE" && method != "PUT"
+				&& method != "PATCH" && method != "HEAD"
+				&& method != "OPTIONS")
+			return (ST_BAD_METHOD);
+	}
+
 	return (ST_OK);
 }
 
@@ -85,6 +104,15 @@ void Location::reportError(EErrorCode code)
 {
 	switch (code)
 	{
+		case ST_BAD_URI:
+			throw std::runtime_error("Configuration: Invalid URI in location block: " + _uri);
+			break;
+		case ST_BAD_CGI:
+			throw std::runtime_error("Configuration: Invalid CGI configuration in location block: " + _uri);
+			break;
+		case ST_BAD_METHOD:
+			throw std::runtime_error("Configuration: Invalid method in location block: " + _uri);
+			break;
 		default:
 			break;
 	}
@@ -97,12 +125,15 @@ const std::string & Location::getRoot() const { return (_root); }
 const std::string & Location::getUploadPath() const { return (_upload_path); }
 const std::vector<std::string>& Location::getIndex() const { return (_index); }
 const std::vector<std::string>& Location::getMethod() const { return (_method); }
+const std::map<EStatusCode, std::string> & Location::getErrorPage() const { return (_errorpage); }
 const std::map<EStatusCode, std::string> & Location::getRedirect() const { return (_redirect); }
 const std::vector<CgiLink> & Location::getCgi() const { return (_cgi); }
 
 void Location::setAutoindex(bool autoindex) { _autoindex = autoindex; }
 void Location::setMaxBodySize(size_t max_body_size) { _max_body_size = max_body_size; }
 void Location::setRoot(const std::string & root) { _root = root; }
+void Location::setIndex(const std::vector<std::string> & index) { _index = index; }
+void Location::setErrorPage(const std::map<EStatusCode, std::string> & errorpage) { _errorpage = errorpage; }
 
 void Location::setDirective(const std::string &directive, const std::string &value)
 {
@@ -122,4 +153,6 @@ void Location::setDirective(const std::string &directive, const std::string &val
 		_redirect = ConfigParser::parseRedirect(value);
 	else if (directive == "cgi")
 		_cgi.push_back(ConfigParser::parseCgi(value));
+	else
+	 	throw std::runtime_error("Configuration: unknown directive '" + directive + "'");
 }

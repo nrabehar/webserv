@@ -21,6 +21,7 @@ class Location: public IParser, public IChecker, public IError
 		std::string _upload_path;
 		std::vector<std::string> _index;
 		std::vector<std::string> _method;
+		std::map<EStatusCode, std::string> _errorpage;
 		std::map<EStatusCode, std::string> _redirect;
 		std::vector<CgiLink> _cgi;
 
@@ -38,6 +39,7 @@ class Location: public IParser, public IChecker, public IError
 		const std::string & getUploadPath() const;
 		const std::vector<std::string> & getIndex() const;
 		const std::vector<std::string> & getMethod() const;
+		const std::map<EStatusCode, std::string> & getErrorPage() const;
 		const std::map<EStatusCode, std::string> & getRedirect() const;
 		const std::vector<CgiLink> & getCgi() const;
 
@@ -48,6 +50,8 @@ class Location: public IParser, public IChecker, public IError
 		void setAutoindex(bool);
 		void setMaxBodySize(size_t);
 		void setRoot(const std::string &);
+		void setIndex(const std::vector<std::string> &);
+		void setErrorPage(const std::map<EStatusCode, std::string> &);
 
 	private:
 

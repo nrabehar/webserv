@@ -24,15 +24,9 @@ void ConfigParser::parse(const std::string &contents = "")
 	for (size_t i = 0; i < _server_block.size(); i++)
 	{
 		Server server;
-		try
-		{
-			server.parse(_server_block[i]);
-			_server.push_back(server);
-		}
-		catch (const std::exception &e)
-		{
-			std::cerr << e.what() << '\n';
-		}
+		server.parse(_server_block[i]);
+		_server.push_back(server);
+		std::cout << "Server "<< i + 1 << " parsed with " << server.getLocation().size() << " locations\n";
 	}
 }
 
@@ -59,13 +53,17 @@ AddrPort ConfigParser::parseHostPort(const std::string &token)
 	{
 		entry.addr = token.substr(0, pos);
 		std::string port_str = token.substr(pos + 1);
+		if (!isValidIp(entry.addr))
+			throw std::runtime_error("Configuration: Invalid IP address in listen directive: " + entry.addr);
 		if (entry.addr[0] == '[' && entry.addr[entry.addr.size() - 1] == ']')
 		{
 			entry.addr = entry.addr.substr(1, entry.addr.size() - 2);
 			entry.is_ipv6 = true;
 		}
 		if (String::isNumber(port_str))
+		{
 			entry.port = std::atoi(port_str.c_str());
+		}
 		else if (!port_str.empty())
 			throw std::runtime_error("Configuration: Invalid port number in listen directive: " + port_str);
 		else
@@ -141,4 +139,60 @@ CgiLink ConfigParser::parseCgi(const std::string &value)
 	cgi.extension = tokens[0];
 	cgi.path = tokens[1];
 	return (cgi);
+}
+
+bool ConfigParser::isValidIp(const std::string &ip)
+{
+	if (ip.empty())
+		return false;
+
+	if (ip[0] == '[')
+	{
+		if (ip[ip.length() - 1] != ']')
+			return false;
+		std::string ipv6 = ip.substr(1, ip.length() - 2);
+		size_t colon_count = 0;
+		for (size_t i = 0; i < ipv6.length(); ++i)
+		{
+			if (ipv6[i] == ':')
+				colon_count++;
+			else if (!isxdigit(ipv6[i]))
+				return false;
+		}
+		return (colon_count >= 2 && colon_count <= 7);
+	}
+	size_t dot_count = 0;
+	size_t len = ip.length();
+	for (size_t i = 0; i < len; ++i)
+	{
+		if (ip[i] == '.')
+		{
+			dot_count++;
+			if (i == 0 || i == len - 1 || ip[i - 1] == '.' || ip[i + 1] == '.')
+				return false;
+		}
+		else if (!isdigit(ip[i]))
+			return false;
+	}
+	if (dot_count != 3)
+		return false;
+	std::vector<std::string> octets = String::split(ip, ".");
+	if (octets.size() != 4)
+		return false;
+
+	for (size_t i = 0; i < octets.size(); ++i)
+	{
+		if (octets[i].empty() || (octets[i].length() > 1 && octets[i][0] == '0'))
+			return false;
+		int octet = std::atoi(octets[i].c_str());
+		if (octet < 0 || octet > 255)
+			return false;
+	}
+
+	return true;
+}
+
+bool ConfigParser::isValidPort(int port)
+{
+	return (port >= 0 && port <= 65535);
 }

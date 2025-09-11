@@ -30,6 +30,8 @@ class ConfigParser : public IParser, public IChecker, public IError
 		static AddrPort parseHostPort(const std::string &);
 		static std::map<EStatusCode, std::string> parseErrorPage(const std::string &);
 		static std::map<EStatusCode, std::string> parseRedirect(const std::string &);
+		static bool isValidIp(const std::string &);
+		static bool isValidPort(int port);
 
 
 	private:

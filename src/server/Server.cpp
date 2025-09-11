@@ -61,11 +61,35 @@ void Server::parse(const std::string &block)
 		loc.parse(loc_blocks[i]);
 		_location.push_back(loc);
 	}
+	fillLocationDefaults();
+	EErrorCode err = check();
+	if (err != ST_OK)
+		reportError(err);
 }
 
 EErrorCode Server::check() const
 {
-	// @todo Implementation of the check function
+	for (size_t i = 0; i < _hostport.size(); ++i)
+	{
+		if (!ConfigParser::isValidPort(_hostport[i].port))
+			return (ST_BAD_PORT);
+		for (size_t j = i + 1; j < _hostport.size(); ++j)
+		{
+			if (_hostport[i].port == _hostport[j].port && _hostport[i].addr == _hostport[j].addr)
+				return (ST_DUPLICATE_LISTEN);
+		}
+	}
+
+	if (_root.empty())
+		return (ST_BAD_ROOT);
+	for (size_t i = 0; i < _index.size(); ++i)
+	{
+		if (_index[i].empty())
+			return (ST_BAD_INDEX);
+	}
+	if (_max_body_size > 0 && _max_body_size < 1000)
+		return (ST_BAD_MAX_BODY_SIZE);
+
 	return (ST_OK);
 }
 
@@ -73,6 +97,24 @@ void Server::reportError(EErrorCode code)
 {
 	switch (code)
 	{
+		case ST_BAD_PORT:
+			throw std::runtime_error("Configuration: Invalid port in listen directive");
+			break;
+		case ST_BAD_HOST:
+			throw std::runtime_error("Configuration: Invalid host in listen directive");
+			break;
+		case ST_BAD_ROOT:
+			throw std::runtime_error("Configuration: root directive is missing or empty");
+			break;
+		case ST_BAD_INDEX:
+			throw std::runtime_error("Configuration: Invalid index directive");
+			break;
+		case ST_BAD_MAX_BODY_SIZE:
+			throw std::runtime_error("Configuration: Invalid max_body_size directive");
+			break;
+		case ST_DUPLICATE_LISTEN:
+			throw std::runtime_error("Configuration: Duplicate listen directive");
+			break;
 		default:
 			break;
 	}
@@ -107,5 +149,42 @@ void Server::setDirective(const std::string &directive, const std::string &value
 		std::map<EStatusCode, std::string>::const_iterator it;
 		for (it = parsed.begin(); it != parsed.end(); ++it)
 			_errorpage[it->first] = it->second;
+	}
+	else
+		throw std::runtime_error("Configuration: Unknown directive in server block: " + directive);
+}
+
+void Server::fillLocationDefaults()
+{
+	for (size_t i = 0; i < _location.size(); i++)
+	{
+		if (_location[i].getRoot().empty())
+			_location[i].setRoot(_root);
+		if (_location[i].getMaxBodySize() == 0)
+			_location[i].setMaxBodySize(_max_body_size);
+		if (_location[i].getIndex().empty())
+			_location[i].setIndex(_index);
+		if (_location[i].getErrorPage().empty())
+			_location[i].setErrorPage(_errorpage);
+		if (_root.empty() && !_location[i].getRoot().empty())
+		{
+			_root = _location[i].getRoot();
+			continue;
+		}
+		if (_max_body_size == 0 && _location[i].getMaxBodySize() != 0)
+		{
+			_max_body_size = _location[i].getMaxBodySize();
+			continue;
+		}
+		if (_index.empty() && !_location[i].getIndex().empty())
+		{
+			_index = _location[i].getIndex();
+			continue;
+		}
+		if (_errorpage.empty() && !_location[i].getErrorPage().empty())
+		{
+			_errorpage = _location[i].getErrorPage();
+			continue;
+		}
 	}
 }

@@ -49,6 +49,7 @@ class Server: public IParser, public IChecker, public IError
 	private:
 
 		void setDirective(const std::string &, const std::string &);
+		void fillLocationDefaults();
 
 };
 

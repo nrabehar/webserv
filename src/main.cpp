@@ -2,8 +2,15 @@
 
 int main(int, char **) {
 
-	Config config("webserv.conf");
-	(void)config;
+	try
+	{
+		Config config("webserv.conf");
+		(void)config;
+	}
+	catch(const std::exception& e)
+	{
+		std::cerr << e.what() << '\n';
+	}
 
 	return (0);
 }
