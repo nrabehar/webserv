@@ -14,3 +14,7 @@ ConfigFile & Config::getFile() {
 ConfigParser & Config::getParser() {
 	return (_parser);
 }
+
+const std::vector<Server> & Config::getServer() const {
+	return (_parser.getServer());
+}

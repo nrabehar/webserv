@@ -18,6 +18,8 @@ class Config
 		ConfigFile & getFile();
 		ConfigParser & getParser();
 
+		const std::vector<Server> & getServer() const;
+
 	private:
 
 		Config();

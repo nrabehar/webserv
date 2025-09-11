@@ -4,14 +4,6 @@ ConfigParser::ConfigParser(const AFile &file) : _file(file),
 																								_server(),
 																								_server_block()
 {
-	try
-	{
-		_server_block = Block::extractServer(_file.getContent());
-	}
-	catch (const std::exception &e)
-	{
-		std::cerr << e.what() << '\n';
-	}
 }
 
 ConfigParser::~ConfigParser()
@@ -20,13 +12,13 @@ ConfigParser::~ConfigParser()
 
 void ConfigParser::parse(const std::string &contents = "")
 {
-	(void)contents;
+	if (!contents.empty())
+		_server_block = Block::extractServer(contents);
 	for (size_t i = 0; i < _server_block.size(); i++)
 	{
 		Server server;
 		server.parse(_server_block[i]);
 		_server.push_back(server);
-		std::cout << "Server "<< i + 1 << " parsed with " << server.getLocation().size() << " locations\n";
 	}
 }
 
