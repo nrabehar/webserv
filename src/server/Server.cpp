@@ -45,12 +45,12 @@ void Server::parse(const std::string &block)
 			if (std::getline(stream, line)) {
 				line = String::trim(line, " \t;");
 				if (line.empty())
-				 continue;
+			 		throw std::runtime_error("Configuration: unexpected end of line after '" + token + "'");
 				token = String::toLower(token);
 				setDirective(token, line);
 			}
 			else {
-				throw std::runtime_error("ConfigParser: unexpected end of line after '" + token + "'");
+				throw std::runtime_error("Configuration: unexpected end of line after '" + token + "'");
 			}
 		}
 	}

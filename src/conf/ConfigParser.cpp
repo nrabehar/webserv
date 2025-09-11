@@ -20,15 +20,49 @@ void ConfigParser::parse(const std::string &contents = "")
 		server.parse(_server_block[i]);
 		_server.push_back(server);
 	}
+	EErrorCode err = check();
+	if (err != ST_OK)
+		reportError(err);
 }
 
 EErrorCode ConfigParser::check() const
 {
+	for (size_t i = 0; i < _server.size(); i++)
+	{
+		for (size_t j = i + 1; j < _server.size(); j++)
+		{
+			const std::vector<AddrPort> &listen_i = _server[i].getHostPort();
+			const std::vector<AddrPort> &listen_j = _server[j].getHostPort();
+			for (size_t m = 0; m < listen_i.size(); m++)
+			{
+				for (size_t n = 0; n < listen_j.size(); n++)
+				{
+					if (listen_i[m].port == listen_j[n].port &&
+						listen_i[m].addr == listen_j[n].addr)
+					{
+						return (ST_DUPLICATE_LISTEN);
+					}
+					if (listen_i[m].port == listen_j[n].port &&
+						(listen_i[m].addr == "0.0.0.0" || listen_j[n].addr == "0.0.0.0"))
+					{
+						return (ST_DUPLICATE_LISTEN);
+					}
+				}
+			}
+		}
+	}
 	return (ST_OK);
 }
 
-void ConfigParser::reportError(EErrorCode)
+void ConfigParser::reportError(EErrorCode code)
 {
+	switch (code)
+	{
+		case ST_DUPLICATE_LISTEN:
+			throw std::runtime_error("Configuration Error: Duplicate listen directive found.");
+		default:
+			throw std::runtime_error("Configuration Error: Unknown error code.");
+	}
 }
 
 const std::vector<Server> &ConfigParser::getServer() const { return (_server); }

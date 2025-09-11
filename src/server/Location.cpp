@@ -45,9 +45,9 @@ void Location::parse(const std::string &block)
 	if (stream >> token)
 	  _uri = token;
 	else
-		throw std::runtime_error("Location::parse: missing URI in location block");
+		throw std::runtime_error("Configuration: missing URI in location block");
 	if (!(stream >> token) || token != "{")
-		throw std::runtime_error("Location::parse: expected '{' after URI in location block");
+		throw std::runtime_error("Configuration: expected '{' after URI in location block");
 	brace_count = 1;
 	while (stream >> token)
 	{
@@ -56,7 +56,7 @@ void Location::parse(const std::string &block)
 		else if (token == "}")
 			brace_count--;
 		if (brace_count < 0)
-			throw std::runtime_error("Location::parse: unexpected closing brace '}'");
+			throw std::runtime_error("Configuration: unexpected closing brace '}'");
 		if (brace_count == 0)
 			break;
 		std::string line;
@@ -64,13 +64,13 @@ void Location::parse(const std::string &block)
 		{
 			line = String::trim(line, " \t;");
 			if (line.empty())
-			 continue;
+			 throw std::runtime_error("Configuration: unexpected end of line after '" + token + "'");
 			token = String::toLower(token);
 			setDirective(token, line);
 		}
 		else
 		{
-			throw std::runtime_error("Location::parse: unexpected end of line after '" + token + "'");
+			throw std::runtime_error("Configuration: unexpected end of line after '" + token + "'");
 		}
 	}
 	EErrorCode err = check();
@@ -155,4 +155,5 @@ void Location::setDirective(const std::string &directive, const std::string &val
 		_cgi.push_back(ConfigParser::parseCgi(value));
 	else
 	 	throw std::runtime_error("Configuration: unknown directive '" + directive + "'");
+	std::cout << "Set directive '" << directive << "' with value '" << value << "' in location '" << _uri << "'\n";
 }
