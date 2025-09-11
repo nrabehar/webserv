@@ -41,6 +41,8 @@ SERVERSRC = \
 
 TOOLSSRC = \
 	AFile.cpp \
+	String.cpp \
+	Block.cpp \
 
 CGISRCS = $(addprefix $(DIRCGI)/, $(CGISRC))
 CLIENTSRCS = $(addprefix $(DIRCLIENT)/, $(CLIENTSRC))

@@ -4,6 +4,7 @@ Config::~Config() {
 }
 
 Config::Config(const std::string & name) : _file(name), _parser(_file) {
+	_parser.parse("");
 }
 
 ConfigFile & Config::getFile() {

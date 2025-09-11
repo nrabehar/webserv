@@ -3,6 +3,12 @@
 
 #include "../webserv.hpp"
 
+struct CgiLink
+{
+	std::string extension;
+	std::string path;
+};
+
 class Location: public IParser, public IChecker, public IError
 {
 
@@ -16,7 +22,7 @@ class Location: public IParser, public IChecker, public IError
 		std::vector<std::string> _index;
 		std::vector<std::string> _method;
 		std::map<EStatusCode, std::string> _redirect;
-		std::vector<std::pair<std::string, std::string> > _cgi;
+		std::vector<CgiLink> _cgi;
 
 	public:
 
@@ -33,7 +39,7 @@ class Location: public IParser, public IChecker, public IError
 		const std::vector<std::string> & getIndex() const;
 		const std::vector<std::string> & getMethod() const;
 		const std::map<EStatusCode, std::string> & getRedirect() const;
-		const std::vector<std::pair<std::string, std::string> > & getCgi() const;
+		const std::vector<CgiLink> & getCgi() const;
 
 		void parse(const std::string &);
 		EErrorCode check() const __attribute__((warn_unused_result));
@@ -42,6 +48,10 @@ class Location: public IParser, public IChecker, public IError
 		void setAutoindex(bool);
 		void setMaxBodySize(size_t);
 		void setRoot(const std::string &);
+
+	private:
+
+		void setDirective(const std::string &, const std::string &);
 
 };
 

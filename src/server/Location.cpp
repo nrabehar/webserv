@@ -1,5 +1,6 @@
 #include "webserv.hpp"
 
+
 Location::Location():
 	_autoindex(false),
 	_uri(""),
@@ -35,9 +36,43 @@ Location & Location::operator=(const Location & src)
 	return (*this);
 }
 
-void Location::parse(const std::string &)
+void Location::parse(const std::string &block)
 {
-	// @todo Implementation of the parse function
+	std::istringstream stream(block);
+	std::string token;
+	int brace_count = 0;
+
+	if (stream >> token)
+	  _uri = token;
+	else
+		throw std::runtime_error("Location::parse: missing URI in location block");
+	if (!(stream >> token) || token != "{")
+		throw std::runtime_error("Location::parse: expected '{' after URI in location block");
+	brace_count = 1;
+	while (stream >> token)
+	{
+		if (token == "{")
+			brace_count++;
+		else if (token == "}")
+			brace_count--;
+		if (brace_count < 0)
+			throw std::runtime_error("Location::parse: unexpected closing brace '}'");
+		if (brace_count == 0)
+			break;
+		std::string line;
+		if (std::getline(stream, line))
+		{
+			line = String::trim(line, " \t;");
+			if (line.empty())
+			 continue;
+			token = String::toLower(token);
+			setDirective(token, line);
+		}
+		else
+		{
+			throw std::runtime_error("Location::parse: unexpected end of line after '" + token + "'");
+		}
+	}
 }
 
 EErrorCode Location::check() const
@@ -63,8 +98,28 @@ const std::string & Location::getUploadPath() const { return (_upload_path); }
 const std::vector<std::string>& Location::getIndex() const { return (_index); }
 const std::vector<std::string>& Location::getMethod() const { return (_method); }
 const std::map<EStatusCode, std::string> & Location::getRedirect() const { return (_redirect); }
-const std::vector<std::pair<std::string, std::string> > & Location::getCgi() const { return (_cgi); }
+const std::vector<CgiLink> & Location::getCgi() const { return (_cgi); }
 
 void Location::setAutoindex(bool autoindex) { _autoindex = autoindex; }
 void Location::setMaxBodySize(size_t max_body_size) { _max_body_size = max_body_size; }
 void Location::setRoot(const std::string & root) { _root = root; }
+
+void Location::setDirective(const std::string &directive, const std::string &value)
+{
+	if (directive == "autoindex")
+		_autoindex = (String::toLower(value) == "on");
+	else if (directive == "root")
+		_root = value;
+	else if (directive == "index")
+		_index = String::split(value, " \t");
+	else if (directive == "upload_path")
+		_upload_path = value;
+	else if (directive == "max_body_size" || directive == "client_max_body_size")
+		_max_body_size = String::toBytes(value);
+	else if (directive == "allow_methods" || directive == "methods")
+		_method = String::split(String::toUpper(value), " \t");
+	else if (directive == "return")
+		_redirect = ConfigParser::parseRedirect(value);
+	else if (directive == "cgi")
+		_cgi.push_back(ConfigParser::parseCgi(value));
+}

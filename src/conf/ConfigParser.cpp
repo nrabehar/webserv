@@ -1,93 +1,144 @@
 #include "webserv.hpp"
 
-ConfigParser::ConfigParser(const AFile & file):
-	_file(file),
-	_server(),
-	_server_block() {
+ConfigParser::ConfigParser(const AFile &file) : _file(file),
+																								_server(),
+																								_server_block()
+{
+	try
+	{
+		_server_block = Block::extractServer(_file.getContent());
+	}
+	catch (const std::exception &e)
+	{
+		std::cerr << e.what() << '\n';
+	}
+}
+
+ConfigParser::~ConfigParser()
+{
+}
+
+void ConfigParser::parse(const std::string &contents = "")
+{
+	(void)contents;
+	for (size_t i = 0; i < _server_block.size(); i++)
+	{
+		Server server;
 		try
 		{
-			parseServerBlock();
+			server.parse(_server_block[i]);
+			_server.push_back(server);
 		}
-		catch(const std::exception& e)
+		catch (const std::exception &e)
 		{
 			std::cerr << e.what() << '\n';
 		}
-
+	}
 }
 
-ConfigParser::~ConfigParser() {
-}
-
-void ConfigParser::parse(const std::string &) {
-}
-
-EErrorCode ConfigParser::check() const {
+EErrorCode ConfigParser::check() const
+{
 	return (ST_OK);
 }
 
-void ConfigParser::reportError(EErrorCode) {
+void ConfigParser::reportError(EErrorCode)
+{
 }
 
-void ConfigParser::parseServerBlock() {
+const std::vector<Server> &ConfigParser::getServer() const { return (_server); }
+const std::vector<std::string> &ConfigParser::getServerBlock() const { return (_server_block); }
 
-	std::string content = _file.getContent();
-	std::istringstream stream(content);
-	std::string token;
-	int 	 brace_count = 0;
-	bool   in_server_block = false;
-	std::string block;
+AddrPort ConfigParser::parseHostPort(const std::string &token)
+{
+	AddrPort entry;
 
-	while (stream >> token)
+	if (token.empty())
+		throw std::runtime_error("Configuration: Empty listen directive");
+	size_t pos = token.find_last_of(':');
+	if (pos != std::string::npos)
 	{
-		if (token.empty())
-			continue;
-		if (token[0] == '#') {
-			std::getline(stream, token);
-			continue;
+		entry.addr = token.substr(0, pos);
+		std::string port_str = token.substr(pos + 1);
+		if (entry.addr[0] == '[' && entry.addr[entry.addr.size() - 1] == ']')
+		{
+			entry.addr = entry.addr.substr(1, entry.addr.size() - 2);
+			entry.is_ipv6 = true;
 		}
-		if (!in_server_block && token == "server") {
-			stream >> token;
-			if (token == "{") {
-				in_server_block = true;
-				brace_count = 1;
-				block.append("server {\n");
-			}
+		if (String::isNumber(port_str))
+			entry.port = std::atoi(port_str.c_str());
+		else if (!port_str.empty())
+			throw std::runtime_error("Configuration: Invalid port number in listen directive: " + port_str);
+		else
+			entry.port = 80;
+	}
+	else if (String::isNumber(token))
+	{
+		entry.port = std::atoi(token.c_str());
+		entry.addr = "0.0.0.0";
+	}
+	return (entry);
+}
+
+std::map<EStatusCode, std::string> ConfigParser::parseErrorPage(const std::string &value)
+{
+	std::map<EStatusCode, std::string> error_map;
+	std::vector<std::string> tokens = String::split(value, " \t");
+	if (tokens.size() < 2)
+	{
+		std::cout << "Tokens size: " << tokens.size() << std::endl;
+		throw std::runtime_error("Configuration: Invalid error_page directive: " + value);
+	}
+	std::string path = tokens.back();
+	for (size_t i = 0; i < tokens.size() - 1; i++)
+	{
+		if (String::isNumber(tokens[i]))
+		{
+			int code = std::atoi(tokens[i].c_str());
+			if (code >= 400 && code < 600)
+				error_map[static_cast<EStatusCode>(code)] = path;
 			else
-				throw std::runtime_error("ConfigParser: 'server' block must be followed by '{'");
-		}
-		if (in_server_block) {
-			while (std::getline(stream, token))
-			{
-				size_t pos = token.find('#');
-				if (pos != std::string::npos)
-					token = token.substr(0, pos);
-				block.append(token + "\n");
-				for (size_t i = 0; i < token.size(); i++)
-				{
-					if (token[i] == '{')
-						brace_count++;
-					else if (token[i] == '}')
-						brace_count--;
-				}
-				if (brace_count == 0)
-					break;
-			}
-			if (brace_count == 0)
-			{
-				in_server_block = false;
-				_server_block.push_back(block);
-				block.clear();
-			}
-			if (brace_count < 0)
-				throw std::runtime_error("ConfigParser: unmatched '}' in 'server' block");
+				throw std::runtime_error("Configuration: Invalid status code in error_page directive: " + tokens[i]);
 		}
 		else
-			throw std::runtime_error("ConfigParser: unexpected token outside 'server' block: " + token);
+		{
+			throw std::runtime_error("Configuration: Non-numeric status code in error_page directive: " + tokens[i]);
+		}
 	}
-	if (in_server_block)
-		throw std::runtime_error("ConfigParser: unmatched '{' in 'server' block");
-
+	return (error_map);
 }
 
-const std::vector<Server> & ConfigParser::getServer() const { return (_server); }
-const std::vector<std::string> & ConfigParser::getServerBlock() const { return (_server_block); }
+std::map<EStatusCode, std::string> ConfigParser::parseRedirect(const std::string &value)
+{
+	std::map<EStatusCode, std::string> redirect_map;
+	std::vector<std::string> tokens = String::split(value, " \t");
+	if (tokens.size() != 2)
+	{
+		throw std::runtime_error("Configuration: Invalid redirect directive: " + value);
+	}
+	if (String::isNumber(tokens[0]))
+	{
+		int code = std::atoi(tokens[0].c_str());
+		if (code >= 300 && code < 400)
+			redirect_map[static_cast<EStatusCode>(code)] = tokens[1];
+		else
+			throw std::runtime_error("Configuration: Invalid status code in redirect directive: " + tokens[0]);
+	}
+	else
+	{
+		throw std::runtime_error("Configuration: Non-numeric status code in redirect directive: " + tokens[0]);
+	}
+	return (redirect_map);
+}
+
+CgiLink ConfigParser::parseCgi(const std::string &value)
+{
+	std::vector<std::string> tokens = String::split(value, " \t");
+	if (tokens.size() != 2)
+	{
+		throw std::runtime_error("Configuration: Invalid cgi directive: " + value);
+	}
+	CgiLink cgi;
+	cgi.extension = tokens[0];
+	cgi.path = tokens[1];
+	return (cgi);
+}

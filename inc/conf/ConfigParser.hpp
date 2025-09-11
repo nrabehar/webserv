@@ -26,13 +26,17 @@ class ConfigParser : public IParser, public IChecker, public IError
 
 		// @todo add necessary setters
 
+		static CgiLink parseCgi(const std::string &);
+		static AddrPort parseHostPort(const std::string &);
+		static std::map<EStatusCode, std::string> parseErrorPage(const std::string &);
+		static std::map<EStatusCode, std::string> parseRedirect(const std::string &);
+
+
 	private:
 
 		ConfigParser();
 		ConfigParser(const ConfigParser &);
 		ConfigParser & operator=(const ConfigParser &);
-
-		void parseServerBlock();
 
 };
 

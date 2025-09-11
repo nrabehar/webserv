@@ -63,6 +63,8 @@ typedef EStatusCode EFileStatus;
 /* Abstract classes */
 
 #include "./tools/AFile.hpp"
+#include "./tools/String.hpp"
+#include "./tools/Block.hpp"
 
 /* Concrete classes */
 
