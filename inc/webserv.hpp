@@ -1,102 +1,60 @@
 #ifndef WEBSERV_HPP
-#define WEBSERV_HPP 1
+#define WEBSERV_HPP
+
+/* Include files ***********************************************************  */
 
 #include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-#include <algorithm>
-#include <cctype>
-#include <cstring>
-#include <cstdlib>
-#include <csignal>
-#include <ctime>
-#include <fstream>
 #include <sstream>
+#include <iomanip>
+#include <fstream>
+#include <string>
+#include <cstring>
+#include <ctime>
+#include <map>
+#include <vector>
+#include <algorithm>
 #include <memory>
-#include <stdexcept>
-#include <exception>
-#include <utility>
-#include <unistd.h>
-#include <fcntl.h>
-#include <sys/socket.h>
+#include <csignal>
+#include <typeinfo>
+
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/socket.h>
 #include <sys/wait.h>
+#include <unistd.h>
+#include <fcntl.h>
 
-/* Enumeration */
+/* Macros ******************************************************************* */
 
-enum EStatusCode {
-	ST_OK = 200,
-	ST_CREATED = 201,
-	ST_ACCEPTED = 202,
-	ST_NO_CONTENT = 204,
-	ST_MOVED_PERMANENTLY = 301,
-	ST_FOUND = 302,
-	ST_SEE_OTHER = 303,
-	ST_NOT_MODIFIED = 304,
-	ST_BAD_REQUEST = 400,
-	ST_UNAUTHORIZED = 401,
-	ST_FORBIDDEN = 403,
-	ST_NOT_FOUND = 404,
-	ST_METHOD_NOT_ALLOWED = 405,
-	ST_INTERNAL_SERVER_ERROR = 500,
-	ST_NOT_IMPLEMENTED = 501,
-	ST_BAD_GATEWAY = 502,
-	ST_SERVICE_UNAVAILABLE = 503,
+#ifdef __GNUC__
+	# define WRESULT __attribute__((warn_unused_result))
+	# define PURE __attribute__((pure))
+	# define NORETURN __attribute__((noreturn))
+	# define NOTHROW __attribute__((nothrow))
+#else
+	# define WRESULT
+	# define PURE
+	# define NORETURN
+	# define NOTHROW
+#endif
 
-	ST_NO_READ_PERMISSION = 99,
-	ST_NO_WRITE_PERMISSION = 98,
-	ST_NO_EXECUTE_PERMISSION = 97,
-	ST_EMPTY_NAME = 96,
-	ST_EMPTY_CONTENT = 95,
+/* Forward declarations ***************************************************** */
 
-	/** CONFIG ERRORS */
-	ST_BAD_URI = 900,
-	ST_BAD_PORT = 901,
-	ST_BAD_HOST = 902,
-	ST_BAD_ROOT = 903,
-	ST_BAD_INDEX = 904,
-	ST_BAD_AUTOINDEX = 905,
-	ST_BAD_UPLOAD_PATH = 906,
-	ST_BAD_METHOD = 907,
-	ST_BAD_CGI = 908,
-	ST_BAD_ERROR_PAGE = 909,
-	ST_BAD_REDIRECT = 910,
-	ST_BAD_MAX_BODY_SIZE = 911,
-	ST_BAD_LISTEN = 912,
-	ST_BAD_SERVER_NAME = 913,
-	ST_BAD_LOCATION = 914,
-	ST_BAD_DIRECTIVE = 915,
-	ST_DUPLICATE_LISTEN = 916,
-	ST_DUPLICATE_SERVER_NAME = 917,
-	ST_DUPLICATE_CGI = 918,
-	ST_UNCLOSED_BRACE = 919,
-	ST_UNEXPECTED_TOKEN = 920,
-	ST_UNEXPECTED_EOF = 921,
-};
+/* Enumerations ************************************************************* */
 
-typedef EStatusCode ECheck;
-typedef EStatusCode EErrorCode;
-typedef EStatusCode EFileStatus;
+/* Type definitions ********************************************************* */
 
-/* Interfaces */
+/* Interfaces *************************************************************** */
 
-#include "interfaces.hpp"
+#include "data.ipp"
+#include "data.hpp"
 
-/* Abstract classes */
+#include "network/Ip.ipp"
 
-#include "./tools/AFile.hpp"
-#include "./tools/String.hpp"
-#include "./tools/Block.hpp"
+/* Base classes ************************************************************* */
 
-/* Concrete classes */
+#include "network/Ip.hpp"
 
-#include "./server/Location.hpp"
-#include "./server/Server.hpp"
-
-#include "./conf/ConfigParser.hpp"
-#include "./conf/ConfigFile.hpp"
-#include "./conf/Config.hpp"
+/* Class includes *********************************************************** */
 
 #endif // WEBSERV_HPP
