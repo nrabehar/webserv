@@ -15,8 +15,8 @@ class IIp :
 		virtual ~IIp() {};
 		virtual void setHost(const std::string &) = 0;
 		virtual const std::string & getHost() const = 0;
-		virtual void setPort(unsigned short) = 0;
-		virtual unsigned short getPort() const = 0;
+		virtual void setPort(int) = 0;
+		virtual int getPort() const = 0;
 };
 
 #endif // IP_IPP

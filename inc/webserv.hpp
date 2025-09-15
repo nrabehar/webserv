@@ -27,15 +27,24 @@
 /* Macros ******************************************************************* */
 
 #ifdef __GNUC__
-	# define WRESULT __attribute__((warn_unused_result))
-	# define PURE __attribute__((pure))
-	# define NORETURN __attribute__((noreturn))
-	# define NOTHROW __attribute__((nothrow))
+# define WRESULT __attribute__((warn_unused_result))
+# define PURE __attribute__((pure))
+# define NORETURN __attribute__((noreturn))
+# define NOTHROW __attribute__((nothrow))
 #else
-	# define WRESULT
-	# define PURE
-	# define NORETURN
-	# define NOTHROW
+# define WRESULT
+# define PURE
+# define NORETURN
+# define NOTHROW
+#endif
+
+#ifndef DEFAULT_SERVER_CONFIG
+# define DEFAULT_SERVER_CONFIG 1
+# define DEFAULT_MAX_BODY_SIZE 1048576 // 1MB
+# define DEFAULT_SERVER_ROOT "/www/"
+# define DEFAULT_SERVER_PORT 80
+# define DEFAULT_SERVER_HOST "0.0.0.0"
+# define DEFAULT_UPLOAD_PATH "/uploads/"
 #endif
 
 /* Forward declarations ***************************************************** */
@@ -50,10 +59,12 @@
 #include "data.hpp"
 
 #include "network/Ip.ipp"
+#include "config/Cfg.ipp"
 
 /* Base classes ************************************************************* */
 
 #include "network/Ip.hpp"
+#include "config/Cfg.hpp"
 
 /* Class includes *********************************************************** */
 

@@ -21,6 +21,7 @@ DIRSERVER = server/
 
 # CONFIGSRC += SrvConfig.cpp
 # CONFIGSRC += LctConfig.cpp
+CONFIGSRC += Cfg.cpp
 # LOCATIONSRC += Location.cpp
 # SERVERSRC += Server.cpp
 NETWORKSRC += Ip.cpp

@@ -7,8 +7,8 @@ class Ip :
 
 	private:
 
-		std::string _host;
-		unsigned short _port;
+		std::string			_host;
+		int							_port;
 
 	public:
 
@@ -20,8 +20,8 @@ class Ip :
 		// Setters/Getters
 		void setHost(const std::string &);
 		const std::string & getHost() const;
-		void setPort(unsigned short);
-		unsigned short getPort() const;
+		void setPort(int);
+		int getPort() const;
 
 		// IData
 		virtual std::string str() const;
