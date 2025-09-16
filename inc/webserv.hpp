@@ -38,14 +38,19 @@
 # define NOTHROW
 #endif
 
-#ifndef DEFAULT_SERVER_CONFIG
-# define DEFAULT_SERVER_CONFIG 1
-# define DEFAULT_MAX_BODY_SIZE 1048576 /* 1MB */
-# define DEFAULT_SERVER_ROOT "/www/"
-# define DEFAULT_SERVER_PORT 80
-# define DEFAULT_SERVER_HOST "0.0.0.0"
-# define DEFAULT_UPLOAD_PATH "/uploads/"
-#endif
+#undef DEFAULT_CONFIG_PATH
+#define DEFAULT_CONFIG_PATH "webserv.conf"
+
+#undef DEFAULT_MAX_BODY_SIZE
+#define DEFAULT_MAX_BODY_SIZE 1048576 /* 1MiB */
+#undef DEFAULT_SERVER_ROOT
+#define DEFAULT_SERVER_ROOT "/www/"
+#undef DEFAULT_SERVER_PORT
+#define DEFAULT_SERVER_PORT 80
+#undef DEFAULT_SERVER_HOST
+#define DEFAULT_SERVER_HOST "0.0.0.0"
+#undef DEFAULT_UPLOAD_PATH
+#define DEFAULT_UPLOAD_PATH "/uploads/"
 
 /* Forward declarations ***************************************************** */
 
@@ -55,22 +60,26 @@
 
 /* Interfaces *************************************************************** */
 
-#include "data.ipp"
-#include "data.hpp"
+#include "base/base.ipp"
+#include "base/io.ipp"
+#include "base/io.hpp"
 
-#include "network/Ip.ipp"
-#include "config/Cfg.ipp"
-#include "parser/IpParse.ipp"
-// #include "validator/CfgValid.ipp"
-#include "validator/IpValid.ipp"
+// #include "base/behavioral/"
+// #include "base/behavioral/"
+// #include "base/behavioral/"
+// #include "base/behavioral/"
+// #include "base/behavioral/"
+// #include "base/behavioral/"
+// #include "base/behavioral/"
+// #include "base/behavioral/"
+// #include "base/behavioral/"
+#include "base/behavioral/Visitor.ipp"
+
+#include "base/creational/Builder.ipp"
+#include "base/creational/Factory.ipp"
+#include "base/creational/Prototype.ipp"
 
 /* Base classes ************************************************************* */
-
-#include "network/Ip.hpp"
-#include "config/Cfg.hpp"
-#include "parser/IpParse.hpp"
-// #include "validator/CfgValid.hpp"
-#include "validator/IpValid.hpp"
 
 /* Class includes *********************************************************** */
 
