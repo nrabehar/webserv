@@ -17,19 +17,26 @@ SRC += $(addprefix $(DIRDATA), $(DATASRC))
 DIRCONFIG = config/
 DIRLOCATION = location/
 DIRNETWORK = network/
+DIRPARSER = parser/
 DIRSERVER = server/
+DIRVALIDATOR = validator/
 
 # CONFIGSRC += SrvConfig.cpp
 # CONFIGSRC += LctConfig.cpp
-CONFIGSRC += Cfg.cpp
+# CONFIGSRC += Cfg.cpp
 # LOCATIONSRC += Location.cpp
-# SERVERSRC += Server.cpp
 NETWORKSRC += Ip.cpp
+PARSERSRC += IpParse.cpp
+# SERVERSRC += Server.cpp
+# VALIDATORSRC += CfgValid.cpp
+VALIDATORSRC += IpValid.cpp
 
 SRC += $(addprefix $(DIRCONFIG), $(CONFIGSRC))
 SRC += $(addprefix $(DIRLOCATION), $(LOCATIONSRC))
 SRC += $(addprefix $(DIRNETWORK), $(NETWORKSRC))
+SRC += $(addprefix $(DIRPARSER), $(PARSERSRC))
 SRC += $(addprefix $(DIRSERVER), $(SERVERSRC))
+SRC += $(addprefix $(DIRVALIDATOR), $(VALIDATORSRC))
 
 INCFILE = webserv.hpp
 INC = -I./$(DIRINC) --include $(DIRINC)$(INCFILE)

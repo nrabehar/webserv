@@ -40,7 +40,7 @@
 
 #ifndef DEFAULT_SERVER_CONFIG
 # define DEFAULT_SERVER_CONFIG 1
-# define DEFAULT_MAX_BODY_SIZE 1048576 // 1MB
+# define DEFAULT_MAX_BODY_SIZE 1048576 /* 1MB */
 # define DEFAULT_SERVER_ROOT "/www/"
 # define DEFAULT_SERVER_PORT 80
 # define DEFAULT_SERVER_HOST "0.0.0.0"
@@ -60,12 +60,18 @@
 
 #include "network/Ip.ipp"
 #include "config/Cfg.ipp"
+#include "parser/IpParse.ipp"
+// #include "validator/CfgValid.ipp"
+#include "validator/IpValid.ipp"
 
 /* Base classes ************************************************************* */
 
 #include "network/Ip.hpp"
 #include "config/Cfg.hpp"
+#include "parser/IpParse.hpp"
+// #include "validator/CfgValid.hpp"
+#include "validator/IpValid.hpp"
 
 /* Class includes *********************************************************** */
 
-#endif // WEBSERV_HPP
+#endif

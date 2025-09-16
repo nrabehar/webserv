@@ -25,8 +25,6 @@ Ip & Ip::operator=(const Ip & src) {
 	return (*this);
 }
 
-// Setters/Getters
-
 void Ip::setHost(const std::string & host) {
 	this->_host = host;
 }
@@ -43,22 +41,16 @@ int Ip::getPort() const {
 	return (this->_port);
 }
 
-// IData
-
 std::string Ip::str() const {
 	std::ostringstream oss;
 	oss << this->_host << ":" << this->_port;
 	return (oss.str());
 }
 
-// IClear
-
 void Ip::clear() {
 	this->_host = "0.0.0.0";
 	this->_port = 80;
 }
-
-// ICopy
 
 Ip::Ip(const ICopy & src) :
 	_host(DEFAULT_SERVER_HOST),
@@ -82,46 +74,20 @@ void Ip::copy(const ICopy & src) {
 	this->_port = ip->getPort();
 }
 
-// IClone
-
 IClone * Ip::clone() const {
 	return (new Ip(*this));
 }
 
-// IIO
-
 void Ip::read(std::istream & is) {
-	std::string host = "0.0.0.0";
-	int port = 80;
-	std::string line;
-	std::getline(is, line);
-
-	if (line.empty())
-		return;
-
-	// @todo add Utils function to trim string
-	size_t start = line.find_first_not_of(" \t\n\r");
-	if (start == std::string::npos)
-		return;
-	size_t end = line.find_last_not_of(" \t\n\r");
-	line = line.substr(start, end - start + 1);
-	//
-
-	host = this->_extractHost(line);
-	// if (!(this->_isValidHost(host)))
-	// 	return;
-	port = this->_extractPort(line);
-	// if (!(this->_isValidPort(port)))
-	// 	return;
-	this->_host = host;
-	this->_port = static_cast<int>(port);
+	IpParse v(is);
+	this->accept(v);
+	this->_host = v.getHost();
+	this->_port = v.getPort();
 }
 
 void Ip::write(std::ostream & os) const {
 	os << this->str();
 }
-
-// ICompare
 
 bool Ip::operator==(const IEqual & other) const {
 	const Ip * ip = dynamic_cast<const Ip *>(&other);
@@ -172,55 +138,12 @@ bool Ip::operator>=(const ICompare & other) const {
 	return (u_host(this->_host) >= u_host(ip->getHost()));
 }
 
-// IValid
-
 bool Ip::valid() const {
-	return (
-		this->_isValidHost(this->_host) &&
-		this->_isValidPort(this->_port)
-	);
+	IpValid v;
+	this->accept(v);
+	return (v.valid());
 }
 
-// Protected
-
-std::string Ip::_extractHost(const std::string & hp) {
-	if (hp.empty())
-		return ("");
-	size_t cpos = hp.find(':');
-	if (cpos == std::string::npos || cpos != hp.rfind(':'))
-		return ("");
-	return (hp.substr(0, cpos));
-}
-
-int Ip::_extractPort(const std::string & hp) {
-	if (hp.empty())
-		return (-1);
-	int port = 0;
-	size_t cpos = hp.find(':');
-	if (cpos == std::string::npos || cpos != hp.rfind(':'))
-		return (-1);
-	std::istringstream pstream(hp.substr(cpos + 1));
-	if (!(pstream >> port) || !pstream.eof() || port > 65535)
-		return (-1);
-	return (port);
-}
-
-bool Ip::_isValidHost(const std::string & host) const {
-	unsigned int a, b, c, d;
-	char dot1, dot2, dot3;
-	if (host.empty())
-	return (false);
-	if (host == "localhost")
-		return (true);
-	std::istringstream hstream(host);
-	if (!(hstream >> a >> dot1 >> b >> dot2 >> c >> dot3 >> d) ||
-		dot1 != '.' || dot2 != '.' || dot3 != '.' ||
-		a > 255 || b > 255 || c > 255 || d > 255 ||
-		!hstream.eof())
-		return (false);
-	return (true);
-}
-
-bool Ip::_isValidPort(int port) const {
-	return (port > 0 && port < 65536);
+void Ip::accept(const IGuest & g) const {
+	g.visit(*this);
 }

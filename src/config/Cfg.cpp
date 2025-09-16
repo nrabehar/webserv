@@ -46,8 +46,6 @@ Cfg & Cfg::operator=(const Cfg & src) {
 	return (*this);
 }
 
-// Setters/Getters
-
 void Cfg::addErrorpage(int code, const std::string & path) {
 	this->_errorpage[code] = path;
 }
@@ -122,8 +120,7 @@ const std::map<std::string, std::string> & Cfg::getCgi() const {
 	return (this->_cgi);
 }
 
-// IData
-
+// @todo Delegate to CfgFormat. maybe use base interface IDataFormat
 std::string Cfg::str() const {
 	std::ostringstream oss;
 	oss << "Cfg(";
@@ -173,8 +170,6 @@ std::string Cfg::str() const {
 	return (oss.str());
 }
 
-// IClear
-
 void Cfg::clear() {
 	this->_errorpage.clear();
 	this->_maxBodySize = DEFAULT_MAX_BODY_SIZE;
@@ -188,8 +183,6 @@ void Cfg::clear() {
 	this->_uploadPath = "/uploads/";
 	this->_cgi.clear();
 }
-
-// ICopy
 
 Cfg::Cfg(const ICopy & other) :
 	_errorpage(),
@@ -226,108 +219,46 @@ void Cfg::copy(const ICopy & other) {
 	this->_cgi = o->getCgi();
 }
 
-// IClone
-
 IClone * Cfg::clone() const {
 	return (new Cfg(*this));
 }
 
-// IIO
-
 void Cfg::read(std::istream & i) {
 	(void)i;
-	// @todo implement
-	// Delegate to CfgParse later
+	// @todo Delegate to CfgParse/CfgRead
 }
 
 void Cfg::write(std::ostream & o) const {
 	o << this->str();
 }
 
-// IEqual
-
 bool Cfg::operator==(const IEqual & other) const {
 	const Cfg * o = dynamic_cast<const Cfg *>(&other);
 	if (!o)
 		return (false);
-	// @todo implement
-	(void)o;
-	return (true);
+	return (
+		this->_errorpage == o->getErrorpage() &&
+		this->_maxBodySize == o->getMaxBodySize() &&
+		this->_method == o->getMethod() &&
+		this->_redirect == o->getRedirect() &&
+		this->_root == o->getRoot() &&
+		this->_autoindex == o->getAutoindex() &&
+		this->_index == o->getIndex() &&
+		this->_uploadPath == o->getUploadPath() &&
+		this->_cgi == o->getCgi()
+	);
 }
 
 bool Cfg::operator!=(const IEqual & other) const {
 	return (!((*this) == other));
 }
 
-// IValid
-
 bool Cfg::valid() const {
-	return (
-		this->_isValidErrorpage(this->_errorpage) &&
-		this->_isValidMaxBodySize(this->_maxBodySize) &&
-		this->_isValidMethod(this->_method) &&
-		this->_isValidRedirect(this->_redirect) &&
-		this->_isValidRoot(this->_root) &&
-		this->_isValidIndex(this->_index) &&
-		this->_isValidUploadPath(this->_uploadPath) &&
-		this->_isValidCgi(this->_cgi)
-	);
+	CfgValid v;
+	this->accept(v);
+	return (v.valid());
 }
 
-// Protected
-
-bool Cfg::_isValidErrorpage(const std::map<int, std::string> & e) const {
-	// @todo delegate to CfgValid
-	// For future use
-	(void)e;
-	return (true);
-}
-
-bool Cfg::_isValidMaxBodySize(size_t s) const {
-	// @todo delegate to CfgValid
-	// For future use
-	(void)s;
-	return (true);
-}
-
-bool Cfg::_isValidMethod(const std::vector<std::string> & m) const {
-	// @todo delegate to CfgValid
-	// For future use
-	(void)m;
-	return (true);
-}
-
-bool Cfg::_isValidRedirect(const std::map<int, std::string> & r) const {
-	// @todo delegate to CfgValid
-	// For future use
-	(void)r;
-	return (true);
-}
-
-bool Cfg::_isValidRoot(const std::string & r) const {
-	// @todo delegate to CfgValid
-	// For future use
-	(void)r;
-	return (true);
-}
-
-bool Cfg::_isValidIndex(const std::vector<std::string> & i) const {
-	// @todo delegate to CfgValid
-	// For future use
-	(void)i;
-	return (true);
-}
-
-bool Cfg::_isValidUploadPath(const std::string & u) const {
-	// @todo delegate to CfgValid
-	// For future use
-	(void)u;
-	return (true);
-}
-
-bool Cfg::_isValidCgi(const std::map<std::string, std::string> & c) const {
-	// @todo delegate to CfgValid
-	// For future use
-	(void)c;
-	return (true);
+void Cfg::accept(const IGuest & g) const {
+	g.visit(*this);
 }

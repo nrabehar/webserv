@@ -25,7 +25,6 @@ class Cfg :
 		Cfg(const Cfg &);
 		Cfg & operator=(const Cfg &);
 
-		// Setters/Getters
 		virtual void addErrorpage(int, const std::string &);
 		virtual const std::map<int, std::string> & getErrorpage() const;
 		virtual void setMaxBodySize(size_t);
@@ -45,42 +44,26 @@ class Cfg :
 		virtual void addCgi(const std::string &, const std::string &);
 		virtual const std::map<std::string, std::string> & getCgi() const;
 
-		// IData
 		virtual std::string str() const;
 
-		// IClear
 		virtual void clear();
 
-		// ICopy
 		Cfg(const ICopy &);
 		Cfg & operator=(const ICopy &);
 		virtual void copy(const ICopy &);
 
-		// IClone
 		virtual IClone * clone() const;
 
-		// IIO
 		virtual void read(std::istream &);
 		virtual void write(std::ostream &) const;
 
-		// IEqual
 		virtual bool operator==(const IEqual &) const;
 		virtual bool operator!=(const IEqual &) const;
 
-		// IValid
 		virtual bool valid() const;
 
-	protected:
-
-		virtual bool _isValidErrorpage(const std::map<int, std::string> &) const;
-		virtual bool _isValidMaxBodySize(size_t) const;
-		virtual bool _isValidMethod(const std::vector<std::string> &) const;
-		virtual bool _isValidRedirect(const std::map<int, std::string> &) const;
-		virtual bool _isValidRoot(const std::string &) const;
-		virtual bool _isValidIndex(const std::vector<std::string> &) const;
-		virtual bool _isValidUploadPath(const std::string &) const;
-		virtual bool _isValidCgi(const std::map<std::string, std::string> &) const;
+		virtual void accept(const IGuest &) const;
 
 };
 
-#endif // CFG_HPP
+#endif

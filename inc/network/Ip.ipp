@@ -9,7 +9,8 @@ class IIp :
 	public virtual IClone,
 	public virtual IIO,
 	public virtual ICompare,
-	public virtual IValid
+	public virtual IValid,
+	public virtual IHost
 {
 	public:
 		virtual ~IIp() {};
@@ -19,4 +20,4 @@ class IIp :
 		virtual int getPort() const = 0;
 };
 
-#endif // IP_IPP
+#endif

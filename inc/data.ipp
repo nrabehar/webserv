@@ -61,7 +61,7 @@ class IParse :
 {
 	public:
 		virtual ~IParse() {};
-		virtual void parse() = 0;
+		virtual void parse() const = 0;
 };
 
 class IOpen :
@@ -126,7 +126,23 @@ class IValid :
 		virtual bool valid() const = 0;
 };
 
+class IGuest :
+	public virtual IData
+{
+	public:
+		virtual ~IGuest() {};
+		virtual void visit(const IData &) const = 0;
+};
+
+class IHost :
+	public virtual IData
+{
+	public:
+		virtual ~IHost() {};
+		virtual void accept(const IGuest &) const = 0;
+};
+
 std::ostream & operator<<(std::ostream &, const IOutput &);
 std::istream & operator>>(std::istream &, IInput &);
 
-#endif // DATA_IPP
+#endif

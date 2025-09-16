@@ -9,7 +9,8 @@ class ICfg :
 	public virtual IClone,
 	public virtual IIO,
 	public virtual IEqual,
-	public virtual IValid
+	public virtual IValid,
+	public virtual IHost
 {
 	public:
 		virtual ~ICfg() {};
@@ -33,4 +34,4 @@ class ICfg :
 		virtual const std::map<std::string, std::string> & getCgi() const = 0;
 };
 
-#endif // CFG_IPP
+#endif
