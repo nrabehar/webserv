@@ -28,7 +28,6 @@ DIRSERVER = server/
 DIRTOOLS = tools/
 DIRVALIDATOR = validator/
 
-<<<<<<< HEAD
 # BASE_INTERFACESRC += io.cpp
 
 BASE_FILESRC += File.cpp \
@@ -46,14 +45,13 @@ CONFIGSRC += Config.cpp \
 						ConfigNode.cpp \
 						ConfigParser.cpp \
 						ConfigValidator.cpp
-=======
+
 BASESRC += base.cpp
 CONFIGSRC += Config.cpp
 CONFIGSRC += ConfigFile.cpp
 CONFIGSRC += ConfigManager.cpp
 TOOLSSRC += Logger.cpp
 TOOLSSRC += Signal.cpp
->>>>>>> aa828a2 (feat: refactor and add new Manager classes)
 
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 
