@@ -38,6 +38,7 @@
 # define NOTHROW
 #endif
 
+<<<<<<< HEAD
 #undef DEFAULT_CONFIG_FILE_NAME
 #define DEFAULT_CONFIG_FILE_NAME "webserv.conf"
 
@@ -53,6 +54,19 @@
 #undef DEFAULT_SERVER_HOST
 #define DEFAULT_SERVER_HOST "0.0.0.0"
 
+=======
+#undef DEFAULT_CONFIG_PATH
+#define DEFAULT_CONFIG_PATH "webserv.conf"
+
+#undef DEFAULT_MAX_BODY_SIZE
+#define DEFAULT_MAX_BODY_SIZE 1048576 /* 1MiB */
+#undef DEFAULT_SERVER_ROOT
+#define DEFAULT_SERVER_ROOT "/www/"
+#undef DEFAULT_SERVER_PORT
+#define DEFAULT_SERVER_PORT 80
+#undef DEFAULT_SERVER_HOST
+#define DEFAULT_SERVER_HOST "0.0.0.0"
+>>>>>>> f57ef79 (feat: add base files for interfaces)
 #undef DEFAULT_UPLOAD_PATH
 #define DEFAULT_UPLOAD_PATH "/uploads/"
 
