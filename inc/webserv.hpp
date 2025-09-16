@@ -72,7 +72,7 @@
 // #include "base/behavioral/"
 // #include "base/behavioral/"
 // #include "base/behavioral/"
-// #include "base/behavioral/"
+#include "base/behavioral/Observer.ipp"
 #include "base/behavioral/Visitor.ipp"
 
 #include "base/creational/Builder.ipp"
