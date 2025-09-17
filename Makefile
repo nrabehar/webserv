@@ -12,6 +12,7 @@ LOGFILE = webserv.log
 
 DIRAGENT = agent/
 DIRBASE = base/
+DIRFILE = file/
 DIRBUILDER = builder/
 DIRCLIENT = client/
 DIRCONFIG = config/
@@ -33,10 +34,16 @@ CONFIGSRC += ConfigManager.cpp
 TOOLSSRC += Logger.cpp
 TOOLSSRC += Signal.cpp
 
+BASE_FILESRC += File.cpp \
+                LocalFile.cpp \
+                InMemoryFile.cpp
+
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 
 SRC += $(addprefix $(DIRBASE), $(BASESRC))
 SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRINTERFACE), $(BASE_INTERFACESRC)))
+
+SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRFILE), $(BASE_FILESRC)))
 
 SRC += $(addprefix $(DIRBUILDER), $(BUILDERSRC))
 
