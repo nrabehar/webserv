@@ -83,4 +83,8 @@
 
 /* Class includes *********************************************************** */
 
+#include "base/file/File.ipp"
+#include "base/file/LocalFile.hpp"
+#include "base/file/InMemoryFile.hpp"
+
 #endif

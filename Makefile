@@ -12,6 +12,7 @@ LOGFILE = webserv.log
 
 DIRAGENT = agent/
 DIRBASE = base/
+DIRFILE = file/
 DIRBUILDER = builder/
 DIRCLIENT = client/
 DIRCONFIG = config/
@@ -27,10 +28,16 @@ DIRVALIDATOR = validator/
 
 # BASE_INTERFACESRC += io.cpp
 
+BASE_FILESRC += File.cpp \
+                LocalFile.cpp \
+                InMemoryFile.cpp
+
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 
 SRC += $(addprefix $(DIRBASE), $(BASESRC))
 SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRINTERFACE), $(BASE_INTERFACESRC)))
+
+SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRFILE), $(BASE_FILESRC)))
 
 SRC += $(addprefix $(DIRBUILDER), $(BUILDERSRC))
 
