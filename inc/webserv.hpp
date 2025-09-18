@@ -12,6 +12,7 @@
 #include <ctime>
 #include <map>
 #include <vector>
+#include <list>
 #include <algorithm>
 #include <memory>
 #include <csignal>
@@ -134,10 +135,14 @@ enum e_LogLevel
 #include "tools/Signal.hpp"
 
 /* Class includes *********************************************************** */
+#include "base/cache/Cache.ipp"
 
 #include "base.hpp"
 #include "base/file/File.ipp"
-#include "base/file/LocalFile.hpp"
-#include "base/file/InMemoryFile.hpp"
+#include "base/file/FileSpecification.ipp"
+#include "base/file/FileCache.hpp"
+
+/* Class includes *********************************************************** */
+
 
 #endif
