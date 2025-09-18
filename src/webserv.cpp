@@ -1,20 +1,35 @@
 #include "webserv.hpp"
 #include <poll.h>
 
-int main(int, char **)
+void test(IOriginator<Config> & cf)
 {
+	LOG("Initial config content:");
+	LOG(cf.getState().getContent());
+	LOG("Modifying config content...");
+	cf.getState().setContent("Modified content");
+	LOG("Current config content:");
+	LOG(cf.getState().getContent());
+}
 
-	try
-	{
-		Config conf("webserv.conf");
-		conf.load();
-		conf.parse();
-	}
-	catch(const std::exception& e)
-	{
-		std::cerr << e.what() << '\n';
-		return (1);
-	}
+static void _run(const char * configfile)
+{
+	(void)configfile;
+	Signal().setup();
+	ConfigFile cfgfile;
+	cfgfile.setName(configfile);
+	LOG(cfgfile.getName());
+	test(cfgfile);
+	LOG("Restoring config to initial state...");
+	cfgfile.restore(cfgfile.save());
+	LOG(cfgfile.getState().getContent());
+}
 
-	return (0);
+int main(int ac, char **av)
+{
+	if (ac != 2) { ERR("Usage: ./webserv <configfile>"); return (1); }
+	LOG("Starting web server...");
+	try { _run(av[1]); }
+	catch (std::exception & e) { ERR(e.what()); return (1); }
+	LOG("Shutting down web server...");
+	return (Signal::existcode);
 }

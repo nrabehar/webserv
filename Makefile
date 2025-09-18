@@ -25,6 +25,7 @@ DIRLOCATION = location/
 DIRNETWORK = network/
 DIRPARSER = parser/
 DIRSERVER = server/
+DIRTOOLS = tools/
 DIRVALIDATOR = validator/
 
 # BASE_INTERFACESRC += io.cpp
@@ -77,6 +78,8 @@ SRC += $(addprefix $(DIRNETWORK), $(NETWORKSRC))
 SRC += $(addprefix $(DIRPARSER), $(PARSERSRC))
 
 SRC += $(addprefix $(DIRSERVER), $(SERVERSRC))
+
+SRC += $(addprefix $(DIRTOOLS), $(TOOLSSRC))
 
 SRC += $(addprefix $(DIRVALIDATOR), $(VALIDATORSRC))
 
