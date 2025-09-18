@@ -53,6 +53,12 @@ CONFIGSRC += ConfigManager.cpp
 TOOLSSRC += Logger.cpp
 TOOLSSRC += Signal.cpp
 
+BASE_FILESRC += File.cpp \
+				FileCache.cpp \
+				FileSpecification.cpp \
+
+BASE_CACHESRC += Cache.cpp \
+
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 
 SRC += $(addprefix $(DIRBASE), $(BASESRC))
@@ -63,6 +69,16 @@ SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRFILE), $(BASE_FILESRC)))
 SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRCACHE), $(BASE_CACHESRC)))
 
 SRC += $(addprefix $(DIRFILE), $(FILESRC))
+
+SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRFILE), $(BASE_FILESRC)))
+
+SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRCACHE), $(BASE_CACHESRC)))
+
+SRC += $(addprefix $(DIRFILE), $(FILESRC))
+
+SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRFILE), $(BASE_FILESRC)))
+
+SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRCACHE), $(BASE_CACHESRC)))
 
 SRC += $(addprefix $(DIRBUILDER), $(BUILDERSRC))
 
