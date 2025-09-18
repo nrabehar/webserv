@@ -3,7 +3,7 @@
 
 #include "../../webserv.hpp"
 
-class FileCache: public ICacheStrategy
+class FileCache: public ICacheStrategy, IObserver<std::string>
 {
 
     private:
@@ -25,6 +25,7 @@ class FileCache: public ICacheStrategy
         virtual void put(const std::string &, const std::string &);
         virtual std::string get(const std::string &);
         virtual bool exists(const std::string &);
+        virtual void update(std::string const &);
 
     private:
 

@@ -39,3 +39,10 @@ bool FileCache::exists(const std::string & path)
     }
     return true;
 }
+
+void FileCache::update(std::string const & path)
+{
+    CacheMap::iterator it = _cache.find(path);
+    if (it != _cache.end())
+        _cache.erase(it);
+}
