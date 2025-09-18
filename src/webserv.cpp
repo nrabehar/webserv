@@ -32,7 +32,6 @@ int main(int, char **)
 		}
 		for (size_t i = 0; i < pfds.size(); ++i) {
 			if (pfds[i].revents & POLLIN) {
-				time_t now = time(NULL);
 				files[i]->read();
 			}
 		}

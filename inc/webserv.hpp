@@ -90,5 +90,7 @@
 
 /* Class includes *********************************************************** */
 
+#include "file/FileHandler.hpp"
+
 
 #endif
