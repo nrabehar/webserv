@@ -8,29 +8,33 @@ class IFile
 	public:
 
 		virtual ~IFile() {}
-		virtual bool open() = 0;
-		virtual void close() = 0;
-		virtual size_t read(char *, size_t) = 0;
-		virtual size_t write(const char *, size_t) = 0;
-		virtual size_t size() const = 0;
-
+		virtual int  getFD() const = 0;
+		virtual bool isComplete() const = 0;
+		virtual void read() = 0;
+		virtual std::string getPath() const = 0;
+		virtual std::string getData() const = 0;
+		
 };
 
 class File : public IFile
 {
+	private:
 
-	protected:
-
-		int	_fd;
-		std::string	_path;
-
-
+		int 						_fd;
+		bool						_complete;
+		std::string					_data;
+		std::string					_path;
+	
 	public:
 
 		File(const std::string &);
 		virtual ~File();
 
-		const std::string & getPath() const;
+		virtual int  getFD() const;
+		virtual bool isComplete() const;
+		virtual void read();
+		virtual std::string getPath() const;
+		virtual std::string getData() const;
 
 	private:
 
@@ -40,27 +44,29 @@ class File : public IFile
 
 };
 
-class FileFactory
+class FileProxy : public IFile
 {
-
 	private:
 
-
-
+		IFile *		_file;
+		std::string	_path;
+	
 	public:
 
-		~FileFactory();
+		FileProxy(IFile *);
+		virtual ~FileProxy();
 
-		static IFile * create(const std::string &);
-
+		virtual int  getFD() const;
+		virtual bool isComplete() const;
+		virtual void read();
+		virtual std::string getPath() const;
+		virtual std::string getData() const;
+	
 	private:
 
-		FileFactory();
-		FileFactory(const FileFactory &);
-		FileFactory & operator=(const FileFactory &);
-
+		FileProxy();
+		FileProxy(const FileProxy &);
+		FileProxy & operator=(const FileProxy &);
 };
-
-
 
 #endif // FILE_IPP

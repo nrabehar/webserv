@@ -12,6 +12,7 @@
 #include <ctime>
 #include <map>
 #include <vector>
+#include <list>
 #include <algorithm>
 #include <memory>
 #include <csignal>
@@ -81,10 +82,13 @@
 
 /* Base classes ************************************************************* */
 
-/* Class includes *********************************************************** */
+#include "base/cache/Cache.ipp"
 
 #include "base/file/File.ipp"
-#include "base/file/LocalFile.hpp"
-#include "base/file/InMemoryFile.hpp"
+#include "base/file/FileSpecification.ipp"
+#include "base/file/FileCache.hpp"
+
+/* Class includes *********************************************************** */
+
 
 #endif
