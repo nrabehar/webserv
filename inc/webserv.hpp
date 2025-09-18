@@ -144,10 +144,11 @@ enum e_LogLevel
 #include "base/behavioral.ipp"
 
 #include "core/File.ipp"
+#include "core/Manager.ipp"
 
 #include "config/Config.ipp"
 #include "config/ConfigFile.ipp"
-// #include "config/DefaultConfig.ipp"
+#include "config/ConfigManager.ipp"
 
 #include "core/FileHandler.ipp"
 
@@ -160,7 +161,7 @@ enum e_LogLevel
 
 #include "config/Config.hpp"
 #include "config/ConfigFile.hpp"
-#include "config/DefaultConfig.hpp"
+#include "config/ConfigManager.hpp"
 
 // #include "core/File.hpp"
 // #include "core/FileHandler.hpp"
