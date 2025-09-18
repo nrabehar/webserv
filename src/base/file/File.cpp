@@ -1,6 +1,7 @@
 #include "webserv.hpp"
 
 /**
+<<<<<<< HEAD
  * AFile
  */
 File::File(const std::string & path)
@@ -33,6 +34,27 @@ LocalFile::LocalFile(const std::string & path)
 LocalFile::~LocalFile(){}
 
 void LocalFile::read()
+=======
+ * File
+ */
+
+File::File(const std::string & path)
+	: _fd(-1), _complete(false), _data(""), _path(path)
+{
+	_fd = ::open(path.c_str(), O_RDONLY|O_NONBLOCK);
+}
+
+File::~File()
+{
+	if (_fd != -1)
+		::close(_fd);
+}
+
+int File::getFD() const { return _fd; }
+bool File::isComplete() const { return _complete; }
+
+void File::read()
+>>>>>>> 0f9cbbd (feat: implement caching mechanism with CacheManager and FileCache classes)
 {
 	if (_fd == -1 || _complete)
 		return ;
@@ -49,6 +71,7 @@ void LocalFile::read()
 		_fd = -1;
 		throw std::runtime_error("Error reading file: " + _path + " (" + std::string(std::strerror(errno)) + ")");
 	}
+<<<<<<< HEAD
 	if (n <= 6096 && n > 0)
 		_complete = true;
 }
@@ -59,6 +82,13 @@ void LocalFile::read()
 InMemoryFile::InMemoryFile(const std::string &path, const std::string &data)
 	: File(path) { _data = data;}
 InMemoryFile::~InMemoryFile(){}
+=======
+}
+
+std::string File::getPath() const { return _path; }
+std::string File::getData() const { return _data; }
+
+>>>>>>> 0f9cbbd (feat: implement caching mechanism with CacheManager and FileCache classes)
 
 /**
  * FileProxy
