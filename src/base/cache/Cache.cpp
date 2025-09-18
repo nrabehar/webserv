@@ -51,7 +51,7 @@ void CacheManager::use(CacheType type)
 
     switch (type)
     {
-        case CT_FILE:
+        case CAT_FILE:
             st = new FileCache();
             break;
         default:

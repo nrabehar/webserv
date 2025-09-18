@@ -1,14 +1,10 @@
 #include "webserv.hpp"
 
 /**
- * File
+ * AFile
  */
-
 File::File(const std::string & path)
-	: _fd(-1), _complete(false), _data(""), _path(path)
-{
-	_fd = ::open(path.c_str(), O_RDONLY|O_NONBLOCK);
-}
+	: _fd(-1), _complete(false), _data(""), _path(path) {}
 
 File::~File()
 {
@@ -19,7 +15,24 @@ File::~File()
 int File::getFD() const { return _fd; }
 bool File::isComplete() const { return _complete; }
 
-void File::read()
+void File::read() {}
+
+std::string File::getPath() const { return _path; }
+std::string File::getData() const { return _data; }
+
+
+/**
+ * LocalFile
+ */
+
+LocalFile::LocalFile(const std::string & path)
+	: File(path)
+{
+	_fd = ::open(path.c_str(), O_RDONLY|O_NONBLOCK);
+}
+LocalFile::~LocalFile(){}
+
+void LocalFile::read()
 {
 	if (_fd == -1 || _complete)
 		return ;
@@ -40,9 +53,12 @@ void File::read()
 		_complete = true;
 }
 
-std::string File::getPath() const { return _path; }
-std::string File::getData() const { return _data; }
-
+/**
+ * InMemoryFile
+ */
+InMemoryFile::InMemoryFile(const std::string &path, const std::string &data)
+	: File(path) { _data = data;}
+InMemoryFile::~InMemoryFile(){}
 
 /**
  * FileProxy
@@ -56,7 +72,7 @@ FileProxy::~FileProxy() { delete _file; }
 int FileProxy::getFD() const { return _file->getFD(); }
 bool FileProxy::isComplete() const
 {
-	CacheManager::getInstance()->use(CT_FILE);
+	CacheManager::getInstance()->use(CAT_FILE);
 
 	if (CacheManager::getInstance()->exists(_path))
 		return true;
@@ -65,7 +81,7 @@ bool FileProxy::isComplete() const
 
 void FileProxy::read()
 {
-	CacheManager::getInstance()->use(CT_FILE);
+	CacheManager::getInstance()->use(CAT_FILE);
 	if (isComplete())
 		return ;
 
@@ -79,8 +95,33 @@ std::string FileProxy::getPath() const { return _path; }
 
 std::string FileProxy::getData() const
 {
-	CacheManager::getInstance()->use(CT_FILE);
+	CacheManager::getInstance()->use(CAT_FILE);
 	if (CacheManager::getInstance()->exists(_path))
 		return CacheManager::getInstance()->get(_path);
 	return _file->getData();
+}
+
+/**
+ * FileFactory
+ */
+FileFactory::~FileFactory() {}
+IFile*	FileFactory::create(const std::string &path)
+{
+	CacheManager *cache = CacheManager::getInstance();
+
+	cache->use(CAT_FILE);
+	
+	if (cache->exists(path))
+	{
+		std::cout << "File: " << path << " is in cache" << std::endl;
+		return (new InMemoryFile(path, cache->get(path)));
+	}
+
+	IFile *file = new LocalFile(path);
+	if (file->getFD() == -1)
+	{
+		delete file;
+		return (NULL);
+	}
+	return (new FileProxy(file));
 }
