@@ -36,6 +36,8 @@ void File::read()
 		_fd = -1;
 		throw std::runtime_error("Error reading file: " + _path + " (" + std::string(std::strerror(errno)) + ")");
 	}
+	if (n <= 6096 && n > 0)
+		_complete = true;
 }
 
 std::string File::getPath() const { return _path; }

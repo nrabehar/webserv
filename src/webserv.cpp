@@ -1,4 +1,5 @@
 #include "webserv.hpp"
+#include <poll.h>
 
 void test(IOriginator<Config> &)
 {
