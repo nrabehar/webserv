@@ -144,5 +144,7 @@ enum e_LogLevel
 
 /* Class includes *********************************************************** */
 
+#include "file/FileHandler.hpp"
+
 
 #endif
