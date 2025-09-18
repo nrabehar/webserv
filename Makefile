@@ -35,6 +35,8 @@ BASE_FILESRC += File.cpp \
 
 BASE_CACHESRC += Cache.cpp \
 
+FILESRC += FileHandler.cpp \
+
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 
 SRC += $(addprefix $(DIRBASE), $(BASESRC))
@@ -43,6 +45,8 @@ SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRINTERFACE), $(BASE_INTERFACESRC)
 SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRFILE), $(BASE_FILESRC)))
 
 SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRCACHE), $(BASE_CACHESRC)))
+
+SRC += $(addprefix $(DIRFILE), $(FILESRC))
 
 SRC += $(addprefix $(DIRBUILDER), $(BUILDERSRC))
 
