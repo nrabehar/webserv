@@ -18,7 +18,6 @@ class IFile
 
 class File : public IFile
 {
-	private:
 
 	protected:
 
@@ -117,9 +116,10 @@ class FileFactory
 	
 	private:
 
-		FileProxy();
-		FileProxy(const FileProxy &);
-		FileProxy & operator=(const FileProxy &);
+		FileFactory();
+		FileFactory(const FileFactory &);
+		FileFactory & operator=(const FileFactory &);
+
 };
 
 #endif // FILE_IPP
