@@ -160,5 +160,8 @@ enum e_LogLevel
 #include "config/ConfigMerger.hpp"
 #include "config/Config.hpp"
 
+#include "base.hpp"
+#include "file/FileHandler.hpp"
+
 
 #endif
