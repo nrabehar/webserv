@@ -39,19 +39,6 @@
 # define NOTHROW
 #endif
 
-<<<<<<< HEAD
-#undef DEFAULT_CONFIG_PATH
-#define DEFAULT_CONFIG_PATH "webserv.conf"
-
-#undef DEFAULT_MAX_BODY_SIZE
-#define DEFAULT_MAX_BODY_SIZE 1048576 /* 1MiB */
-#undef DEFAULT_SERVER_ROOT
-#define DEFAULT_SERVER_ROOT "/www/"
-#undef DEFAULT_SERVER_PORT
-#define DEFAULT_SERVER_PORT 80
-#undef DEFAULT_SERVER_HOST
-#define DEFAULT_SERVER_HOST "0.0.0.0"
-=======
 #undef DEFAULT_CONFIG_FILE_NAME
 #define DEFAULT_CONFIG_FILE_NAME "webserv.conf"
 
@@ -67,7 +54,6 @@
 #undef DEFAULT_SERVER_HOST
 #define DEFAULT_SERVER_HOST "0.0.0.0"
 
->>>>>>> 0349d61 (feat: add Working IGuest, IHost, IMemento classes)
 #undef DEFAULT_UPLOAD_PATH
 #define DEFAULT_UPLOAD_PATH "/uploads/"
 
@@ -80,6 +66,7 @@ class IFileHandler;
 template <typename GuestType, typename HostType> class IGuest;
 template <typename HostType, typename GuestType> class IHost;
 class ILogger;
+class IManager;
 template <typename Element> class IMemento;
 template <typename Element> class IOriginator;
 template <typename Element> class ICaretaker;
@@ -87,7 +74,7 @@ class ISignal;
 
 class Config;
 class ConfigFile;
-class DefaultConfig;
+class ConfigManager;
 class Logger;
 class Signal;
 
@@ -136,10 +123,11 @@ enum e_LogLevel
 #include "base/behavioral.ipp"
 
 #include "core/File.ipp"
+#include "core/Manager.ipp"
 
 #include "config/Config.ipp"
 #include "config/ConfigFile.ipp"
-// #include "config/DefaultConfig.ipp"
+#include "config/ConfigManager.ipp"
 
 #include "core/FileHandler.ipp"
 
@@ -152,7 +140,7 @@ enum e_LogLevel
 
 #include "config/Config.hpp"
 #include "config/ConfigFile.hpp"
-#include "config/DefaultConfig.hpp"
+#include "config/ConfigManager.hpp"
 
 // #include "core/File.hpp"
 // #include "core/FileHandler.hpp"

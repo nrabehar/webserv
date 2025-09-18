@@ -22,16 +22,7 @@ ConfigFile & ConfigFile::operator=(const ConfigFile & src)
 	if (this == &src)
 		return (*this);
 	this->setName(src.getName());
-	this->setState(src.getState());
-	return (*this);
-}
-
-ConfigFile & ConfigFile::operator=(const IConfigFile & src)
-{
-	if (this == &src)
-		return (*this);
-	this->setName(src.getName());
-	this->setState(src.getState());
+	this->IOriginator<Config>::set(src.IOriginator<Config>::get());
 	return (*this);
 }
 
