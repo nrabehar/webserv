@@ -22,14 +22,6 @@ Config & Config::operator=(const Config & src)
 	return (*this);
 }
 
-Config & Config::operator=(const IConfig & src)
-{
-	if (this == &src)
-		return (*this);
-	this->setContent(src.getContent());
-	return (*this);
-}
-
 const std::string & Config::getContent() const
 {
 	return (this->_content);

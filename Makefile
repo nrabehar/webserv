@@ -29,7 +29,7 @@ DIRVALIDATOR = validator/
 BASESRC += base.cpp
 CONFIGSRC += Config.cpp
 CONFIGSRC += ConfigFile.cpp
-CONFIGSRC += DefaultConfig.cpp
+CONFIGSRC += ConfigManager.cpp
 TOOLSSRC += Logger.cpp
 TOOLSSRC += Signal.cpp
 

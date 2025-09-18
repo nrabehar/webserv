@@ -1,26 +1,14 @@
 #include "webserv.hpp"
 
-void test(IOriginator<Config> & cf)
+void test(IOriginator<Config> &)
 {
-	LOG("Initial config content:");
-	LOG(cf.getState().getContent());
-	LOG("Modifying config content...");
-	cf.getState().setContent("Modified content");
-	LOG("Current config content:");
-	LOG(cf.getState().getContent());
 }
 
 static void _run(const char * configfile)
 {
-	(void)configfile;
 	Signal().setup();
-	ConfigFile cfgfile;
-	cfgfile.setName(configfile);
-	LOG(cfgfile.getName());
-	test(cfgfile);
-	LOG("Restoring config to initial state...");
-	cfgfile.restore(cfgfile.save());
-	LOG(cfgfile.getState().getContent());
+	ConfigManager cm(configfile);
+	cm.run();
 }
 
 int main(int ac, char **av)

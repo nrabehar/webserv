@@ -19,9 +19,6 @@ public virtual IOriginator<Config>
 		ConfigFile(const ConfigFile &);
 		ConfigFile & operator=(const ConfigFile &);
 
-		ConfigFile(const IConfig &);
-		ConfigFile & operator=(const IConfigFile &);
-
 		virtual const std::string & getName() const;
 		virtual void setName(const std::string & name);
 

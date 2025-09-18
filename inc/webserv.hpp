@@ -65,6 +65,7 @@ class IFileHandler;
 template <typename GuestType, typename HostType> class IGuest;
 template <typename HostType, typename GuestType> class IHost;
 class ILogger;
+class IManager;
 template <typename Element> class IMemento;
 template <typename Element> class IOriginator;
 template <typename Element> class ICaretaker;
@@ -72,7 +73,7 @@ class ISignal;
 
 class Config;
 class ConfigFile;
-class DefaultConfig;
+class ConfigManager;
 class Logger;
 class Signal;
 
@@ -90,15 +91,14 @@ enum e_LogLevel
 
 /* Interfaces *************************************************************** */
 
-#include "base.hpp"
-
 #include "base/behavioral.ipp"
 
 #include "core/File.ipp"
+#include "core/Manager.ipp"
 
 #include "config/Config.ipp"
 #include "config/ConfigFile.ipp"
-// #include "config/DefaultConfig.ipp"
+#include "config/ConfigManager.ipp"
 
 #include "core/FileHandler.ipp"
 
@@ -111,7 +111,7 @@ enum e_LogLevel
 
 #include "config/Config.hpp"
 #include "config/ConfigFile.hpp"
-#include "config/DefaultConfig.hpp"
+#include "config/ConfigManager.hpp"
 
 // #include "core/File.hpp"
 // #include "core/FileHandler.hpp"
@@ -120,5 +120,7 @@ enum e_LogLevel
 #include "tools/Signal.hpp"
 
 /* Class includes *********************************************************** */
+
+#include "base.hpp"
 
 #endif

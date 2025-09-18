@@ -18,8 +18,6 @@ public virtual IConfig
 		Config(const Config &);
 		Config & operator=(const Config &);
 
-		Config & operator=(const IConfig &);
-
 		const std::string & getContent() const;
 		void setContent(const std::string &);
 };
