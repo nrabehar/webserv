@@ -4,7 +4,7 @@
 #include "../../webserv.hpp"
 
 enum CacheType {
-    CT_FILE,
+    CAT_FILE,
 };
 
 class ICacheStrategy

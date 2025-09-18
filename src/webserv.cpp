@@ -4,50 +4,43 @@
 int main(int, char **)
 {
 
-	IFile * f1 = new FileProxy(new File("Makefile"));
-	IFile * f2 = new FileProxy(new File("src/webserv.cpp")); // not used, just to test
-	IFile * f3 = new FileProxy(new File("Makefile")); // duplicate to test cache
+	FileHandler	handler;
+	FilePathBuilder path_builder(".", "");
+	FileExistenceChecker f_exist;
+	FilePermissionChecker p_check(R_OK);
+	FileOpener f_open;
+	
+	handler.setNext(&path_builder)
+				 ->setNext(&f_exist)
+				 ->setNext(&p_check)
+				 ->setNext(&f_open);
 
-	std::vector<IFile *> files;
-	files.push_back(f1);
-	files.push_back(f2);
-	files.push_back(f3);
-
-	while (!files.empty())
+	IFile *file = handler.handle("Makefile");
+	if (!file)
+	std::cout << "Reason: " << handler.getReason() << std::endl;
+	else
 	{
-		std::vector<struct pollfd> pfds;
-		for (size_t i = 0; i < files.size(); ++i) {
-			struct pollfd pfd;
-			pfd.fd = files[i]->getFD();
-			pfd.events = POLLIN;
-			pfd.revents = 0;
-			pfds.push_back(pfd);
-		}
-
-		int ret = ::poll(&pfds[0], pfds.size(), -1);
-		if (ret == -1)
-		{
-			std::cerr << "Error in poll(): " << std::strerror(errno) << std::endl;
-			return (1);
-		}
-		for (size_t i = 0; i < pfds.size(); ++i) {
-			if (pfds[i].revents & POLLIN) {
-				files[i]->read();
-			}
-		}
-		for (size_t i = 0; i < files.size(); ++i) {
-			if (files[i]->isComplete()) {
-				std::cout << "File " << files[i]->getPath()
-							<< " on fd " << files[i]->getFD()
-							<< " complete, size: " << files[i]->getData().size() << std::endl;
-				files.erase(files.begin() + i);
-			}
-		}
+		file->read();
+		std::cout << "Readed file: " << file->getPath() << " on fd " << file->getFD() << std::endl;
 	}
+	
 
-	delete f1;
-	delete f2;
-	delete f3;
+	IFile *f2 = handler.handle("Makefile");
+	if (!f2)
+		std::cout << "Reason: " << handler.getReason() << std::endl;
+	else
+		std::cout << "Readed file: " << f2->getPath() << " on fd " << f2->getFD() << std::endl;
+
+	
+	if (file)
+		delete file;
+	if (f2)
+		delete f2;
+	// delete handler;
+	// delete path_builder;
+	// delete f_exist;
+	// delete p_check;
+	// delete f_open;
 
 	return (0);
 }

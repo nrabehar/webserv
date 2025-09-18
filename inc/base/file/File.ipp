@@ -18,13 +18,15 @@ class IFile
 
 class File : public IFile
 {
-	private:
 
-		int 						_fd;
-		bool						_complete;
+	protected:
+
+		int 								_fd;
+		bool								_complete;
 		std::string					_data;
 		std::string					_path;
-	
+		
+
 	public:
 
 		File(const std::string &);
@@ -43,6 +45,41 @@ class File : public IFile
 		File & operator=(const File &);
 
 };
+
+class LocalFile : public File
+{
+
+	public:
+
+		LocalFile(const std::string &);
+		virtual ~LocalFile();
+
+		virtual void read();
+
+	private:
+
+		LocalFile();
+		LocalFile(const LocalFile &);
+		LocalFile & operator=(const LocalFile &);
+
+};
+
+class InMemoryFile : public File
+{
+
+	public:
+
+			InMemoryFile(const std::string&, const std::string&);
+			virtual ~InMemoryFile();
+
+	private:
+
+		InMemoryFile();
+		InMemoryFile(const InMemoryFile &);
+		InMemoryFile & operator=(const InMemoryFile &);
+			
+};
+
 
 class FileProxy : public IFile
 {
@@ -67,6 +104,22 @@ class FileProxy : public IFile
 		FileProxy();
 		FileProxy(const FileProxy &);
 		FileProxy & operator=(const FileProxy &);
+};
+
+class FileFactory
+{
+
+	public:
+		
+		~FileFactory();
+		static IFile*	create(const std::string &);
+	
+	private:
+
+		FileFactory();
+		FileFactory(const FileFactory &);
+		FileFactory & operator=(const FileFactory &);
+
 };
 
 #endif // FILE_IPP

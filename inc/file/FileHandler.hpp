@@ -7,31 +7,42 @@
 class IFileHandler
 {
 
+	protected:
+
+		typedef std::string FileReason;
+
 	public:
 
-		virtual ~IFileHandler() = default;
+
+		virtual ~IFileHandler() {};
 
 		virtual IFileHandler* setNext(IFileHandler*) = 0;
+		virtual IFileHandler* setPrev(IFileHandler*) = 0;
 		virtual IFile *handle(const std::string& ) = 0;
+		virtual void setReason(const FileReason &) = 0;
+		virtual void	setFile(IFile *) = 0;
 	
 };
 
 class FileHandler : public IFileHandler
 {
 
-	private:
-
-		typedef std::string FileReason;
+	protected:
 
 		IFileHandler*	_next;
+		IFileHandler*	_prev;
 		FileReason		_reason;
+
+		IFile*				_file;
 
 	public:
 
 		FileHandler();
-		virtual ~FileHandler() {}
+		virtual ~FileHandler();
 
 		IFileHandler* setNext(IFileHandler*);
+		IFileHandler* setPrev(IFileHandler*);
+		void setReason(const FileReason &);
 
 		IFile *handle(const std::string&);
 		const FileReason& getReason() const;
@@ -40,10 +51,11 @@ class FileHandler : public IFileHandler
 
 		FileHandler(const FileHandler &);
 		FileHandler &operator=(const FileHandler &);
+		void	reset_chain();
 
 	protected:
 
-		void setReason(const FileReason &);
+		void setFile(IFile *);
 
 };
 
@@ -89,6 +101,10 @@ class FileExistenceChecker : public FileHandler
 
 class FilePermissionChecker : public FileHandler
 {
+
+	private:
+
+		int	_flags;
 
 	public:
 
