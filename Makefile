@@ -10,32 +10,58 @@ CPPFLAGS += $(STD98)
 SRCMAIN = $(DIRSRC)webserv.cpp
 LOGFILE = webserv.log
 
-DIRDATA = ./
-DATASRC = data.cpp
-SRC += $(addprefix $(DIRDATA), $(DATASRC))
-
+DIRAGENT = agent/
+DIRBASE = base/
+DIRBUILDER = builder/
+DIRCLIENT = client/
 DIRCONFIG = config/
+DIRCORE = core/
+DIRHANDLER = handler/
+DIRHTTP = http/
+DIRINTERFACE = interface/
 DIRLOCATION = location/
 DIRNETWORK = network/
 DIRPARSER = parser/
 DIRSERVER = server/
+DIRTOOLS = tools/
 DIRVALIDATOR = validator/
 
-# CONFIGSRC += SrvConfig.cpp
-# CONFIGSRC += LctConfig.cpp
-# CONFIGSRC += Cfg.cpp
-# LOCATIONSRC += Location.cpp
-NETWORKSRC += Ip.cpp
-PARSERSRC += IpParse.cpp
-# SERVERSRC += Server.cpp
-# VALIDATORSRC += CfgValid.cpp
-VALIDATORSRC += IpValid.cpp
+BASESRC += base.cpp
+CONFIGSRC += Config.cpp
+CONFIGSRC += ConfigFile.cpp
+CONFIGSRC += DefaultConfig.cpp
+TOOLSSRC += Logger.cpp
+TOOLSSRC += Signal.cpp
+
+SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
+
+SRC += $(addprefix $(DIRBASE), $(BASESRC))
+SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRINTERFACE), $(BASE_INTERFACESRC)))
+
+SRC += $(addprefix $(DIRBUILDER), $(BUILDERSRC))
+
+SRC += $(addprefix $(DIRCLIENT), $(CLIENTSRC))
 
 SRC += $(addprefix $(DIRCONFIG), $(CONFIGSRC))
+
+SRC += $(addprefix $(DIRCORE), $(CORESRC))
+
+SRC += $(addprefix $(DIRHANDLER), $(HANDLERSRC))
+
+SRC += $(addprefix $(DIRHTTP), $(HTTPSRC))
+
+SRC += $(addprefix $(DIRINTERFACE), $(INTERFACESRC))
+
 SRC += $(addprefix $(DIRLOCATION), $(LOCATIONSRC))
+
 SRC += $(addprefix $(DIRNETWORK), $(NETWORKSRC))
+
 SRC += $(addprefix $(DIRPARSER), $(PARSERSRC))
+
 SRC += $(addprefix $(DIRSERVER), $(SERVERSRC))
+
+SRC += $(addprefix $(DIRTOOLS), $(TOOLSSRC))
+
 SRC += $(addprefix $(DIRVALIDATOR), $(VALIDATORSRC))
 
 INCFILE = webserv.hpp

@@ -2,9 +2,16 @@
 	"explorer.fileNesting.enabled": true,
 	"explorer.fileNesting.expand": false,
 	"explorer.fileNesting.patterns": {
-		"*.cpp": "${capture}.tpp, ${capture}*.cpp, ${capture}*.tpp",
-		"*.hpp": "${capture}.ipp, ${capture}*.hpp, ${capture}*.ipp",
+		"*.hpp": "${capture}.ipp, ${capture}.hpp",
 	},
 	"editor.insertSpaces": false,
 	"editor.tabSize": 2,
+	"editor.quickSuggestions": {
+		"other": "on",
+		"comments": "off",
+		"strings": "off"
+	},
+	"editor.tabCompletion": "onlySnippets",
+	"editor.suggest.showKeywords": false,
+	"editor.suggest.showWords": false,
 }
