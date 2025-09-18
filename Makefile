@@ -58,6 +58,7 @@ BASE_FILESRC += File.cpp \
 				FileSpecification.cpp \
 
 BASE_CACHESRC += Cache.cpp \
+FILESRC += FileHandler.cpp \
 
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 
