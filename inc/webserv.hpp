@@ -39,7 +39,6 @@
 # define NOTHROW
 #endif
 
-<<<<<<< HEAD
 #undef DEFAULT_CONFIG_FILE_NAME
 #define DEFAULT_CONFIG_FILE_NAME "webserv.conf"
 
@@ -55,7 +54,6 @@
 #undef DEFAULT_SERVER_HOST
 #define DEFAULT_SERVER_HOST "0.0.0.0"
 
-=======
 #undef DEFAULT_CONFIG_PATH
 #define DEFAULT_CONFIG_PATH "webserv.conf"
 
@@ -67,7 +65,6 @@
 #define DEFAULT_SERVER_PORT 80
 #undef DEFAULT_SERVER_HOST
 #define DEFAULT_SERVER_HOST "0.0.0.0"
->>>>>>> f57ef79 (feat: add base files for interfaces)
 #undef DEFAULT_UPLOAD_PATH
 #define DEFAULT_UPLOAD_PATH "/uploads/"
 
@@ -89,6 +86,7 @@ class ISignal;
 class Config;
 class ConfigFile;
 class ConfigManager;
+class DefaultConfig;
 class Logger;
 class Signal;
 
@@ -141,6 +139,34 @@ enum e_LogLevel
 #include "base/file/File.ipp"
 #include "base/file/FileSpecification.ipp"
 #include "base/file/FileCache.hpp"
+#include "base.hpp"
+
+#include "base/behavioral.ipp"
+
+#include "core/File.ipp"
+
+#include "config/Config.ipp"
+#include "config/ConfigFile.ipp"
+// #include "config/DefaultConfig.ipp"
+
+#include "core/FileHandler.ipp"
+
+#include "tools/Logger.ipp"
+#include "tools/Signal.ipp"
+
+/* Template classes ********************************************************* */
+
+/* Base classes ************************************************************* */
+
+#include "config/Config.hpp"
+#include "config/ConfigFile.hpp"
+#include "config/DefaultConfig.hpp"
+
+// #include "core/File.hpp"
+// #include "core/FileHandler.hpp"
+
+#include "tools/Logger.hpp"
+#include "tools/Signal.hpp"
 
 /* Class includes *********************************************************** */
 
