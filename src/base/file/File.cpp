@@ -60,9 +60,6 @@ InMemoryFile::InMemoryFile(const std::string &path, const std::string &data)
 	: File(path) { _data = data;}
 InMemoryFile::~InMemoryFile(){}
 
-std::string File::getPath() const { return _path; }
-std::string File::getData() const { return _data; }
-
 
 /**
  * FileProxy

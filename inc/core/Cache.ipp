@@ -1,7 +1,7 @@
 #ifndef CACHE_HPP
 #define CACHE_HPP
 
-#include "../../webserv.hpp"
+#include "../webserv.hpp"
 
 enum CacheType {
     CAT_FILE,

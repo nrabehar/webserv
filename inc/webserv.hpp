@@ -59,25 +59,12 @@
 
 /* Forward declarations ***************************************************** */
 
-class IConfig;
-class IConfigFile;
-class IFile;
-class IFileHandler;
 template <typename GuestType, typename HostType> class IGuest;
 template <typename HostType, typename GuestType> class IHost;
-class ILogger;
-class IManager;
 template <typename Element> class IMemento;
 template <typename Element> class IOriginator;
 template <typename Element> class ICaretaker;
 class ISignal;
-
-class Config;
-class ConfigFile;
-class ConfigManager;
-class DefaultConfig;
-class Logger;
-class Signal;
 
 /* Enumerations ************************************************************* */
 
@@ -96,81 +83,19 @@ enum e_LogLevel
 #include "base/behavioral.ipp"
 
 #include "core/File.ipp"
+#include "core/Cache.ipp"
 #include "core/Manager.ipp"
 
-#include "config/Config.ipp"
-#include "config/ConfigFile.ipp"
-#include "config/ConfigManager.ipp"
-
-#include "core/FileHandler.ipp"
 
 #include "tools/Logger.ipp"
-#include "tools/Signal.ipp"
-
-/* Template classes ********************************************************* */
-
-/* Base classes ************************************************************* */
-
-#include "config/Config.hpp"
-#include "config/ConfigFile.hpp"
-#include "config/ConfigManager.hpp"
-
-// #include "core/File.hpp"
-// #include "core/FileHandler.hpp"
-
 #include "tools/Logger.hpp"
-#include "tools/Signal.hpp"
-
-/* Class includes *********************************************************** */
-#include "base/cache/Cache.ipp"
-
-#include "base.hpp"
-#include "base/file/File.ipp"
-#include "base/file/FileSpecification.ipp"
-#include "base/file/FileCache.hpp"
-#include "base.hpp"
-
-#include "base/behavioral.ipp"
-
-#include "core/File.ipp"
-#include "core/Manager.ipp"
-
-#include "config/Config.ipp"
-#include "config/ConfigFile.ipp"
-#include "config/ConfigManager.ipp"
-
-#include "core/FileHandler.ipp"
-
-#include "tools/Logger.ipp"
 #include "tools/Signal.ipp"
-
-/* Template classes ********************************************************* */
-
-/* Base classes ************************************************************* */
-
-#include "config/Config.hpp"
-#include "config/ConfigFile.hpp"
-#include "config/ConfigManager.hpp"
-
-// #include "core/File.hpp"
-// #include "core/FileHandler.hpp"
-
-#include "tools/Logger.hpp"
 #include "tools/Signal.hpp"
 
 /* Class includes *********************************************************** */
 
-#include "file/FileHandler.hpp"
-
-#include "config/ConfigDirective.hpp"
-#include "config/ConfigLexer.hpp"
-#include "config/ConfigNode.hpp"
-#include "config/ConfigValidator.hpp"
-#include "config/ConfigParser.hpp"
-#include "config/ConfigMerger.hpp"
-#include "config/Config.hpp"
-
 #include "base.hpp"
+#include "file/FileCache.hpp"
 #include "file/FileHandler.hpp"
 
 #include "config/ConfigDirective.hpp"

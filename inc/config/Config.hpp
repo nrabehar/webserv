@@ -3,8 +3,7 @@
 
 #include "../webserv.hpp"
 
-class Config:
-public virtual IConfig
+class Config
 {
 
 	private:

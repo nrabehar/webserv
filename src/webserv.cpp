@@ -8,8 +8,8 @@ void test(IOriginator<Config> &)
 static void _run(const char * configfile)
 {
 	Signal().setup();
-	ConfigManager cm(configfile);
-	cm.run();
+	Config cm(configfile);
+	cm.load();
 }
 
 int main(int ac, char **av)

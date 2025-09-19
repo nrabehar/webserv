@@ -1,9 +1,9 @@
 #ifndef FILECACHE_HPP
 #define FILECACHE_HPP
 
-#include "../../webserv.hpp"
+#include "../webserv.hpp"
 
-class FileCache: public ICacheStrategy, IObserver<std::string>
+class FileCache: public ICacheStrategy
 {
 
     private:

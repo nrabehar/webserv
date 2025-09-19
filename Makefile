@@ -28,32 +28,16 @@ DIRSERVER = server/
 DIRTOOLS = tools/
 DIRVALIDATOR = validator/
 
-<<<<<<< HEAD
-# BASE_INTERFACESRC += io.cpp
-=======
-<<<<<<< HEAD
-<<<<<<< HEAD
 BASESRC += base.cpp
-CONFIGSRC += Config.cpp
-CONFIGSRC += ConfigFile.cpp
-CONFIGSRC += ConfigManager.cpp
 TOOLSSRC += Logger.cpp
 TOOLSSRC += Signal.cpp
-=======
-<<<<<<< HEAD
-=======
->>>>>>> e2afe1f (feat: add base files for interfaces)
-# BASE_INTERFACESRC += io.cpp
->>>>>>> 86b89fe (feat: refactor and add new Manager classes)
->>>>>>> nrabarij
 
 BASE_FILESRC += File.cpp \
-				FileCache.cpp \
-				FileSpecification.cpp \
 
 BASE_CACHESRC += Cache.cpp \
 
-FILESRC += FileHandler.cpp \
+FILESRC += FileCache.cpp \
+				FileHandler.cpp \
 
 CONFIGSRC += Config.cpp \
 						ConfigDirective.cpp \
@@ -64,33 +48,11 @@ CONFIGSRC += Config.cpp \
 						ConfigValidator.cpp
 
 BASESRC += base.cpp
-CONFIGSRC += Config.cpp
-CONFIGSRC += ConfigFile.cpp
-CONFIGSRC += ConfigManager.cpp
-TOOLSSRC += Logger.cpp
-TOOLSSRC += Signal.cpp
-
-BASE_FILESRC += File.cpp \
-				FileCache.cpp \
-				FileSpecification.cpp \
-
-BASE_CACHESRC += Cache.cpp \
-FILESRC += FileHandler.cpp \
 
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 
 SRC += $(addprefix $(DIRBASE), $(BASESRC))
 SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRINTERFACE), $(BASE_INTERFACESRC)))
-
-SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRFILE), $(BASE_FILESRC)))
-
-SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRCACHE), $(BASE_CACHESRC)))
-
-SRC += $(addprefix $(DIRFILE), $(FILESRC))
-
-SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRFILE), $(BASE_FILESRC)))
-
-SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRCACHE), $(BASE_CACHESRC)))
 
 SRC += $(addprefix $(DIRFILE), $(FILESRC))
 
