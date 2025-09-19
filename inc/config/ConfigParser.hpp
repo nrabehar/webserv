@@ -25,7 +25,9 @@ class ConfigParser
 		static ConfigNode*	parseStatement();
 		static ConfigNode*	parseBlock(const std::string &, const std::vector<std::string> &);
 		static ConfigNode*	parseDirective(const std::string &, const std::vector<std::string> &);
-		 
+		
+		static ConfigNode*	skipComment(const std::string &, const std::vector<std::string> &);
+
 		static bool	expectType(TokenType);
 		static std::string toStr(int);
 
