@@ -8,7 +8,7 @@ ConfigParser::~ConfigParser() {}
 ConfigNode*	ConfigParser::parse(std::vector<Token>& token)
 {
 	_token = token;
-	ConfigNode*	root = new ConfigNode("root");
+	ConfigNode*	root = new ConfigNode("base");
 	while (_token[_pos].type != TK_EOF)
 		root->addChild(parseStatement());
 	_token.clear();
@@ -36,10 +36,7 @@ ConfigNode* ConfigParser::parseStatement()
 		else if (value == "{")
 			return (parseBlock(name, args));
 		else
-		{
-			std::cout << "ST ato" << std::endl;
 			throw std::runtime_error("Syntax error at line "+toStr(_token[_pos].line));
-		}
 	}
 	else
 		throw std::runtime_error("Syntax error at line "+toStr(_token[_pos].line));
@@ -62,10 +59,7 @@ ConfigNode*	ConfigParser::parseBlock(const std::string &name, const std::vector<
 	for (size_t i = 0; i < args.size(); ++i)
 		block->pushArg(args[i]);
 	while (!(_token[_pos].type & TK_SYMBOL) && _token[_pos].value != "}")
-	{
-		std::cout << "ato anaty block " << name << std::endl;
 		block->addChild(parseStatement());
-	}
 	
 	++_pos;
 	return (block);
@@ -75,10 +69,8 @@ ConfigNode*	ConfigParser::parseBlock(const std::string &name, const std::vector<
 ConfigNode*	ConfigParser::skipComment(const std::string &name, const std::vector<std::string> &args)
 {
 	int line = _token[_pos].line;
-	std::cout << "Skiping comment from " << _token[_pos].value;
 	while (_pos < _token.size() && line == _token[_pos].line)
 		++_pos;
-	std::cout << " to " << _token[_pos].value << std::endl; 
 	if ((_token[_pos].type & TK_SYMBOL) && _token[_pos].value == "#")
 		return (skipComment(name, args));
 	if (args.size())
