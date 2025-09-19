@@ -40,6 +40,6 @@ std::vector<Token> ConfigLexer::tokenize(const std::string &inp)
 
 bool	ConfigLexer::isSymbol(int c)
 {
-	std::string ss = "{};()[]$#";
+	std::string ss = "{};#";
 	return (ss.find(c) != std::string::npos);
 }
