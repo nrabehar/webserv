@@ -9,17 +9,23 @@ public virtual IConfig
 
 	private:
 
-		std::string _content;
+		IFile*			_file;
+		std::string _path;
 
 	public:
 
+		Config(const std::string &);
+		~Config();
+		void	load();
+		void	parse();
+
+	private:
+
 		Config();
-		virtual ~Config();
 		Config(const Config &);
 		Config & operator=(const Config &);
 
-		const std::string & getContent() const;
-		void setContent(const std::string &);
+
 };
 
-#endif
+#endif // CONFIG_HPP
