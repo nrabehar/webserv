@@ -33,6 +33,7 @@ void ConfigNode::setParent(const ConfigNode *parent) { _parent = parent; }
 const std::string&	ConfigNode::getName() const { return (_name); }
 const std::vector<std::string>& ConfigNode::getArg() const { return (_args); }
 std::vector<ConfigNode *> &ConfigNode::getChild() { return (_child); }
+const ConfigNode*	ConfigNode::getParent() const { return (_parent); }
 
 void ConfigNode::print(size_t indent = 0) const
 {

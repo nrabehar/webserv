@@ -12,6 +12,7 @@ Config::~Config()
 
 void	Config::load()
 {
+	
 	FileHandler	handler;
 	FilePathBuilder path_builder(".", "");
 	FileExistenceChecker f_exist;
@@ -36,6 +37,9 @@ void	Config::parse()
 	std::vector<Token> tokens = ConfigLexer::tokenize(_file->getData());
 	_root = ConfigParser::parse(tokens);
 	ConfigValidator validator;
+
+	validator.add(new CHttpValidator());
+	
 	validator.validate(_root);
   _root->print(0);
 }

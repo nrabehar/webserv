@@ -27,6 +27,7 @@ class ConfigNode
 		const std::string&	getName() const;
 		const std::vector<std::string>&	getArg() const;
 		std::vector<ConfigNode *>& getChild();
+		const ConfigNode*	getParent() const;
 
 		void	print(size_t) const;
 

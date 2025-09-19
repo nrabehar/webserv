@@ -10,6 +10,7 @@ static void _run(const char * configfile)
 	Signal().setup();
 	Config cm(configfile);
 	cm.load();
+	cm.parse();
 }
 
 int main(int ac, char **av)
