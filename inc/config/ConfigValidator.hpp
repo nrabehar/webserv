@@ -3,22 +3,32 @@
 
 #include "../webserv.hpp"
 
-class ConfigValidator
+class IConfigValidator
+{
+
+	public:
+
+		virtual ~IConfigValidator() {}
+		virtual void	validate(ConfigNode*) = 0;
+
+};
+
+class ConfigValidator: public IConfigValidator
 {
 
 	private:
 		
-		const ConfigDirectiveRegistry& _reg;
+		std::vector<IConfigValidator *> _validator;
 
 	public:
 	
-		ConfigValidator(const ConfigDirectiveRegistry &);
-		~ConfigValidator();
-		void	validate(ConfigNode*, const std::string &);
+		ConfigValidator();
+		virtual ~ConfigValidator();
+		virtual void	validate(ConfigNode*);
+		void	add(IConfigValidator *);
 
 	private:
 		
-		ConfigValidator();
 		ConfigValidator(const ConfigValidator &);
 		ConfigValidator & operator=(const ConfigValidator &);
 

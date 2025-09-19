@@ -1,8 +1,8 @@
 #include "webserv.hpp"
 
-ConfigNode::ConfigNode(const std::string &name): _name(name) {}
+ConfigNode::ConfigNode(const std::string &name): _name(name), _parent(NULL) {}
 ConfigNode::ConfigNode(const ConfigNode &other)
-	: _name(other._name), _args(other._args) {
+	: _name(other._name), _args(other._args), _parent(other._parent) {
 		for (size_t i = 0; i < other._child.size(); ++i)
 		{
 			_child.push_back(new ConfigNode(*other._child[i]));
@@ -22,8 +22,13 @@ void ConfigNode::pushArg(const std::string &arg)
 void ConfigNode::addChild(ConfigNode *child)
 {
 	if (child)
+	{
+		child->setParent(this);
 		_child.push_back(child);
+	}
 }
+
+void ConfigNode::setParent(const ConfigNode *parent) { _parent = parent; }
 
 const std::string&	ConfigNode::getName() const { return (_name); }
 const std::vector<std::string>& ConfigNode::getArg() const { return (_args); }

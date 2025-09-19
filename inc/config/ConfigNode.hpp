@@ -8,10 +8,10 @@ class ConfigNode
 
 	private:
 
-
 		std::string								_name;
 		std::vector<std::string>	_args;
 		std::vector<ConfigNode *> _child;
+		const ConfigNode*					_parent;
 		
 
 	public:
@@ -22,6 +22,7 @@ class ConfigNode
 
 		void	pushArg(const std::string &);
 		void	addChild(ConfigNode *);
+		void	setParent(const ConfigNode *);
 
 		const std::string&	getName() const;
 		const std::vector<std::string>&	getArg() const;
