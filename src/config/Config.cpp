@@ -35,5 +35,9 @@ void	Config::parse()
 {
 	std::vector<Token> tokens = ConfigLexer::tokenize(_file->getData());
 	_root = ConfigParser::parse(tokens);
+	ConfigDirectiveRegistry rg;
+	ConfigValidator validator(rg);
+	validator.validate(_root, "base");
+	// ConfigValidator::validate(_root, "root");
   _root->print(0);
 }

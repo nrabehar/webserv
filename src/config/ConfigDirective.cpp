@@ -16,9 +16,17 @@ ConfigDirectiveRegistry::ConfigDirectiveRegistry()
 {
 	DirectiveSpec spec;
 	// http
+	spec.name = "base";
+	spec.is_block = true;
+	spec.allowed_in.push_back("base");
+	spec.min_arg = 0;
+	spec.max_arg = 0;
+	_specs.push_back(spec);
+	spec.clean();
+	// http
 	spec.name = "http";
 	spec.is_block = true;
-	spec.allowed_in.push_back("root");
+	spec.allowed_in.push_back("base");
 	spec.min_arg = 0;
 	spec.max_arg = 0;
 	_specs.push_back(spec);
@@ -28,6 +36,7 @@ ConfigDirectiveRegistry::ConfigDirectiveRegistry()
 	spec.name = "server";
 	spec.is_block = true;
 	spec.allowed_in.push_back("http");
+	spec.allowed_in.push_back("base");
 	spec.min_arg = 0;
 	spec.max_arg = 0;
 	_specs.push_back(spec);
