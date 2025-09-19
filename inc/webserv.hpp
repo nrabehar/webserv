@@ -184,5 +184,13 @@ enum e_LogLevel
 #include "base.hpp"
 #include "file/FileHandler.hpp"
 
+#include "config/ConfigDirective.hpp"
+#include "config/ConfigLexer.hpp"
+#include "config/ConfigNode.hpp"
+#include "config/ConfigValidator.hpp"
+#include "config/ConfigParser.hpp"
+#include "config/ConfigMerger.hpp"
+#include "config/Config.hpp"
+
 
 #endif
