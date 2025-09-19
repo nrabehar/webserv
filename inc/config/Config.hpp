@@ -11,6 +11,7 @@ public virtual IConfig
 
 		IFile*			_file;
 		std::string _path;
+		ConfigNode	*_root;
 
 	public:
 

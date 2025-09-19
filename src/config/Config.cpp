@@ -1,8 +1,14 @@
 #include "webserv.hpp"
 
 Config::Config(const std::string &path)
-	: _file(NULL), _path(path) {}
-Config::~Config() { delete _file; }
+	: _file(NULL), _path(path), _root(NULL) {}
+Config::~Config()
+{
+	if (_file)
+		delete _file;
+	if (_root)
+		delete _root;
+}
 
 void	Config::load()
 {
@@ -28,8 +34,6 @@ void	Config::load()
 void	Config::parse()
 {
 	std::vector<Token> tokens = ConfigLexer::tokenize(_file->getData());
-	ConfigNode *root = ConfigParser::parse(tokens);
-  root->print(0);
-
-  delete root;
+	_root = ConfigParser::parse(tokens);
+  _root->print(0);
 }
