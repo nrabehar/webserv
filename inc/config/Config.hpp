@@ -26,7 +26,6 @@ public virtual IConfig
 		Config(const Config &);
 		Config & operator=(const Config &);
 
-
 };
 
 #endif // CONFIG_HPP

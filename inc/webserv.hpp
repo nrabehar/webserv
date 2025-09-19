@@ -75,6 +75,7 @@ class ISignal;
 class Config;
 class ConfigFile;
 class ConfigManager;
+class DefaultConfig;
 class Logger;
 class Signal;
 
@@ -92,29 +93,38 @@ enum e_LogLevel
 
 /* Interfaces *************************************************************** */
 
-#include "base/base.ipp"
-#include "base/io.ipp"
-#include "base/io.hpp"
+#include "base/behavioral.ipp"
 
-// #include "base/behavioral/"
-// #include "base/behavioral/"
-// #include "base/behavioral/"
-// #include "base/behavioral/"
-// #include "base/behavioral/"
-// #include "base/behavioral/"
-// #include "base/behavioral/"
-// #include "base/behavioral/"
-#include "base/behavioral/Observer.ipp"
-#include "base/behavioral/Visitor.ipp"
+#include "core/File.ipp"
+#include "core/Manager.ipp"
 
-#include "base/creational/Builder.ipp"
-#include "base/creational/Factory.ipp"
-#include "base/creational/Prototype.ipp"
+#include "config/Config.ipp"
+#include "config/ConfigFile.ipp"
+#include "config/ConfigManager.ipp"
+
+#include "core/FileHandler.ipp"
+
+#include "tools/Logger.ipp"
+#include "tools/Signal.ipp"
+
+/* Template classes ********************************************************* */
 
 /* Base classes ************************************************************* */
 
+#include "config/Config.hpp"
+#include "config/ConfigFile.hpp"
+#include "config/ConfigManager.hpp"
+
+// #include "core/File.hpp"
+// #include "core/FileHandler.hpp"
+
+#include "tools/Logger.hpp"
+#include "tools/Signal.hpp"
+
+/* Class includes *********************************************************** */
 #include "base/cache/Cache.ipp"
 
+#include "base.hpp"
 #include "base/file/File.ipp"
 #include "base/file/FileSpecification.ipp"
 #include "base/file/FileCache.hpp"

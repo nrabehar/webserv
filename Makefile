@@ -28,7 +28,24 @@ DIRSERVER = server/
 DIRTOOLS = tools/
 DIRVALIDATOR = validator/
 
+<<<<<<< HEAD
 # BASE_INTERFACESRC += io.cpp
+=======
+<<<<<<< HEAD
+<<<<<<< HEAD
+BASESRC += base.cpp
+CONFIGSRC += Config.cpp
+CONFIGSRC += ConfigFile.cpp
+CONFIGSRC += ConfigManager.cpp
+TOOLSSRC += Logger.cpp
+TOOLSSRC += Signal.cpp
+=======
+<<<<<<< HEAD
+=======
+>>>>>>> e2afe1f (feat: add base files for interfaces)
+# BASE_INTERFACESRC += io.cpp
+>>>>>>> 86b89fe (feat: refactor and add new Manager classes)
+>>>>>>> nrabarij
 
 BASE_FILESRC += File.cpp \
 				FileCache.cpp \
