@@ -37,6 +37,14 @@ BASE_CACHESRC += Cache.cpp \
 
 FILESRC += FileHandler.cpp \
 
+CONFIGSRC += Config.cpp \
+						ConfigDirective.cpp \
+						ConfigLexer.cpp \
+						ConfigMerger.cpp \
+						ConfigNode.cpp \
+						ConfigParser.cpp \
+						ConfigValidator.cpp
+
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 
 SRC += $(addprefix $(DIRBASE), $(BASESRC))
