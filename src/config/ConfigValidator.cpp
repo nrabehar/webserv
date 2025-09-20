@@ -25,7 +25,7 @@ bool	ConfigValidator::checkArgType(const std::string& arg, ArgType type)
 bool	ConfigValidator::validate(Node<Token> *node)
 {
 	std::cout << "Trying to validate " << node->getName()
-						<< "with " << node->getChild().size() << " childrens" << std::endl;
+						<< " with " << node->getChild().size() << " childrens" << std::endl;
 	size_t i = 0;
 	for (; i < _validator.size(); ++i)
 	{
@@ -34,7 +34,7 @@ bool	ConfigValidator::validate(Node<Token> *node)
 	}
 
 	if (i >= _validator.size() && !(!node->getParent() && node->getName() == "base"))
-		throw std::runtime_error("Unknown directive " + node->getName());
+		throw std::runtime_error("Unknown directive `" + node->getName() + "`");
 
 	for(size_t i=0;i<node->getChild().size();++i)
 			validate(node->getChild()[i]);
@@ -53,7 +53,7 @@ bool	CHttpValidator::validate(Node<Token> *node)
 {
 	if (node->getName() != "http")
 		return (false);
-	if (node->getParent())
+	if (node->getParent() && node->getParent()->getName() != "base")
 		throw std::runtime_error("Directive " + node->getName() + " not allowed in " + node->getParent()->getName());
 	if (node->getData().size())
 		throw std::runtime_error("Invalid number of args for " + node->getName());

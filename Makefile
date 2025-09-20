@@ -32,6 +32,7 @@ BASESRC += base.cpp
 TOOLSSRC += Logger.cpp
 TOOLSSRC += Signal.cpp
 TOOLSSRC += Token.cpp
+TOOLSSRC += TokenExtractor.cpp
 TOOLSSRC += Lexer.cpp
 
 CORESRC += directive/Directive.cpp

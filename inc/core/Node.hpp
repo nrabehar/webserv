@@ -24,6 +24,7 @@ class Node
 			for (size_t i = 0; i < _child.size(); ++i)
 				delete _child[i];
 			_child.clear();
+			_data.clear();
 		};
 
 		void	push(const T & element) { _data.push_back(element); }

@@ -6,10 +6,16 @@
 enum TokenType
 {
 	TK_NONE,
-	TK_STRING  = 1 << 0,
 	TK_SYMBOL  = 1 << 1,
-	TK_EOL     = 1 << 2,
-	TK_EOF     = 1 << 3
+	TK_BRACE_O = 1 << 2,
+	TK_BRACE_C = 1 << 3,
+	TK_COMMA	 = 1 << 4,
+	TK_COMMENT	 = 1 << 5,
+
+	TK_STRING	 = 1 << 6,
+	TK_NUMBER	 = 1 << 7,
+
+	TK_EOF     = 1 << 8
 };
 
 struct Token
@@ -18,7 +24,8 @@ struct Token
 	int					line;
 	TokenType 	type;
 
-	Token(const std::string & v, int l, TokenType t = TK_NONE);
+	Token(const std::string & v, int l, TokenType t);
+	Token(const std::string & v, int l);
 	bool				isType(TokenType t) const;
 };
 
@@ -29,14 +36,17 @@ class TokenU
 	private:
 
 		static std::string _c_s;
-		static std::string _symbol;
+		static std::string _symref;
 
 	public:
 
 		~TokenU();
-		static void				useSymbole(const std::string &c_s);
+		static void				setSymRef(const std::string &c_s);
+		static void				resetSymRef();
+		static std::string getSymRef();
 		static TokenType	inferType(const std::string & t);
 		static std::string typeToString(TokenType t);
+		static bool isSymbol(const std::string & v);
 	
 	private:
 	
@@ -44,7 +54,6 @@ class TokenU
 		TokenU(const TokenU &);
 		TokenU & operator=(const TokenU &);
 
-		static bool isSymbol(const std::string & v);
 
 };
 

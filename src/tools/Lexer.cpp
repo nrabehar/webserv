@@ -11,35 +11,30 @@ std::vector<Token> Lexer::tokenize(const std::string &inp)
 
 	while (i < inp.size())
 	{
-		TokenType t = TokenU::inferType(std::string(1, inp[i]));
 		if (std::isspace(inp[i]))
 		{
 			if (inp[i] == '\n')
 			{
 				++line;
-				if (!(tokens.back().type & TK_SYMBOL))
-				{
-					std::cout << "Not end with symbol" << std::endl;
-					tokens.push_back(Token(std::string(1, ';'), line - 1, TK_SYMBOL));
-				}
+				if (tokens.size() && (!(tokens.back().type & (TK_COMMA | TK_BRACE_C | TK_BRACE_O))))
+					tokens.push_back(Token(std::string(1, ';'), (line) - 1));
 			}
 			++i;
 			continue ;
 		}
-		else if (t & TK_SYMBOL)
-			tokens.push_back(Token(std::string(1, inp[i++]), line, TK_SYMBOL));
+		else if (TokenU::isSymbol(std::string(1, inp[i])))
+		{
+			tokens.push_back(Token(std::string(1, inp[i]), line));
+			i++;
+		}
 		else
 		{
 			size_t start = i;
-			while (i < inp.size() && !std::isspace(inp[i]) && !(t & TK_SYMBOL))
-			{
+			while (i < inp.size() && !TokenU::isSymbol(std::string(1, inp[i])) &&
+				!std::isspace(static_cast<unsigned char>(inp[i])))
 				++i;
-				t = TokenU::inferType(std::string(1, inp[i]));
-			}
 			tokens.push_back(Token(inp.substr(start, i - start), line));
 		}
-		std::cout << "Current token [" << tokens.back().value << "] with type "
-							<< TokenU::typeToString(tokens.back().type) << std::endl;
 	}
 	tokens.push_back(Token("", line, TK_EOF));
 	return (tokens);

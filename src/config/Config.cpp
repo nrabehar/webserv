@@ -34,16 +34,17 @@ void	Config::load()
 
 void	Config::parse()
 {
-	TokenU::useSymbole("#;{}");
+	Directive d;
+
+	d.load();
+
+	TokenU::setSymRef("#;{}");
 	std::vector<Token> tokens = Lexer::tokenize(_file->getData());
-	std::cout << "We have " << tokens.size() << " tokens" << std::endl;
 	TokenStream ss(tokens);
 	DirectiveParser parser(ss);
 	_root = parser.parse();
 	ConfigValidator validator;
 
 	validator.with(new CHttpValidator());
-	
 	validator.validate(_root);
-	std::cout << "Valideee" << std::endl;
 }

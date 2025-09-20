@@ -1,0 +1,55 @@
+#include "webserv.hpp"
+
+ATokenExtractor::ATokenExtractor() : _next(NULL) {}
+ATokenExtractor::~ATokenExtractor()
+{
+	if (_next)
+		delete _next;
+}
+TokenType	ATokenExtractor::getType(const std::string &v)
+{
+	if (_next)
+		return (_next->getType(v));
+	if (v.empty())
+		return (TK_EOF);
+	return (TK_STRING);
+}
+ITokenTypeExtractor *	ATokenExtractor::next(ITokenTypeExtractor * ext)
+{
+	_next = ext;
+	return (_next);
+}
+
+TokenExtractor::TokenExtractor(): ATokenExtractor() {}
+TokenExtractor::~TokenExtractor(){}
+TokenType	TokenExtractor::getType(const std::string &v) { return (ATokenExtractor::getType(v)); }
+
+TokenSymboleExtractor::TokenSymboleExtractor(): ATokenExtractor() {}
+TokenSymboleExtractor::~TokenSymboleExtractor(){}
+TokenType	TokenSymboleExtractor::getType(const std::string &v)
+{
+	if (v.size() != 1 || !TokenU::isSymbol(v))
+		return (ATokenExtractor::getType(v));
+	int c = v[0];
+	switch (c)
+	{
+		case ';': return (TK_COMMA);
+		case '#': return (TK_COMMENT);
+		case '{': return (TK_BRACE_O);
+		case '}': return (TK_BRACE_C);
+		default: return (TK_SYMBOL);
+	}
+}
+
+
+TokenNumberExtractor::TokenNumberExtractor(): ATokenExtractor() {}
+TokenNumberExtractor::~TokenNumberExtractor(){}
+TokenType	TokenNumberExtractor::getType(const std::string &v)
+{
+	if (v.empty())
+		return (ATokenExtractor::getType(v));
+	std::string s = "0123456789";
+	if (v.find_first_not_of(s) == std::string::npos)
+		return (TK_NUMBER);
+	return (ATokenExtractor::getType(v));
+}

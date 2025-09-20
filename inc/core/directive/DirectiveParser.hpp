@@ -40,7 +40,7 @@ class DirectiveParser
 		Node<Token>*	parseDirective(const std::string & name, const std::vector<Token> & arg);
 		Node<Token>*	skipComment(const std::string & name, const std::vector<Token> & arg);
 
-		std::string lineStr();
+		std::string line();
 
 };
 

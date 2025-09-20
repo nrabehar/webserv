@@ -1,111 +1,167 @@
 #include "webserv.hpp"
 
 DirectiveParser::DirectiveParser(ITokenStream & stream)
-	: _stream(stream) {
-		if (!stream.eof())
-			std::cout << "initialized with stream first " << stream.peek().value << std::endl;
-		else
-			std::cout << "Got " << TokenU::typeToString(TK_STRING) << std::endl;
-	};
+	: _stream(stream) {};
 DirectiveParser::~DirectiveParser() {}
 
 Node<Token> * DirectiveParser::parse()
 {
+	
 	Node<Token> * base = new Node<Token>("base");
-	while (!_stream.eof())
-		base->addChild(parseStatement());
-	return (base);
+	
+	try
+	{
+	
+		while (!_stream.eof())
+			base->addChild(parseStatement());
+	
+		return (base);
+	
+	}
+	catch(const std::exception& e)
+	{
+	
+		delete base;
+	
+		throw;
+	
+	}
+	
 };
 
 Node<Token> * DirectiveParser::parseStatement()
 {
-	std::vector<Token> mk;
-	if (_stream.eof())
-	{
-		std::cout << "Finale end of line" << std::endl;
-		return (NULL);
-	}
-	std::string name = _stream.peek().value;
-	if (name == "#")
-		skipComment(name, mk);
-	if (!_stream.peek().isType(TK_STRING))
-		throw std::runtime_error("Unexpected token at line " + lineStr());
+	
 	std::vector<Token> args;
-	Token t = _stream.next();
-	int curr_line = t.line;
-	while (t.isType(TK_STRING) && t.line == curr_line)
+	
+	if (_stream.eof())
+		return (NULL);
+
+	Token t = _stream.peek();
+	std::string node_name = t.value;
+	
+	if (t.isType(TK_COMMENT))
+		skipComment("", std::vector<Token>());
+
+	if (!t.isType(TK_STRING))
+		throw std::runtime_error("Unexpected token `" + _stream.peek().value + "` at line " + line());
+
+	t = _stream.next();
+
+	while (t.isType(TK_STRING) || t.isType(TK_NUMBER))
 	{
-		std::cout << "Pushing arg " << t.value << " == "; 
+		LOG("Pushing [" + t.value + "] as argument for [" + node_name + "]");
 		args.push_back(t);
 		t = _stream.next();
-		std::cout << "With next token " << t.value << std::endl;
 	}
-	std::cout << "Token  " << t.value << " after args " << std::endl;
-	if (t.isType(TK_SYMBOL))
-	{
-		if (t.value == "#")
-			return (skipComment(name, args));
-		if (t.value == ";")
-			return (parseDirective(name, args));
-		if (t.value == "{")
-			return (parseBlock(name, args));
-		throw std::runtime_error("Syntax error at line " + lineStr());
-	}
-	throw std::runtime_error("Syntax error at line " + lineStr());
+	
+	if (t.isType(TK_COMMENT))
+		return (skipComment(node_name, args));
+	
+	if (t.isType(TK_COMMA))
+		return (parseDirective(node_name, args));
+
+	if (t.isType(TK_BRACE_O))
+		return (parseBlock(node_name, args));
+	
+	return (parseStatement());
+
 }
 
 Node<Token>*	DirectiveParser::parseDirective(const std::string & name, const std::vector<Token> & arg)
 {
-	std::cout << "Enter to comma at line " << _stream.peek().line << std::endl;
+
 	Node<Token> * directive = new Node<Token>(name);
+
 	for (size_t i = 0; i < arg.size() ; ++i)
 		directive->push(arg[i]);
+
 	_stream.skip();
+
 	return (directive);
+
 }
 
 Node<Token>*	DirectiveParser::parseBlock(const std::string & name, const std::vector<Token> & arg)
 {
-	Token t = _stream.peek();
-	std::cout << "Enter to block at line " << t.line << " " << t.value << std::endl;
+
+	Node<Token> * block = NULL;
+
 	_stream.skip();
-	t = _stream.peek();
-	std::cout << "Type of " << t.value << " " << TokenU::typeToString(t.type) << std::endl;
-	if (!_stream.eof() && _stream.peek().isType(TK_SYMBOL))
-		std::cout << "Should return for successed symbol" << std::endl;
-	Node<Token> * block = new Node<Token>(name);
-	for (size_t i = 0; i < arg.size(); ++i)
-		block->push(arg[i]);
-	while (!_stream.eof() && !_stream.peek().isType(TK_SYMBOL) && _stream.peek().value != "}")
+	
+	if (_stream.eof())
+		throw std::runtime_error("Unexpected end of file");
+	
+	Token t = _stream.peek();
+	
+	if (t.isType(TK_COMMENT))
+		block = skipComment(name, arg);
+
+	if (_stream.eof())
+	{
+		delete block;
+		throw std::runtime_error("Unexpected end of file");
+	}
+
+	if (!_stream.eof() && !t.isType(TK_STRING) && !t.isType(TK_BRACE_C))
+		throw std::runtime_error("Unexpected `" + t.value + "` at line " + line());
+
+	if (!block)
+	{
+
+		block = new Node<Token>(name);
+		
+		for (size_t i = 0; i < arg.size(); ++i)
+			block->push(arg[i]);
+		
+	}
+
+	while (!_stream.eof() && !_stream.peek().isType(TK_BRACE_C))
 		block->addChild(parseStatement());
-	if (!_stream.eof())
-		_stream.skip();
+	
+	if (_stream.eof())
+		throw std::runtime_error("Unexpected end of file");
+		
+	_stream.skip();
+
 	return (block);
+
 }
 
 Node<Token>*	DirectiveParser::skipComment(const std::string & name, const std::vector<Token> & arg)
 {
-	std::cout << "Enter to comment at line " << _stream.peek().line << std::endl;
+
 	int	curr_line = _stream.peek().line;
+
 	while (!_stream.eof() && _stream.peek().line == curr_line)
 		_stream.skip();
-	if (!_stream.eof() && _stream.peek().isType(TK_SYMBOL) && _stream.peek().value == "#")
+
+	if (!_stream.eof() && _stream.peek().isType(TK_COMMENT))
 		return (skipComment(name, arg));
+
 	if (arg.size())
 	{
+
 		Node<Token> * directive = new Node<Token>(name);
 		for (size_t i = 0; i < arg.size() ; ++i)
 			directive->push(arg[i]);
+		return (directive);
+
 	}
+
 	return (NULL);
+
 }
 
-std::string	DirectiveParser::lineStr()
+std::string	DirectiveParser::line()
 {
+
 	if (_stream.eof())
 		return ("unknown");
+	
 	std::ostringstream oss;
-
 	oss << _stream.peek().line;
+
 	return (oss.str());
+
 }
