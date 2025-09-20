@@ -8,9 +8,9 @@ class Config
 
 	private:
 
-		IFile*			_file;
-		std::string _path;
-		ConfigNode	*_root;
+		IFile*						_file;
+		std::string 			_path;
+		Node<std::string>	*_root;
 
 	public:
 

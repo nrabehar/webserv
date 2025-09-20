@@ -1,22 +1,20 @@
 #include "webserv.hpp"
 
-std::vector<Token>	ConfigParser::_token;
-size_t ConfigParser::_pos = 0;
-
+ConfigParser::ConfigParser() {}
 ConfigParser::~ConfigParser() {}
 
-ConfigNode*	ConfigParser::parse(std::vector<Token>& token)
+Node<std::string>*	ConfigParser::parse(std::vector<Token>& token)
 {
 	_token = token;
-	ConfigNode*	root = new ConfigNode("base");
+	Node<std::string>*	root = new Node<std::string>("base");
 	while (_token[_pos].type != TK_EOF)
-		root->addChild(parseStatement());
+		root->push(parseStatement());
 	_token.clear();
 	_pos = 0;
 	return (root);
 }
 
-ConfigNode* ConfigParser::parseStatement()
+Node<std::string>* ConfigParser::parseStatement()
 {
 	expectType(TK_STRING);
 	std::string name = _token[_pos].value;
@@ -42,31 +40,31 @@ ConfigNode* ConfigParser::parseStatement()
 		throw std::runtime_error("Syntax error at line "+toStr(_token[_pos].line));
 }
 
-ConfigNode*	ConfigParser::parseDirective(const std::string &name, const std::vector<std::string> &args)
+Node<std::string>*	ConfigParser::parseDirective(const std::string & name, const std::vector<std::string> & args)
 {
-	ConfigNode*	directive = new ConfigNode(name);
+	Node<std::string>*	directive = new Node<std::string>(name);
 	for (size_t i = 0; i < args.size(); ++i)
-	directive->pushArg(args[i]);
+	directive->push(args[i]);
 	++_pos;
 	return (directive);
 }
 
-ConfigNode*	ConfigParser::parseBlock(const std::string &name, const std::vector<std::string> &args)
+Node<std::string>*	ConfigParser::parseBlock(const std::string &name, const std::vector<std::string> &args)
 {
-	ConfigNode*	block = new ConfigNode(name);
+	Node<std::string>*	block = new Node<std::string>(name);
 	++_pos;
 
 	for (size_t i = 0; i < args.size(); ++i)
-		block->pushArg(args[i]);
+		block->push(args[i]);
 	while (!(_token[_pos].type & TK_SYMBOL) && _token[_pos].value != "}")
-		block->addChild(parseStatement());
+		block->push(parseStatement());
 	
 	++_pos;
 	return (block);
 }
 
 
-ConfigNode*	ConfigParser::skipComment(const std::string &name, const std::vector<std::string> &args)
+Node<std::string>*	ConfigParser::skipComment(const std::string &name, const std::vector<std::string> &args)
 {
 	int line = _token[_pos].line;
 	while (_pos < _token.size() && line == _token[_pos].line)
@@ -75,9 +73,9 @@ ConfigNode*	ConfigParser::skipComment(const std::string &name, const std::vector
 		return (skipComment(name, args));
 	if (args.size())
 	{
-		ConfigNode* directive = new ConfigNode(name);
+		Node<std::string>* directive = new Node<std::string>(name);
 		for (size_t i = 0; i < args.size(); ++i)
-			directive->pushArg(args[i]);
+			directive->push(args[i]);
 		return (directive);
 	}
 	return (NULL);

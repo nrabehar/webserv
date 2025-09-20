@@ -22,7 +22,7 @@ bool	ConfigValidator::checkArgType(const std::string& arg, ArgType type)
 	}
 }
 
-bool	ConfigValidator::validate(ConfigNode *node)
+bool	ConfigValidator::validate(Node<std::string> *node)
 {
 	size_t i = 0;
 	for (; i < _validator.size(); ++i)
@@ -47,13 +47,13 @@ void ConfigValidator::add(IConfigValidator *validator) { _validator.push_back(va
  */
 CHttpValidator::CHttpValidator(){}
 CHttpValidator::~CHttpValidator(){}
-bool	CHttpValidator::validate(ConfigNode *node)
+bool	CHttpValidator::validate(Node<std::string> *node)
 {
 	if (node->getName() != "http")
 		return (false);
 	if (node->getParent())
 		throw std::runtime_error("Directive " + node->getName() + " not allowed in " + node->getParent()->getName());
-	if (node->getArg().size())
+	if (node->getData().size())
 		throw std::runtime_error("Invalid number of args for " + node->getName());
 	return (true);
 }

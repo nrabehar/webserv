@@ -85,6 +85,7 @@ enum e_LogLevel
 #include "core/File.ipp"
 #include "core/Cache.ipp"
 #include "core/Manager.ipp"
+#include "core/Node.hpp"
 
 
 #include "tools/Logger.ipp"
@@ -100,7 +101,6 @@ enum e_LogLevel
 
 #include "config/ConfigDirective.hpp"
 #include "config/ConfigLexer.hpp"
-#include "config/ConfigNode.hpp"
 #include "config/ConfigValidator.hpp"
 #include "config/ConfigParser.hpp"
 #include "config/ConfigMerger.hpp"

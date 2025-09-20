@@ -43,7 +43,6 @@ CONFIGSRC += Config.cpp \
 						ConfigDirective.cpp \
 						ConfigLexer.cpp \
 						ConfigMerger.cpp \
-						ConfigNode.cpp \
 						ConfigParser.cpp \
 						ConfigValidator.cpp
 

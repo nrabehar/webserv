@@ -9,7 +9,7 @@ class IConfigValidator
 	public:
 
 		virtual ~IConfigValidator() {}
-		virtual bool	validate(ConfigNode*) = 0;
+		virtual bool	validate(Node<std::string>*) = 0;
 
 };
 
@@ -24,7 +24,7 @@ class ConfigValidator: public IConfigValidator
 	
 		ConfigValidator();
 		virtual ~ConfigValidator();
-		virtual bool	validate(ConfigNode*);
+		virtual bool	validate(Node<std::string>*);
 		void	add(IConfigValidator *);
 
 	private:
@@ -44,7 +44,7 @@ class CHttpValidator: public IConfigValidator
 
 		CHttpValidator();
 		virtual ~CHttpValidator();
-		virtual bool	validate(ConfigNode*);
+		virtual bool	validate(Node<std::string>*);
 	
 	private:
 
