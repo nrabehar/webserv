@@ -86,6 +86,8 @@ enum e_LogLevel
 #include "core/Cache.ipp"
 #include "core/Manager.ipp"
 #include "core/Node.hpp"
+#include "core/Directive.hpp"
+
 
 
 #include "tools/Logger.ipp"

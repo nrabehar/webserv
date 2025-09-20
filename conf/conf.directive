@@ -1,0 +1,47 @@
+base {
+	block								true;
+}
+
+http {
+	block								true
+	allowed_in					base
+}
+
+server {
+	block								true
+	allowed_in					base http
+}
+
+location {
+	block								true
+	allowed_in					server
+	min_arg							1
+	arg_type						string
+}
+
+listen {
+	allowed_in					server
+	min_arg							1
+	max_arg							2
+	arg_type						string
+}
+
+root {
+	allowed_in					http server location
+	min_arg							1
+	max_arg							1
+	arg_type						string
+}
+
+index {
+	allowed_in					server location
+	min_arg							1
+	arg_type						string
+}
+
+autoindex {
+	allowed_in					server location
+	min_arg							1
+	max_arg							1
+	arg_type						on off
+}
