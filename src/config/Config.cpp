@@ -34,10 +34,8 @@ void	Config::load()
 
 void	Config::parse()
 {
-	ConfigParser parser;
-
 	std::vector<Token> tokens = ConfigLexer::tokenize(_file->getData());
-	_root = parser.parse(tokens);
+	_root = ConfigParser::parse(tokens);
 	ConfigValidator validator;
 
 	validator.add(new CHttpValidator());

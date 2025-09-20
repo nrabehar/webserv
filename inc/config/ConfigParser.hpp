@@ -8,28 +8,28 @@ class ConfigParser
 
 	private:
 		
-		std::vector<Token > _token;
-		size_t	_pos;
+		static std::vector<Token> _token;
+		static size_t	_pos;
 
 	public:
 	
 		ConfigParser();
 		~ConfigParser();
-		Node<std::string>* parse(std::vector<Token> &);
+		static Node<std::string>* parse(std::vector<Token> &);
 
 	private:
 		
 		ConfigParser(const ConfigParser &);
 		ConfigParser & operator=(const ConfigParser &);
 
-		Node<std::string>*	parseStatement();
-		Node<std::string>*	parseBlock(const std::string &, const std::vector<std::string> &);
-		Node<std::string>*	parseDirective(const std::string &, const std::vector<std::string> &);
+		static Node<std::string>*	parseStatement();
+		static Node<std::string>*	parseBlock(const std::string &, const std::vector<std::string> &);
+		static Node<std::string>*	parseDirective(const std::string &, const std::vector<std::string> &);
 		
-		Node<std::string>*	skipComment(const std::string &, const std::vector<std::string> &);
+		static Node<std::string>*	skipComment(const std::string &, const std::vector<std::string> &);
 
-		bool	expectType(TokenType);
-		std::string toStr(int);
+		static bool	expectType(TokenType);
+		static std::string toStr(int);
 
 };
 

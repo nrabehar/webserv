@@ -1,5 +1,7 @@
 #include "webserv.hpp"
 
+size_t ConfigParser::_pos = 0;
+
 ConfigParser::ConfigParser() {}
 ConfigParser::~ConfigParser() {}
 
