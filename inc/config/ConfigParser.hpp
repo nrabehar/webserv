@@ -15,7 +15,7 @@ class ConfigParser
 	
 		ConfigParser();
 		~ConfigParser();
-		static Node<std::string>* parse(std::vector<Token> &);
+		static Node<std::string>* parse(std::vector<Token> & token);
 
 	private:
 		
@@ -25,7 +25,6 @@ class ConfigParser
 		static Node<std::string>*	parseStatement();
 		static Node<std::string>*	parseBlock(const std::string &, const std::vector<std::string> &);
 		static Node<std::string>*	parseDirective(const std::string &, const std::vector<std::string> &);
-		
 		static Node<std::string>*	skipComment(const std::string &, const std::vector<std::string> &);
 
 		static bool	expectType(TokenType);

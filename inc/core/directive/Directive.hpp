@@ -1,7 +1,7 @@
 #ifndef DIRECTIVE_HPP
 #define DIRECTIVE_HPP
 
-#include "../webserv.hpp"
+#include "../../webserv.hpp"
 
 
 class Directive
@@ -10,7 +10,8 @@ class Directive
 	private:
 
 		IFile *							_file;
-		Node<std::string> *	_data;
+		Node<Token> *				_data;
+		bool 								_loaded;
 
 	public:
 
@@ -18,7 +19,7 @@ class Directive
 		~Directive();
 
 		void	load();
-		const Node<std::string> * get() const;
+		const Node<Token> * get();
 
 
 	private:

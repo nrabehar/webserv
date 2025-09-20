@@ -82,18 +82,24 @@ enum e_LogLevel
 
 #include "base/behavioral.ipp"
 
-#include "core/File.ipp"
-#include "core/Cache.ipp"
-#include "core/Manager.ipp"
-#include "core/Node.hpp"
-#include "core/Directive.hpp"
-
-
 
 #include "tools/Logger.ipp"
 #include "tools/Logger.hpp"
 #include "tools/Signal.ipp"
 #include "tools/Signal.hpp"
+#include "tools/Token.hpp"
+#include "tools/Lexer.hpp"
+
+
+#include "core/File.ipp"
+#include "core/Cache.ipp"
+#include "core/Manager.ipp"
+#include "core/Node.hpp"
+
+#include "core/directive/Directive.hpp"
+#include "core/directive/DirectiveParser.hpp"
+
+
 
 /* Class includes *********************************************************** */
 
@@ -102,7 +108,6 @@ enum e_LogLevel
 #include "file/FileHandler.hpp"
 
 #include "config/ConfigDirective.hpp"
-#include "config/ConfigLexer.hpp"
 #include "config/ConfigValidator.hpp"
 #include "config/ConfigParser.hpp"
 #include "config/ConfigMerger.hpp"

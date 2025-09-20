@@ -22,8 +22,10 @@ bool	ConfigValidator::checkArgType(const std::string& arg, ArgType type)
 	}
 }
 
-bool	ConfigValidator::validate(Node<std::string> *node)
+bool	ConfigValidator::validate(Node<Token> *node)
 {
+	std::cout << "Trying to validate " << node->getName()
+						<< "with " << node->getChild().size() << " childrens" << std::endl;
 	size_t i = 0;
 	for (; i < _validator.size(); ++i)
 	{
@@ -39,7 +41,7 @@ bool	ConfigValidator::validate(Node<std::string> *node)
 	return (true);
 }
 
-void ConfigValidator::add(IConfigValidator *validator) { _validator.push_back(validator); }
+void ConfigValidator::with(IConfigValidator *validator) { _validator.push_back(validator); }
 
 
 /**
@@ -47,7 +49,7 @@ void ConfigValidator::add(IConfigValidator *validator) { _validator.push_back(va
  */
 CHttpValidator::CHttpValidator(){}
 CHttpValidator::~CHttpValidator(){}
-bool	CHttpValidator::validate(Node<std::string> *node)
+bool	CHttpValidator::validate(Node<Token> *node)
 {
 	if (node->getName() != "http")
 		return (false);

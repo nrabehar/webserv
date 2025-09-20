@@ -19,7 +19,7 @@ void	ConfigMerger::merge(Node<std::string> *parent, Node<std::string> *child)
 					found = true;
 			}
 			if (!found)
-				child->push(new Node<std::string>(*directive));
+				child->addChild(directive);
 		}
 	}
 	for (size_t i = 0; i < child->getChild().size(); ++i)

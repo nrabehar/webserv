@@ -1,5 +1,6 @@
 #include "webserv.hpp"
 
+std::vector<Token>ConfigParser::_token;
 size_t ConfigParser::_pos = 0;
 
 ConfigParser::ConfigParser() {}
@@ -10,7 +11,7 @@ Node<std::string>*	ConfigParser::parse(std::vector<Token>& token)
 	_token = token;
 	Node<std::string>*	root = new Node<std::string>("base");
 	while (_token[_pos].type != TK_EOF)
-		root->push(parseStatement());
+		root->addChild(parseStatement());
 	_token.clear();
 	_pos = 0;
 	return (root);
@@ -21,14 +22,20 @@ Node<std::string>* ConfigParser::parseStatement()
 	expectType(TK_STRING);
 	std::string name = _token[_pos].value;
 	int					line = _token[_pos].line;
-	++_pos;
+	// ++_pos;
 
 	std::vector<std::string> args;
 	while ((_token[_pos].type & TK_STRING) && line == _token[_pos].line)
-		args.push_back(_token[_pos++].value);
+	{
+		std::cout << "Processing token arg: " << _token[_pos].value << std::endl;
+		args.push_back(_token[_pos].value);
+		++_pos;
+	}
 	if (_token[_pos].type & TK_SYMBOL)
 	{
 		std::string value = _token[_pos].value;
+		std::cout << "Processing token: " << value << " type: "
+							<< TokenU::typeToString(_token[_pos].type) << std::endl;
 		if (value == "#")
 			return (skipComment(name, args));
 		if (value == ";")
@@ -36,7 +43,10 @@ Node<std::string>* ConfigParser::parseStatement()
 		else if (value == "{")
 			return (parseBlock(name, args));
 		else
+		{
+			std::cout << "Token name: " << name << " curremt: " << _token[_pos].value << std::endl;
 			throw std::runtime_error("Syntax error at line "+toStr(_token[_pos].line));
+		}
 	}
 	else
 		throw std::runtime_error("Syntax error at line "+toStr(_token[_pos].line));
@@ -46,7 +56,7 @@ Node<std::string>*	ConfigParser::parseDirective(const std::string & name, const 
 {
 	Node<std::string>*	directive = new Node<std::string>(name);
 	for (size_t i = 0; i < args.size(); ++i)
-	directive->push(args[i]);
+		directive->push(args[i]);
 	++_pos;
 	return (directive);
 }
@@ -59,7 +69,7 @@ Node<std::string>*	ConfigParser::parseBlock(const std::string &name, const std::
 	for (size_t i = 0; i < args.size(); ++i)
 		block->push(args[i]);
 	while (!(_token[_pos].type & TK_SYMBOL) && _token[_pos].value != "}")
-		block->push(parseStatement());
+		block->addChild(parseStatement());
 	
 	++_pos;
 	return (block);

@@ -10,7 +10,7 @@ class Config
 
 		IFile*						_file;
 		std::string 			_path;
-		Node<std::string>	*_root;
+		Node<Token>	*_root;
 
 	public:
 

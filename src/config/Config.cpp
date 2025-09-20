@@ -34,11 +34,16 @@ void	Config::load()
 
 void	Config::parse()
 {
-	std::vector<Token> tokens = ConfigLexer::tokenize(_file->getData());
-	_root = ConfigParser::parse(tokens);
+	TokenU::useSymbole("#;{}");
+	std::vector<Token> tokens = Lexer::tokenize(_file->getData());
+	std::cout << "We have " << tokens.size() << " tokens" << std::endl;
+	TokenStream ss(tokens);
+	DirectiveParser parser(ss);
+	_root = parser.parse();
 	ConfigValidator validator;
 
-	validator.add(new CHttpValidator());
+	validator.with(new CHttpValidator());
 	
 	validator.validate(_root);
+	std::cout << "Valideee" << std::endl;
 }

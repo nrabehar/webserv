@@ -31,6 +31,11 @@ DIRVALIDATOR = validator/
 BASESRC += base.cpp
 TOOLSSRC += Logger.cpp
 TOOLSSRC += Signal.cpp
+TOOLSSRC += Token.cpp
+TOOLSSRC += Lexer.cpp
+
+CORESRC += directive/Directive.cpp
+CORESRC += directive/DirectiveParser.cpp
 
 BASE_FILESRC += File.cpp \
 
@@ -41,7 +46,6 @@ FILESRC += FileCache.cpp \
 
 CONFIGSRC += Config.cpp \
 						ConfigDirective.cpp \
-						ConfigLexer.cpp \
 						ConfigMerger.cpp \
 						ConfigParser.cpp \
 						ConfigValidator.cpp
