@@ -3,29 +3,19 @@
 
 #include "../webserv.hpp"
 
-class IConfigValidator
-{
-
-	public:
-
-		virtual ~IConfigValidator() {}
-		virtual bool	validate(Node<Token>*) = 0;
-
-};
-
-class ConfigValidator: public IConfigValidator
+class ConfigValidator: public INodeValidator<Token>
 {
 
 	private:
 		
-		std::vector<IConfigValidator *> _validator;
+		std::vector<INodeValidator *> _validator;
 
 	public:
 	
 		ConfigValidator();
 		virtual ~ConfigValidator();
 		virtual bool	validate(Node<Token>*);
-		void	with(IConfigValidator *);
+		void	with(INodeValidator *);
 
 	private:
 		
@@ -37,7 +27,8 @@ class ConfigValidator: public IConfigValidator
 };
 
 
-class CHttpValidator: public IConfigValidator
+class CHttpValidator
+	: public INodeValidator<Token>
 {
 
 	public:

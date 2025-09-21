@@ -41,7 +41,7 @@ bool	ConfigValidator::validate(Node<Token> *node)
 	return (true);
 }
 
-void ConfigValidator::with(IConfigValidator *validator) { _validator.push_back(validator); }
+void ConfigValidator::with(INodeValidator *validator) { _validator.push_back(validator); }
 
 
 /**
@@ -51,11 +51,11 @@ CHttpValidator::CHttpValidator(){}
 CHttpValidator::~CHttpValidator(){}
 bool	CHttpValidator::validate(Node<Token> *node)
 {
+
 	if (node->getName() != "http")
 		return (false);
-	if (node->getParent() && node->getParent()->getName() != "base")
-		throw std::runtime_error("Directive " + node->getName() + " not allowed in " + node->getParent()->getName());
-	if (node->getData().size())
-		throw std::runtime_error("Invalid number of args for " + node->getName());
-	return (true);
+	return NodeChecker::check(node)
+								.requireChild()
+								.acceptParent("base")
+								.argCount(0, 0).isValid();
 }

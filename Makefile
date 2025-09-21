@@ -38,6 +38,8 @@ TOOLSSRC += Lexer.cpp
 CORESRC += directive/Directive.cpp
 CORESRC += directive/DirectiveParser.cpp
 
+CORESRC += node/NodeChecker.cpp
+
 BASE_FILESRC += File.cpp \
 
 BASE_CACHESRC += Cache.cpp \

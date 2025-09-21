@@ -53,3 +53,12 @@ TokenType	TokenNumberExtractor::getType(const std::string &v)
 		return (TK_NUMBER);
 	return (ATokenExtractor::getType(v));
 }
+
+TokenBoolExtractor::TokenBoolExtractor(): ATokenExtractor() {}
+TokenBoolExtractor::~TokenBoolExtractor(){}
+TokenType	TokenBoolExtractor::getType(const std::string &v)
+{
+	if (v == "true" || v == "false")
+		return (TK_BOOLEAN);
+	return (ATokenExtractor::getType(v));
+}

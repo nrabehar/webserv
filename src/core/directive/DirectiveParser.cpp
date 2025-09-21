@@ -50,7 +50,6 @@ Node<Token> * DirectiveParser::parseStatement()
 
 	while (t.isType(TK_STRING) || t.isType(TK_NUMBER))
 	{
-		LOG("Pushing [" + t.value + "] as argument for [" + node_name + "]");
 		args.push_back(t);
 		t = _stream.next();
 	}

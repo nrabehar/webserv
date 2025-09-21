@@ -103,6 +103,30 @@ class TokenNumberExtractor
 };
 
 
+class TokenBoolExtractor
+	: public ATokenExtractor
+{
+
+	private:
+
+		
+
+	public:
+
+		TokenBoolExtractor();
+		~TokenBoolExtractor();
+		TokenType getType(const std::string &value);
+
+	private:
+
+		TokenBoolExtractor(const TokenBoolExtractor &);
+		TokenBoolExtractor & operator=(const TokenBoolExtractor &);
+
+};
+
+
+
+
 
 
 #endif // TOKENEXTRACTOR_HPP

@@ -55,9 +55,26 @@ std::string TokenU::typeToString(TokenType t)
 		case TK_COMMENT: return "comment";
 		case TK_STRING: return "string";
 		case TK_NUMBER: return "number";
+		case TK_BOOLEAN: return "boolean";
 		case TK_EOF:    return "eof";
 		default:        return "unknown";
 	}
+}
+
+TokenType TokenU::strToType(const std::string & t)
+{
+	if (t == "none")        return TK_NONE;
+	if (t == "symbol") return TK_SYMBOL;
+	if (t == "open_brace")  return TK_BRACE_O;
+	if (t == "close_brace") return TK_BRACE_C;
+	if (t == "comma")   return TK_COMMA;
+	if (t == "comment") return TK_COMMENT;
+	if (t == "string")  return TK_STRING;
+	if (t == "number")  return TK_NUMBER;
+	if (t == "boolean") return TK_BOOLEAN;
+	if (t == "eof")     return TK_EOF;
+	
+	return TK_NONE; 		
 }
 
 TokenStream::TokenStream(const std::vector<Token> & tokens)
@@ -73,9 +90,5 @@ TokenStream & TokenStream::operator=(const TokenStream &other)
 TokenStream::~TokenStream() {}
 const Token& TokenStream::peek() const { return (_tokens[_cursor]); }
 const Token& TokenStream::next() { return (_tokens[++_cursor]); }
-void TokenStream::skip() {
-	std::cout << "Skip [" << _tokens[_cursor].value << "] at line " << _tokens[_cursor].line;
-	_tokens[_cursor++];
-	std::cout << " => [" << _tokens[_cursor].value  << "] at line " << _tokens[_cursor].line << std::endl;
-}
+void TokenStream::skip() { _tokens[_cursor++]; }
 bool	TokenStream::eof() const { return (_cursor >= _tokens.size() || _tokens[_cursor].isType(TK_EOF)); } 

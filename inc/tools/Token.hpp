@@ -6,16 +6,17 @@
 enum TokenType
 {
 	TK_NONE,
-	TK_SYMBOL  = 1 << 1,
-	TK_BRACE_O = 1 << 2,
-	TK_BRACE_C = 1 << 3,
-	TK_COMMA	 = 1 << 4,
-	TK_COMMENT	 = 1 << 5,
+	TK_SYMBOL  		= 1 << 1,
+	TK_BRACE_O 		= 1 << 2,
+	TK_BRACE_C 		= 1 << 3,
+	TK_COMMA		 	= 1 << 4,
+	TK_COMMENT	 	= 1 << 5,
 
-	TK_STRING	 = 1 << 6,
-	TK_NUMBER	 = 1 << 7,
+	TK_STRING	 		= 1 << 6,
+	TK_NUMBER	 		= 1 << 7,
+	TK_BOOLEAN 		= 1 << 8,
 
-	TK_EOF     = 1 << 8
+	TK_EOF     		= 1 << 9
 };
 
 struct Token
@@ -46,6 +47,7 @@ class TokenU
 		static std::string getSymRef();
 		static TokenType	inferType(const std::string & t);
 		static std::string typeToString(TokenType t);
+		static TokenType strToType(const std::string & t);
 		static bool isSymbol(const std::string & v);
 	
 	private:

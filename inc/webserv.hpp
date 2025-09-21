@@ -96,7 +96,11 @@ enum e_LogLevel
 #include "core/File.ipp"
 #include "core/Cache.ipp"
 #include "core/Manager.ipp"
-#include "core/Node.hpp"
+
+#include "core/node/Node.hpp"
+#include "core/node/NodeChecker.hpp"
+
+
 
 #include "core/directive/Directive.hpp"
 #include "core/directive/DirectiveParser.hpp"

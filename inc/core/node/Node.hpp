@@ -1,7 +1,7 @@
 #ifndef NODE_HPP
 #define NODE_HPP
 
-#include "../webserv.hpp"
+#include "../../webserv.hpp"
 
 template<typename T>
 class Node
@@ -81,7 +81,7 @@ class ANodeValidator
 	: virtual public INodeValidator<T>
 {
 
-	private:
+	protected:
 
 		std::map<std::string, INodeValidator<T> * > _validator;
 
@@ -89,7 +89,7 @@ class ANodeValidator
 
 		ANodeValidator() {};
 
-		~ANodeValidator()
+		virtual ~ANodeValidator()
 		{
 			typename std::map<std::string, INodeValidator<T> * >::iterator it;
 			for (it = _validator.begin(); it != _validator.end(); ++it)
@@ -97,12 +97,14 @@ class ANodeValidator
 			_validator.clear();
 		};
 
-		void	with(const std::string & name, INodeValidator<T> * validator)
+		ANodeValidator*	with(const std::string & name, INodeValidator<T> * validator)
 		{
+
 			if (!validator)
-				return ;
+				return (this);
 			typename std::map<std::string, INodeValidator<T> * >::iterator it;
 			it = _validator.find(name);
+			
 			if (it != _validator.end())
 			{
 				delete it->second;
@@ -110,9 +112,32 @@ class ANodeValidator
 			}
 			else
 				_validator[name] = validator;
-		};
+			return (this);
 
-		virtual bool	validate(Node<T> *) = 0;
+		};
+		
+		virtual bool validate(Node<T> * node)
+		{
+			size_t i = 0;
+			for ( ; i < _validator.size(); ++i )
+			{
+				if (_validator[i]->validate())
+					break ;
+			}
+
+			if (i >= _validator.size() && 
+					(!node->getParent() && node->getNAme() == "base"))
+				throw std::runtime_error("Unknown directive `" + node->getName() + "`" );
+		
+			for (i = 0; i < node->getChild().size() ; ++ i)
+			{
+				if (!validate(node->getChild()[i]))
+					return (false);
+			}
+
+			return (true);
+		
+		}
 
 	private:
 
@@ -120,6 +145,23 @@ class ANodeValidator
 		ANodeValidator & operator=(const ANodeValidator &);
 
 };
+
+template<typename T>
+class NodeValidator
+	: virtual public ANodeValidator<T>
+{
+	public:
+
+		NodeValidator() {};
+		virtual ~NodeValidator() {};
+	
+	private:
+
+		NodeValidator(const NodeValidator &);
+		NodeValidator & operator=(const NodeValidator &);
+
+};
+
 
 
 #endif // NODE_HPP
