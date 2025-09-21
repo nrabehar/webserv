@@ -6,22 +6,6 @@ ConfigValidator::~ConfigValidator() {
 		delete _validator[i];
 }
 
-bool	ConfigValidator::checkArgType(const std::string& arg, ArgType type)
-{
-	switch(type)
-	{
-		case NUMBER:
-			return true;
-		case STRING:
-			return true;
-		case ARRAY:
-			return true;
-		case BOOL:
-			return arg=="on" || arg=="off";
-		default: return false;
-	}
-}
-
 bool	ConfigValidator::validate(Node<Token> *node)
 {
 	std::cout << "Trying to validate " << node->getName()
@@ -41,7 +25,15 @@ bool	ConfigValidator::validate(Node<Token> *node)
 	return (true);
 }
 
-void ConfigValidator::with(INodeValidator *validator) { _validator.push_back(validator); }
+ConfigValidator * ConfigValidator::with(INodeValidator *validator)
+{
+
+	if (validator)
+		_validator.push_back(validator);
+
+	return (this);
+
+}
 
 
 /**

@@ -15,14 +15,12 @@ class ConfigValidator: public INodeValidator<Token>
 		ConfigValidator();
 		virtual ~ConfigValidator();
 		virtual bool	validate(Node<Token>*);
-		void	with(INodeValidator *);
+		ConfigValidator *	with(INodeValidator *);
 
 	private:
 		
 		ConfigValidator(const ConfigValidator &);
 		ConfigValidator & operator=(const ConfigValidator &);
-
-		bool	checkArgType(const std::string &, ArgType);
 
 };
 

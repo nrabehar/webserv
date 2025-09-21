@@ -14,7 +14,7 @@ class ConfigMerger
 		ConfigMerger();
 		~ConfigMerger();
 
-		static void	merge(Node<std::string> *, Node<std::string> *);
+		static void	merge(Node<Token> *, Node<Token> *);
 
 	private:
 	
