@@ -99,6 +99,7 @@ enum e_LogLevel
 
 #include "core/node/Node.hpp"
 #include "core/node/NodeChecker.hpp"
+#include "core/node/NodeValidator.hpp"
 
 
 
