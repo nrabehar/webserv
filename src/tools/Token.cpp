@@ -51,7 +51,7 @@ std::string TokenU::typeToString(TokenType t)
 		case TK_SYMBOL: return "symbol";
 		case TK_BRACE_O: return "open_brace";
 		case TK_BRACE_C: return "close_brace";
-		case TK_COMMA:	return "comma";
+		case TK_SEMICOLON:	return "semicolon";
 		case TK_COMMENT: return "comment";
 		case TK_STRING: return "string";
 		case TK_NUMBER: return "number";
@@ -67,7 +67,7 @@ TokenType TokenU::strToType(const std::string & t)
 	if (t == "symbol") return TK_SYMBOL;
 	if (t == "open_brace")  return TK_BRACE_O;
 	if (t == "close_brace") return TK_BRACE_C;
-	if (t == "comma")   return TK_COMMA;
+	if (t == "semicolon")   return TK_SEMICOLON;
 	if (t == "comment") return TK_COMMENT;
 	if (t == "string")  return TK_STRING;
 	if (t == "number")  return TK_NUMBER;

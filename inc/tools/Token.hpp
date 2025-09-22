@@ -9,7 +9,7 @@ enum TokenType
 	TK_SYMBOL  		= 1 << 1,
 	TK_BRACE_O 		= 1 << 2,
 	TK_BRACE_C 		= 1 << 3,
-	TK_COMMA		 	= 1 << 4,
+	TK_SEMICOLON		 	= 1 << 4,
 	TK_COMMENT	 	= 1 << 5,
 
 	TK_STRING	 		= 1 << 6,

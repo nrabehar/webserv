@@ -33,7 +33,7 @@ TokenType	TokenSymboleExtractor::getType(const std::string &v)
 	int c = v[0];
 	switch (c)
 	{
-		case ';': return (TK_COMMA);
+		case ';': return (TK_SEMICOLON);
 		case '#': return (TK_COMMENT);
 		case '{': return (TK_BRACE_O);
 		case '}': return (TK_BRACE_C);

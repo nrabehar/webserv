@@ -16,7 +16,7 @@ std::vector<Token> Lexer::tokenize(const std::string &inp)
 			if (inp[i] == '\n')
 			{
 				++line;
-				if (tokens.size() && (!(tokens.back().type & (TK_COMMA | TK_BRACE_C | TK_BRACE_O))))
+				if (tokens.size() && (!(tokens.back().type & (TK_SEMICOLON | TK_BRACE_C | TK_BRACE_O))))
 					tokens.push_back(Token(std::string(1, ';'), (line) - 1));
 			}
 			++i;

@@ -57,7 +57,7 @@ Node<Token> * DirectiveParser::parseStatement()
 	if (t.isType(TK_COMMENT))
 		return (skipComment(node_name, args));
 	
-	if (t.isType(TK_COMMA))
+	if (t.isType(TK_SEMICOLON))
 		return (parseDirective(node_name, args));
 
 	if (t.isType(TK_BRACE_O))
