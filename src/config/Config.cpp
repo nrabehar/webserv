@@ -44,13 +44,18 @@ void	Config::parse()
 
 	std::vector<Node<Token>* > & childs = _root->getChild();
 
-	std::cout << "Before merge ============================" << std::endl;
-	_root->print();
-
 	for (size_t i = 0; i < childs.size(); ++i)
 		ConfigMerger::merge(_root, childs[i]);
 
-	std::cout << "After merge ============================" << std::endl;
-	_root->print();
+	_servers = Transformer::transform(_root);
+
+	std::cout << "Server size " << _servers.size() << std::endl;
+
+	for (size_t i = 0; i < _servers.size(); ++i)
+	{
+		std::cout << "SERVER " << i + 1 << " :" << std::endl << std::endl;
+		_servers[i].print();
+		std::cout << std::endl;
+	}
 	
 }

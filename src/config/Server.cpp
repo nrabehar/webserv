@@ -1,0 +1,43 @@
+#include "webserv.hpp"
+
+Config::Server::Server()
+	: keepalive_timeout(0) {}
+
+void	Config::Server::print() const
+{
+	std::cout << "Server:" << std::endl;
+	std::cout << "  Keepalive timeout: " << keepalive_timeout << std::endl;
+
+	std::cout << "  Listens:" << std::endl;
+	for (size_t i = 0; i < listen.size(); ++i)
+		std::cout << "    Host: " << listen[i].host << ", Port: " << listen[i].port << std::endl;
+
+	std::cout << "  Locations:" << std::endl;
+	for (size_t i = 0; i < location.size(); ++i)
+	{
+		const Location &loc = location[i];
+		std::cout << "    Path: " << loc.path << std::endl;
+		std::cout << "      Root: " << loc.root << std::endl;
+		std::cout << "      Autoindex: " << (loc.autoindex ? "on" : "off") << std::endl;
+
+		std::cout << "      Index files: ";
+		for (size_t j = 0; j < loc.index.size(); ++j)
+			std::cout << loc.index[j] << " ";
+		std::cout << std::endl;
+
+		std::cout << "      Error pages:" << std::endl;
+		for (std::map<int,std::string>::const_iterator it = loc.err_page.begin(); it != loc.err_page.end(); ++it)
+			std::cout << "        " << it->first << " -> " << it->second << std::endl;
+
+		std::cout << "      CGI:" << std::endl;
+		for (size_t j = 0; j < loc.cgi.size(); ++j)
+			std::cout << "        " << loc.cgi[j].first << " -> " << loc.cgi[j].second << std::endl;
+	}
+}
+
+Config::Server::Listen::Listen()
+	: port("80"), host("0.0.0.0") {}
+
+Config::Server::Location::Location()
+	: path(""), root(""), autoindex(false) {}
+

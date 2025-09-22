@@ -53,6 +53,9 @@ CONFIGSRC += Config.cpp \
 						ConfigParser.cpp \
 						ConfigValidator.cpp
 
+CONFIGSRC += Server.cpp
+CONFIGSRC += Transformer.cpp
+
 BASESRC += base.cpp
 
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))

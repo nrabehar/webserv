@@ -115,6 +115,8 @@ enum e_LogLevel
 #include "config/ConfigParser.hpp"
 #include "config/ConfigMerger.hpp"
 #include "config/Config.hpp"
+#include "config/Server.hpp"
+#include "config/Transformer.hpp"
 
 
 #endif
