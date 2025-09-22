@@ -37,6 +37,7 @@ TOOLSSRC += Lexer.cpp
 
 CORESRC += directive/Directive.cpp
 CORESRC += directive/DirectiveParser.cpp
+CORESRC += directive/DirectiveRegistry.cpp
 
 CORESRC += node/NodeChecker.cpp
 
@@ -48,7 +49,6 @@ FILESRC += FileCache.cpp \
 				FileHandler.cpp \
 
 CONFIGSRC += Config.cpp \
-						ConfigDirective.cpp \
 						ConfigMerger.cpp \
 						ConfigParser.cpp \
 						ConfigValidator.cpp

@@ -62,3 +62,15 @@ TokenType	TokenBoolExtractor::getType(const std::string &v)
 		return (TK_BOOLEAN);
 	return (ATokenExtractor::getType(v));
 }
+
+TokenOnOffExtractor::TokenOnOffExtractor(): ATokenExtractor() {}
+TokenOnOffExtractor::~TokenOnOffExtractor(){}
+TokenType	TokenOnOffExtractor::getType(const std::string &v)
+{
+	if (v == "on")
+		return (TK_ON);
+	if (v == "off")
+		return (TK_OFF);
+	return (ATokenExtractor::getType(v));
+}
+

@@ -50,8 +50,45 @@ class Node
 			}
 		}
 
+		Node<T>* clone()
+		{
+				Node<T>* dst = new Node<T>(_name);
+				for (size_t i = 0; i < _data.size(); ++i)
+						dst->push(_data[i]);
+
+				for (size_t i = 0; i < _child.size(); ++i)
+						dst->addChild(_child[i]->clone());
+
+				return (dst);
+		}
+
+		void print(int depth = 0)
+		{
+			for (int i = 0; i < depth; ++i)
+				std::cout << "  ";
+
+			std::cout << _name;
+
+			if (!_data.empty())
+			{
+				std::cout << " (";
+				for (size_t i = 0; i < _data.size(); ++i)
+				{
+					std::cout << _data[i].value;
+					if (i + 1 < _data.size())
+							std::cout << ", ";
+				}
+				std::cout << ")";
+			}
+
+			std::cout << std::endl;
+			for (size_t i = 0; i < _child.size(); ++i)
+				_child[i]->print(depth + 1);
+		}
+
 		const std::string &	getName() const { return (_name); };
 		const std::vector<T> &	getData() const { return (_data); };
+		std::vector<Node<T> *> & getChild() { return (_child); };
 		const std::vector<Node<T> *> & getChild() const { return (_child); };
 		Node<T>*	getParent() const { return (_parent); };
 

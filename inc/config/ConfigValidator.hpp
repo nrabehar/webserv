@@ -3,43 +3,41 @@
 
 #include "../webserv.hpp"
 
-class ConfigValidator: public INodeValidator<Token>
+class ConfigValidator
 {
 
 	private:
 		
-		std::vector<INodeValidator *> _validator;
+		static bool	_valid;
+		static bool	_checked;
+		static std::string		_status;
 
 	public:
 	
 		ConfigValidator();
 		virtual ~ConfigValidator();
-		virtual bool	validate(Node<Token>*);
-		ConfigValidator *	with(INodeValidator *);
+		static bool	validate(Node<Token> * node);
 
 	private:
 		
 		ConfigValidator(const ConfigValidator &);
 		ConfigValidator & operator=(const ConfigValidator &);
 
-};
-
-
-class CHttpValidator
-	: public INodeValidator<Token>
-{
-
-	public:
-
-		CHttpValidator();
-		virtual ~CHttpValidator();
-		virtual bool	validate(Node<Token>*);
-	
-	private:
-
-		CHttpValidator(const CHttpValidator &);
-		CHttpValidator&	operator=(const CHttpValidator &);
+		static void checkHttp(Node<Token> * node);
+		static void checkServer(Node<Token> * node);
+		static void checkLocation(Node<Token> * node);
+		static void checkListen(Node<Token> * node);
+		static void checkRoot(Node<Token> * node);
+		static void checkIndex(Node<Token> * node);
+		static void checkAutoindex(Node<Token> * node);
+		static void checkErrorPage(Node<Token> * node);
+		static void checkClientMaxBodySize(Node<Token> * node);
+		static void checkKeepaliveTimeout(Node<Token> * node);
+		static void checkServerName(Node<Token> * node);
+		static void checkCgi(Node<Token> * node);
+		static void checkAllowedMethod(Node<Token> * node);
 
 };
+
 
 #endif // CONFIGVALIDATOR_HPP

@@ -98,15 +98,12 @@ enum e_LogLevel
 #include "core/Manager.ipp"
 
 #include "core/node/Node.hpp"
-#include "core/node/NodeChecker.hpp"
 #include "core/node/NodeValidator.hpp"
-
-
 
 #include "core/directive/Directive.hpp"
 #include "core/directive/DirectiveParser.hpp"
-
-
+#include "core/directive/DirectiveRegistry.hpp"
+#include "core/directive/DirectiveChecker.hpp"
 
 /* Class includes *********************************************************** */
 
@@ -114,7 +111,6 @@ enum e_LogLevel
 #include "file/FileCache.hpp"
 #include "file/FileHandler.hpp"
 
-#include "config/ConfigDirective.hpp"
 #include "config/ConfigValidator.hpp"
 #include "config/ConfigParser.hpp"
 #include "config/ConfigMerger.hpp"

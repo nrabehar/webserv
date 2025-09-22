@@ -1,113 +1,110 @@
 #include "webserv.hpp"
 
-NodeChecker::~NodeChecker() {}
+bool DirectiveChecker::_valid = true;
 
-NodeChecker::Checker NodeChecker::check(const Node<Token>* node)
+DirectiveChecker::~DirectiveChecker() {}
+
+void DirectiveChecker::argCount(const Directive & d)
 {
-  return Checker(node);
-}
-
-NodeChecker::Checker::~Checker() {}
-
-NodeChecker::Checker::Checker(const Node<Token>* n)
-	: _node(n), _valid(true) {}
-
-NodeChecker::Checker::Checker(const Checker &other)
-	: _node(other._node), _valid(other._valid) {}
-
-NodeChecker::Checker& NodeChecker::Checker::argCount(int min, int max)
-{
-  
-	if (_valid)
-	{
-
-    size_t n = _node->getData().size();
+    if (!_valid || !d.node())
+        return;
     
-		if ((min >= 0 && n < (size_t)min) || (max >= 0 && n > (size_t)max))
-      _valid = false;
-  
-	}
-
-	return (*this);
-
-}
-
-NodeChecker::Checker& NodeChecker::Checker::argType(const std::string& types)
-{
- 
-	if (_valid && !types.empty())
-	{
+    size_t n = d.node()->getData().size();
+    int min = d.min_arg();
+    int max = d.max_arg();
     
-		std::vector<std::string> allowed = split(types, ' ');
-    const std::vector<Token>& args = _node->getData();
-    
-		for (size_t i = 0; i < args.size(); ++i)
-			
-			if (!contains(allowed, TokenU::typeToString(args[i].type)))
-			{
-	
-				_valid = false;
-				break;
-
-			}
-
+    if ((min >= 0 && n < (size_t)min) ||
+        (max >= 0 && n > (size_t)max))
+    {
+        std::ostringstream oss;
+        oss << "Directive `" << d.name() << "` expects ";
+        if (min == max)
+            oss << min << " argument(s)";
+        else if (max >= 0)
+            oss << "between " << min << " and " << max << " arguments";
+        else
+            oss << "at least " << min << " arguments";
+        oss << ", but got " << n << " at line " << d.node()->getData()[0].line;
+        throw std::runtime_error(oss.str());
+        _valid = false;
     }
-
-    return (*this);
-
 }
 
-NodeChecker::Checker& NodeChecker::Checker::acceptParent(const std::string& parents)
+void DirectiveChecker::argType(const Directive & d)
 {
+    const Node<Token> * node = d.node();
+    if (!_valid || !node)
+        return;
     
-	if (_valid && !parents.empty() && _node->getParent())
-	{
+    const std::vector<std::string> & types = d.arg_type();
+    const std::vector<Token>& args = node->getData();
     
-		std::vector<std::string> allowed = split(parents, ' ');
-    
-		if (!contains(allowed, _node->getParent()->getName()))
-      _valid = false;
-  }
-  
-	return (*this);
-
+    for (size_t i = 0; i < args.size(); ++i)
+    {
+        std::string typeStr = TokenU::typeToString(args[i].type);
+        if (!contains(types, typeStr))
+        {
+            std::ostringstream oss;
+            oss << "Directive `" << d.name() << "` has invalid argument `"
+                << args[i].value << "` at position " << i
+                << ". Allowed types: ";
+            for (size_t j = 0; j < types.size(); ++j)
+            {
+                if (j > 0) oss << ", ";
+                oss << types[j];
+            }
+            throw std::runtime_error(oss.str());
+            _valid = false;
+            break;
+        }
+    }
 }
 
-NodeChecker::Checker& NodeChecker::Checker::requireChild()
+void DirectiveChecker::acceptParent(const Directive & d)
+{
+    const Node<Token> * node = d.node();
+    if (!_valid || !node || !node->getParent())
+        return;
+    
+    std::string parent_name = node->getParent()->getName();
+    _valid = d.isAllowedIn(parent_name);
+
+    if (!_valid)
+        ERR("Directive `" + d.name() + "` is not allowed in `" + parent_name + "`");
+}
+
+void DirectiveChecker::requireChild(const Directive & d)
+{
+    const Node<Token> * node = d.node();
+    if (!_valid || !node)
+        return;
+
+    size_t n = node->getChild().size();
+    if (d.req_child() && n == 0)
+    {
+        ERR("Directive `" + d.name() + "` requires at least one child block");
+        _valid = false;
+    }
+}
+
+bool DirectiveChecker::check(const Directive & d)
 {
 
-	if (_valid && _node->getChild().empty())
-    _valid = false;
-  
-	return (*this);
+	_valid = true;
+
+	argCount(d);
+	argType(d);
+	acceptParent(d);
+	requireChild(d);
+
+	if (_valid)
+		DirectiveRegistry::save(d);
+
+	return (_valid);
 
 }
 
-bool NodeChecker::Checker::isValid() const { return _valid; }
-
-std::vector<std::string> NodeChecker::Checker::split(const std::string& s, char delim)
-{
-    
-	std::vector<std::string> elems;
-    
-	std::string::size_type start = 0, end = 0;
-    
-	while ((end = s.find(delim, start)) != std::string::npos)
-	{
-        
-		if (end > start) elems.push_back(s.substr(start, end - start));
-      start = end + 1;
-
-	}
-    
-	if (start < s.size())
-		elems.push_back(s.substr(start));
-    
-	return (elems);
-
-}
-
-bool NodeChecker::Checker::contains(const std::vector<std::string>& vec, const std::string& val)
+bool DirectiveChecker::contains(const std::vector<std::string>& vec, const std::string& val)
 {
     
 	for (size_t i = 0; i < vec.size(); ++i)

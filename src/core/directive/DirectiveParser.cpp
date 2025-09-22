@@ -48,7 +48,7 @@ Node<Token> * DirectiveParser::parseStatement()
 
 	t = _stream.next();
 
-	while (t.isType(TK_STRING) || t.isType(TK_NUMBER))
+	while (t.isType(TK_STRING) || t.isType(TK_NUMBER) || t.isType(TK_ON) || t.isType(TK_OFF))
 	{
 		args.push_back(t);
 		t = _stream.next();

@@ -34,17 +34,23 @@ void	Config::load()
 
 void	Config::parse()
 {
-	Directive d;
-
-	d.load();
 
 	TokenU::setSymRef("#;{}");
 	std::vector<Token> tokens = Lexer::tokenize(_file->getData());
 	TokenStream ss(tokens);
 	DirectiveParser parser(ss);
 	_root = parser.parse();
-	ConfigValidator validator;
+	ConfigValidator::validate(_root);
 
-	validator.with(new CHttpValidator());
-	validator.validate(_root);
+	std::vector<Node<Token>* > & childs = _root->getChild();
+
+	std::cout << "Before merge ============================" << std::endl;
+	_root->print();
+
+	for (size_t i = 0; i < childs.size(); ++i)
+		ConfigMerger::merge(_root, childs[i]);
+
+	std::cout << "After merge ============================" << std::endl;
+	_root->print();
+	
 }

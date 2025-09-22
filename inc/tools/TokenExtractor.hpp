@@ -125,8 +125,26 @@ class TokenBoolExtractor
 };
 
 
+class TokenOnOffExtractor
+	: public ATokenExtractor
+{
 
+	private:
 
+		
+
+	public:
+
+		TokenOnOffExtractor();
+		~TokenOnOffExtractor();
+		TokenType getType(const std::string &value);
+
+	private:
+
+		TokenOnOffExtractor(const TokenOnOffExtractor &);
+		TokenOnOffExtractor & operator=(const TokenOnOffExtractor &);
+
+};
 
 
 #endif // TOKENEXTRACTOR_HPP

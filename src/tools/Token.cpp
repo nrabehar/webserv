@@ -14,7 +14,7 @@ Token::Token(const std::string & v, int l)
 	: value(v), line(l), type(TK_NONE)
 	{ type = TokenU::inferType(v); }
 
-bool	Token::isType(TokenType t) const { return (type == t); }
+bool	Token::isType(TokenType t) const { return (type & t); }
 
 TokenU::~TokenU() {}
 void	TokenU::setSymRef(const std::string &c_s) {_c_s = c_s; }
@@ -36,7 +36,9 @@ TokenType	TokenU::inferType(const std::string & t)
 	TokenExtractor *extractor = new TokenExtractor();
 
 	extractor->next(new TokenSymboleExtractor())
-					->next(new TokenNumberExtractor());
+					->next(new TokenNumberExtractor())
+					->next(new TokenBoolExtractor())
+					->next(new TokenOnOffExtractor());
 
 	TokenType type = extractor->getType(t);
 	delete extractor;
@@ -56,6 +58,8 @@ std::string TokenU::typeToString(TokenType t)
 		case TK_STRING: return "string";
 		case TK_NUMBER: return "number";
 		case TK_BOOLEAN: return "boolean";
+		case TK_ON: return "on";
+		case TK_OFF: return "off";
 		case TK_EOF:    return "eof";
 		default:        return "unknown";
 	}
@@ -72,6 +76,8 @@ TokenType TokenU::strToType(const std::string & t)
 	if (t == "string")  return TK_STRING;
 	if (t == "number")  return TK_NUMBER;
 	if (t == "boolean") return TK_BOOLEAN;
+	if (t == "on") return TK_ON;
+	if (t == "off") return TK_OFF;
 	if (t == "eof")     return TK_EOF;
 	
 	return TK_NONE; 		
