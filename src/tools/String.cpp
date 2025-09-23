@@ -16,7 +16,7 @@ std::string String::trim(const std::string & s, const std::string & delim)
 	if (start == std::string::npos)
 		return (s);
 
-	return (s.substr(start, end));
+	return (s.substr(start, end - start + 1));
 
 }
 
@@ -37,24 +37,18 @@ std::vector<std::string> String::split(const std::string & s, const std::string 
 	size_t	start = 0;
 	size_t	end = 0;
 
-	t_str = trim(s, delim);
-	end = s.find_first_of(delim);
-
-	while (end != std::string::npos && start < s.size())
+	start = s.find_first_not_of(delim);
+	while (start != std::string::npos)
 	{
 
-		if (end > start)
-			res.push_back(s.substr(start, end - start));
+		end = s.find_first_of(delim, start);
+		if (end == std::string::npos)
+			end = s.size();
 		
+		res.push_back(s.substr(start, end - start));
 		start = s.find_first_not_of(delim, end);
-		
-		if (start != std::string::npos)
-			end = s.find_first_of(delim, start);
 
 	}
-
-	if (start < s.size())
-		res.push_back(s.substr(start));
 
 	return (res);
 

@@ -14,6 +14,9 @@ std::string	Config::Sanitizer::sanitize(const std::string & s)
 	//? remove consecutive newline
 	res = normalizeNewlines(res);
 
+	// 
+	res = normalizeBrackets(res);
+
 	return (res);
 
 }
@@ -75,4 +78,27 @@ std::string Config::Sanitizer::normalizeNewlines(const std::string & s)
 	return (res);
 
 }
+
+std::string Config::Sanitizer::normalizeBrackets(const std::string & s)
+{
+
+	std::string res;
+
+	for (size_t i = 0; i < s.size(); ++i)
+	{
+
+		int c = s[i];
+	
+		if (c == '{')
+			res = String::trim(res) + " {";
+		
+		else
+			res.push_back(c);
+
+	}
+
+	return (res);
+
+}
+
 

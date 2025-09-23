@@ -38,7 +38,6 @@ class DirectiveParser
 		Node<Token>*	parseStatement();
 		Node<Token>*	parseBlock(const std::string & name, const std::vector<Token> & arg);
 		Node<Token>*	parseDirective(const std::string & name, const std::vector<Token> & arg);
-		Node<Token>*	skipComment(const std::string & name, const std::vector<Token> & arg);
 
 		std::string line();
 

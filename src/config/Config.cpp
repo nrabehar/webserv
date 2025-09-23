@@ -38,6 +38,10 @@ void	Config::parse()
 	TokenU::setSymRef("#;{}");
 
 	std::string content = Sanitizer::sanitize(_file->getData());
+	std::cout << "Should no comments content: " << std::endl;
+	std::cout << content << std::endl << std::endl;
+	std::cout << "===================================" << std::endl;
+
 	std::vector<Token> tokens = Lexer::tokenize(content);
 	TokenStream ss(tokens);
 	DirectiveParser parser(ss);

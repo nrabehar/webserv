@@ -40,22 +40,16 @@ Node<Token> * DirectiveParser::parseStatement()
 	Token t = _stream.peek();
 	std::string node_name = t.value;
 	
-	if (t.isType(TK_COMMENT))
-		skipComment("", std::vector<Token>());
-
 	if (!t.isType(TK_STRING))
 		throw std::runtime_error("Unexpected token `" + _stream.peek().value + "` at line " + line());
 
 	t = _stream.next();
 
-	while (t.isType(TK_STRING) || t.isType(TK_NUMBER) || t.isType(TK_ON) || t.isType(TK_OFF))
+	while (t.type & (TK_STRING | TK_NUMBER | TK_ON | TK_OFF))
 	{
 		args.push_back(t);
 		t = _stream.next();
 	}
-	
-	if (t.isType(TK_COMMENT))
-		return (skipComment(node_name, args));
 	
 	if (t.isType(TK_SEMICOLON))
 		return (parseDirective(node_name, args));
@@ -93,28 +87,14 @@ Node<Token>*	DirectiveParser::parseBlock(const std::string & name, const std::ve
 	
 	Token t = _stream.peek();
 	
-	if (t.isType(TK_COMMENT))
-		block = skipComment(name, arg);
-
-	if (_stream.eof())
-	{
-		delete block;
-		throw std::runtime_error("Unexpected end of file last line " + line());
-	}
-
-	if (!_stream.eof() && !t.isType(TK_STRING) && !t.isType(TK_BRACE_C))
+	if (!t.isType(TK_STRING) && !t.isType(TK_BRACE_C))
 		throw std::runtime_error("Unexpected `" + t.value + "` at line " + line());
 
-	if (!block)
-	{
-
-		block = new Node<Token>(name);
+	block = new Node<Token>(name);
+	
+	for (size_t i = 0; i < arg.size(); ++i)
+		block->push(arg[i]);
 		
-		for (size_t i = 0; i < arg.size(); ++i)
-			block->push(arg[i]);
-		
-	}
-
 	while (!_stream.eof() && !_stream.peek().isType(TK_BRACE_C))
 		block->addChild(parseStatement());
 	
@@ -124,31 +104,6 @@ Node<Token>*	DirectiveParser::parseBlock(const std::string & name, const std::ve
 	_stream.skip();
 
 	return (block);
-
-}
-
-Node<Token>*	DirectiveParser::skipComment(const std::string & name, const std::vector<Token> & arg)
-{
-
-	int	curr_line = _stream.peek().line;
-
-	while (!_stream.eof() && _stream.peek().line == curr_line)
-		_stream.skip();
-
-	if (!_stream.eof() && _stream.peek().isType(TK_COMMENT))
-		return (skipComment(name, arg));
-
-	if (arg.size())
-	{
-
-		Node<Token> * directive = new Node<Token>(name);
-		for (size_t i = 0; i < arg.size() ; ++i)
-			directive->push(arg[i]);
-		return (directive);
-
-	}
-
-	return (NULL);
 
 }
 
