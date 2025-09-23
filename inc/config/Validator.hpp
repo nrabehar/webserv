@@ -3,7 +3,7 @@
 
 #include "../webserv.hpp"
 
-class ConfigValidator
+class Config::Validator
 {
 
 	private:
@@ -14,14 +14,14 @@ class ConfigValidator
 
 	public:
 	
-		ConfigValidator();
-		virtual ~ConfigValidator();
+		Validator();
+		virtual ~Validator();
 		static bool	validate(Node<Token> * node);
 
 	private:
 		
-		ConfigValidator(const ConfigValidator &);
-		ConfigValidator & operator=(const ConfigValidator &);
+		Validator(const Validator &);
+		Validator & operator=(const Validator &);
 
 		static void checkHttp(Node<Token> * node);
 		static void checkServer(Node<Token> * node);

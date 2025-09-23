@@ -18,6 +18,9 @@ class Config
 		struct Server;
 		class Transformer;
 		class Sanitizer;
+		class Parser;
+		class Merger;
+		class Validator;
 
 
 		Config(const std::string &);

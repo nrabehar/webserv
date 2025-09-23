@@ -49,14 +49,13 @@ BASE_CACHESRC += Cache.cpp \
 FILESRC += FileCache.cpp \
 				FileHandler.cpp \
 
-CONFIGSRC += Config.cpp \
-						ConfigMerger.cpp \
-						ConfigParser.cpp \
-						ConfigValidator.cpp
-
+CONFIGSRC += Config.cpp
+CONFIGSRC += Sanitizer.cpp
+CONFIGSRC += Parser.cpp
+CONFIGSRC += Merger.cpp
+CONFIGSRC += Validator.cpp
 CONFIGSRC += Server.cpp
 CONFIGSRC += Transformer.cpp
-CONFIGSRC += Sanitizer.cpp
 
 BASESRC += base.cpp
 

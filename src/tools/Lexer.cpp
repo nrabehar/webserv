@@ -17,33 +17,18 @@ std::vector<Token> Lexer::tokenize(const std::string &inp)
 			{
 				++line;
 				if (tokens.size() && (!(tokens.back().type & (TK_SEMICOLON | TK_BRACE_C | TK_BRACE_O))))
-					tokens.push_back(Token(std::string(1, '~'), line - 1, TK_EOL));
+					tokens.push_back(Token(std::string(1, ';'), line - 1, TK_SEMICOLON));
 			}
 			++i;
 			continue ;
 		}
 		else if (TokenU::isSymbol(std::string(1, inp[i])))
 		{
-			if (tokens.size() && tokens.back().type & TK_EOL)
-			{
-				if (inp[i] != '{')
-				{
-						tokens.back().type = TK_SEMICOLON;
-						tokens.back().value = ";";
-				}
-				else
-					tokens.pop_back();
-			}
 			tokens.push_back(Token(std::string(1, inp[i]), line));
 			i++;
 		}
 		else
 		{
-			if (tokens.size() && tokens.back().type & TK_EOL)
-			{
-				tokens.back().type = TK_SEMICOLON;
-				tokens.back().value = ";";
-			}
 			size_t start = i;
 			while (i < inp.size() && !TokenU::isSymbol(std::string(1, inp[i])) &&
 				!std::isspace(static_cast<unsigned char>(inp[i])))

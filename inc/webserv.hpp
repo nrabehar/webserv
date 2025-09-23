@@ -112,13 +112,13 @@ enum e_LogLevel
 #include "file/FileCache.hpp"
 #include "file/FileHandler.hpp"
 
-#include "config/ConfigValidator.hpp"
-#include "config/ConfigParser.hpp"
-#include "config/ConfigMerger.hpp"
 #include "config/Config.hpp"
 #include "config/Server.hpp"
-#include "config/Transformer.hpp"
 #include "config/Sanitizer.hpp"
+#include "config/Parser.hpp"
+#include "config/Merger.hpp"
+#include "config/Validator.hpp"
+#include "config/Transformer.hpp"
 
 
 #endif

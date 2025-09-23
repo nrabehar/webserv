@@ -38,21 +38,17 @@ void	Config::parse()
 	TokenU::setSymRef("#;{}");
 
 	std::string content = Sanitizer::sanitize(_file->getData());
-	std::cout << "Should no comments content: " << std::endl;
-	std::cout << content << std::endl << std::endl;
-	std::cout << "===================================" << std::endl;
-
 	std::vector<Token> tokens = Lexer::tokenize(content);
 	TokenStream ss(tokens);
 	DirectiveParser parser(ss);
 	_root = parser.parse();
 	_root->print();
-	ConfigValidator::validate(_root);
+	Validator::validate(_root);
 
 	std::vector<Node<Token>* > & childs = _root->getChild();
 
 	for (size_t i = 0; i < childs.size(); ++i)
-		ConfigMerger::merge(_root, childs[i]);
+		Merger::merge(_root, childs[i]);
 
 	_servers = Transformer::transform(_root);
 

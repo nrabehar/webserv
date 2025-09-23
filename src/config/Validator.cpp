@@ -1,13 +1,13 @@
 #include "webserv.hpp"
 
-bool ConfigValidator::_valid = true;
-bool ConfigValidator::_checked = false;
-std::string ConfigValidator::_status = "ok";
+bool Config::Validator::_valid = true;
+bool Config::Validator::_checked = false;
+std::string Config::Validator::_status = "ok";
 
-ConfigValidator::ConfigValidator() {}
-ConfigValidator::~ConfigValidator() {}
+Config::Validator::Validator() {}
+Config::Validator::~Validator() {}
 
-bool	ConfigValidator::validate(Node<Token> *node)
+bool	Config::Validator::validate(Node<Token> *node)
 {
 
 	if (!_valid)
@@ -38,7 +38,7 @@ bool	ConfigValidator::validate(Node<Token> *node)
 
 }
 
-void ConfigValidator::checkHttp(Node<Token> * node)
+void Config::Validator::checkHttp(Node<Token> * node)
 {
 
 	if (!node || !_valid || _checked)
@@ -56,7 +56,7 @@ void ConfigValidator::checkHttp(Node<Token> * node)
 	_valid = DirectiveChecker::check(http);
 
 }
-void ConfigValidator::checkServer(Node<Token> * node)
+void Config::Validator::checkServer(Node<Token> * node)
 {
 
 	if (!node || !_valid || _checked)
@@ -74,7 +74,7 @@ void ConfigValidator::checkServer(Node<Token> * node)
 	_valid = DirectiveChecker::check(server);
 
 }
-void ConfigValidator::checkLocation(Node<Token> * node)
+void Config::Validator::checkLocation(Node<Token> * node)
 {
 
 	if (!node || !_valid || _checked)
@@ -99,7 +99,7 @@ void ConfigValidator::checkLocation(Node<Token> * node)
 		_valid = false;
 
 }
-void ConfigValidator::checkListen(Node<Token> * node)
+void Config::Validator::checkListen(Node<Token> * node)
 {
 
 	if (!node || !_valid || _checked)
@@ -120,7 +120,7 @@ void ConfigValidator::checkListen(Node<Token> * node)
 	// @todo check valid port/ip
 
 }
-void ConfigValidator::checkRoot(Node<Token> * node)
+void Config::Validator::checkRoot(Node<Token> * node)
 {
 
 	if (!node || !_valid || _checked)
@@ -138,7 +138,7 @@ void ConfigValidator::checkRoot(Node<Token> * node)
 	_valid = DirectiveChecker::check(root);
 
 }
-void ConfigValidator::checkIndex(Node<Token> * node)
+void Config::Validator::checkIndex(Node<Token> * node)
 {
 
 	if (!node || !_valid || _checked)
@@ -156,7 +156,7 @@ void ConfigValidator::checkIndex(Node<Token> * node)
 	_valid = DirectiveChecker::check(index);
 
 }
-void ConfigValidator::checkAutoindex(Node<Token> * node)
+void Config::Validator::checkAutoindex(Node<Token> * node)
 {
 
 	if (!node || !_valid || _checked)
@@ -174,7 +174,7 @@ void ConfigValidator::checkAutoindex(Node<Token> * node)
 	_valid = DirectiveChecker::check(autoindex);
 
 }
-void ConfigValidator::checkErrorPage(Node<Token> * node)
+void Config::Validator::checkErrorPage(Node<Token> * node)
 {
 
 	if (!node || !_valid || _checked)
@@ -198,7 +198,7 @@ void ConfigValidator::checkErrorPage(Node<Token> * node)
 		throw std::runtime_error("invalid error_page location");
 
 }
-void ConfigValidator::checkClientMaxBodySize(Node<Token> * node)
+void Config::Validator::checkClientMaxBodySize(Node<Token> * node)
 {
 
 	if (!node || !_valid || _checked)
@@ -216,7 +216,7 @@ void ConfigValidator::checkClientMaxBodySize(Node<Token> * node)
 	_valid = DirectiveChecker::check(max_body);
 
 }
-void ConfigValidator::checkKeepaliveTimeout(Node<Token> * node)
+void Config::Validator::checkKeepaliveTimeout(Node<Token> * node)
 {
 
 	if (!node || !_valid || _checked)
@@ -234,7 +234,7 @@ void ConfigValidator::checkKeepaliveTimeout(Node<Token> * node)
 	_valid = DirectiveChecker::check(keepalive);
 
 }
-void ConfigValidator::checkServerName(Node<Token> * node)
+void Config::Validator::checkServerName(Node<Token> * node)
 {
 
 	if (!node || !_valid || _checked)
@@ -252,7 +252,7 @@ void ConfigValidator::checkServerName(Node<Token> * node)
 	_valid = DirectiveChecker::check(server_name);
 
 }
-void ConfigValidator::checkCgi(Node<Token> * node)
+void Config::Validator::checkCgi(Node<Token> * node)
 {
 
 	if (!node || !_valid || _checked)
@@ -270,7 +270,7 @@ void ConfigValidator::checkCgi(Node<Token> * node)
 	_valid = DirectiveChecker::check(cgi);
 
 }
-void ConfigValidator::checkAllowedMethod(Node<Token> * node)
+void Config::Validator::checkAllowedMethod(Node<Token> * node)
 {
 
 	if (!node || !_valid || _checked)

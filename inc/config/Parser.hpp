@@ -1,9 +1,9 @@
 #ifndef CONFIGPARSER_HPP
 #define CONFIGPARSER_HPP
 
-#include "webserv.hpp"
+#include "../webserv.hpp"
 
-class ConfigParser
+class Config::Parser
 {
 
 	private:
@@ -13,14 +13,14 @@ class ConfigParser
 
 	public:
 	
-		ConfigParser();
-		~ConfigParser();
+		Parser();
+		~Parser();
 		static Node<std::string>* parse(std::vector<Token> & token);
 
 	private:
 		
-		ConfigParser(const ConfigParser &);
-		ConfigParser & operator=(const ConfigParser &);
+		Parser(const Parser &);
+		Parser & operator=(const Parser &);
 
 		static Node<std::string>*	parseStatement();
 		static Node<std::string>*	parseBlock(const std::string &, const std::vector<std::string> &);

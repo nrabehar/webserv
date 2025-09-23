@@ -3,23 +3,20 @@
 
 #include "../webserv.hpp"
 
-class ConfigMerger
+class Config::Merger
 {
-
-	private:
-		
 
 	public:
 		
-		ConfigMerger();
-		~ConfigMerger();
+		Merger();
+		~Merger();
 
 		static void	merge(Node<Token> *, Node<Token> *);
 
 	private:
 	
-		ConfigMerger(const ConfigMerger &);
-		ConfigMerger & operator=(const ConfigMerger &);
+		Merger(const Merger &);
+		Merger & operator=(const Merger &);
 
 };
 

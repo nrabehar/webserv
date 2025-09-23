@@ -1,9 +1,9 @@
 #include "webserv.hpp"
 
-ConfigMerger::ConfigMerger() {}
-ConfigMerger::~ConfigMerger() {}
+Config::Merger::Merger() {}
+Config::Merger::~Merger() {}
 
-void ConfigMerger::merge(Node<Token> *parent, Node<Token> *child)
+void Config::Merger::merge(Node<Token> *parent, Node<Token> *child)
 {
     if (!parent || !child) return;
 

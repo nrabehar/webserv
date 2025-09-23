@@ -1,12 +1,12 @@
 #include "webserv.hpp"
 
-std::vector<Token>ConfigParser::_token;
-size_t ConfigParser::_pos = 0;
+std::vector<Token>Config::Parser::_token;
+size_t Config::Parser::_pos = 0;
 
-ConfigParser::ConfigParser() {}
-ConfigParser::~ConfigParser() {}
+Config::Parser::Parser() {}
+Config::Parser::~Parser() {}
 
-Node<std::string>*	ConfigParser::parse(std::vector<Token>& token)
+Node<std::string>*	Config::Parser::parse(std::vector<Token>& token)
 {
 	_token = token;
 	Node<std::string>*	root = new Node<std::string>("base");
@@ -17,12 +17,11 @@ Node<std::string>*	ConfigParser::parse(std::vector<Token>& token)
 	return (root);
 }
 
-Node<std::string>* ConfigParser::parseStatement()
+Node<std::string>* Config::Parser::parseStatement()
 {
 	expectType(TK_STRING);
 	std::string name = _token[_pos].value;
 	int					line = _token[_pos].line;
-	// ++_pos;
 
 	std::vector<std::string> args;
 	while ((_token[_pos].type & TK_STRING) && line == _token[_pos].line)
@@ -52,7 +51,7 @@ Node<std::string>* ConfigParser::parseStatement()
 		throw std::runtime_error("Syntax error at line "+toStr(_token[_pos].line));
 }
 
-Node<std::string>*	ConfigParser::parseDirective(const std::string & name, const std::vector<std::string> & args)
+Node<std::string>*	Config::Parser::parseDirective(const std::string & name, const std::vector<std::string> & args)
 {
 	Node<std::string>*	directive = new Node<std::string>(name);
 	for (size_t i = 0; i < args.size(); ++i)
@@ -61,7 +60,7 @@ Node<std::string>*	ConfigParser::parseDirective(const std::string & name, const 
 	return (directive);
 }
 
-Node<std::string>*	ConfigParser::parseBlock(const std::string &name, const std::vector<std::string> &args)
+Node<std::string>*	Config::Parser::parseBlock(const std::string &name, const std::vector<std::string> &args)
 {
 	Node<std::string>*	block = new Node<std::string>(name);
 	++_pos;
@@ -76,7 +75,7 @@ Node<std::string>*	ConfigParser::parseBlock(const std::string &name, const std::
 }
 
 
-Node<std::string>*	ConfigParser::skipComment(const std::string &name, const std::vector<std::string> &args)
+Node<std::string>*	Config::Parser::skipComment(const std::string &name, const std::vector<std::string> &args)
 {
 	int line = _token[_pos].line;
 	while (_pos < _token.size() && line == _token[_pos].line)
@@ -93,14 +92,14 @@ Node<std::string>*	ConfigParser::skipComment(const std::string &name, const std:
 	return (NULL);
 }
 
-bool	ConfigParser::expectType(TokenType type)
+bool	Config::Parser::expectType(TokenType type)
 {
 	if (!(_token[_pos].type & type))
 		throw std::runtime_error("Unexpected token at line " + toStr(_token[_pos].line));
 	return (true);
 }
 
-std::string	ConfigParser::toStr(int n)
+std::string	Config::Parser::toStr(int n)
 {
 	std::ostringstream oss;
 
