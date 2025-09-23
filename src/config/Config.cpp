@@ -40,6 +40,7 @@ void	Config::parse()
 	TokenStream ss(tokens);
 	DirectiveParser parser(ss);
 	_root = parser.parse();
+	_root->print();
 	ConfigValidator::validate(_root);
 
 	std::vector<Node<Token>* > & childs = _root->getChild();

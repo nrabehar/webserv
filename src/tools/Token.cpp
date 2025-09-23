@@ -96,5 +96,6 @@ TokenStream & TokenStream::operator=(const TokenStream &other)
 TokenStream::~TokenStream() {}
 const Token& TokenStream::peek() const { return (_tokens[_cursor]); }
 const Token& TokenStream::next() { return (_tokens[++_cursor]); }
+const Token& TokenStream::prev() const { return (_tokens[_cursor - 1]); }
 void TokenStream::skip() { _tokens[_cursor++]; }
 bool	TokenStream::eof() const { return (_cursor >= _tokens.size() || _tokens[_cursor].isType(TK_EOF)); } 

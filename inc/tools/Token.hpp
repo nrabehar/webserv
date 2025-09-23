@@ -18,8 +18,9 @@ enum TokenType
 
 	TK_ON 			= 1 << 9,
 	TK_OFF 			= 1 << 10,
-
-	TK_EOF     		= 1 << 11
+	
+	TK_EOL 			= 1 << 11,
+	TK_EOF     		= 1 << 12
 };
 
 struct Token
@@ -69,6 +70,7 @@ class ITokenStream
 
 		virtual ~ITokenStream() {}
     virtual const Token& peek() const = 0;
+    virtual const Token& prev() const = 0;
     virtual const Token& next() = 0;
     virtual void skip() = 0;
     virtual bool eof() const = 0;
@@ -93,6 +95,7 @@ class TokenStream
 
 		const Token& peek() const;
     const Token& next();
+    const Token& prev() const;
     void skip();
     bool eof() const;
 

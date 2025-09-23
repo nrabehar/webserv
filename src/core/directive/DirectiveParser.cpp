@@ -99,7 +99,7 @@ Node<Token>*	DirectiveParser::parseBlock(const std::string & name, const std::ve
 	if (_stream.eof())
 	{
 		delete block;
-		throw std::runtime_error("Unexpected end of file");
+		throw std::runtime_error("Unexpected end of file last line " + line());
 	}
 
 	if (!_stream.eof() && !t.isType(TK_STRING) && !t.isType(TK_BRACE_C))
@@ -119,7 +119,7 @@ Node<Token>*	DirectiveParser::parseBlock(const std::string & name, const std::ve
 		block->addChild(parseStatement());
 	
 	if (_stream.eof())
-		throw std::runtime_error("Unexpected end of file");
+		throw std::runtime_error("Unexpected end of file last line " + line());
 		
 	_stream.skip();
 
@@ -155,11 +155,12 @@ Node<Token>*	DirectiveParser::skipComment(const std::string & name, const std::v
 std::string	DirectiveParser::line()
 {
 
-	if (_stream.eof())
-		return ("unknown");
-	
 	std::ostringstream oss;
-	oss << _stream.peek().line;
+
+	if (_stream.eof())
+		oss << _stream.prev().line;
+	else	
+		oss << _stream.peek().line;
 
 	return (oss.str());
 
