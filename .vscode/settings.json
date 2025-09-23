@@ -11,6 +11,18 @@
 		"comments": "off",
 		"strings": "off"
 	},
+	"files.exclude": {
+		"**/.git": true,
+		"**/.svn": true,
+		"**/.hg": true,
+		"**/.DS_Store": true,
+		"**/Thumbs.db": true,
+		"**/.vscode": true,
+		"**/*.o": true,
+		"**/*.obj": true,
+		"**/.gitignore": true,
+		"**/.code": true,
+	},
 	"editor.tabCompletion": "onlySnippets",
 	"editor.suggest.showKeywords": false,
 	"editor.suggest.showWords": false,

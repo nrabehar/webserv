@@ -1,0 +1,59 @@
+{
+  "Preprocessor C/Cpp": {
+    "scope": "c, cpp",
+    "prefix": "#ifndef",
+    "body": [
+      "#ifndef ${TM_FILENAME_BASE/(\\w+)(?:\\.|$)/${1:/upcase}_/g}${TM_FILENAME/.*\\.(\\w+)$/${1:/upcase}/}",
+      "#define ${TM_FILENAME_BASE/(\\w+)(?:\\.|$)/${1:/upcase}_/g}${TM_FILENAME/.*\\.(\\w+)$/${1:/upcase}/}",
+      "",
+      "${0}",
+      "",
+      "#endif"
+    ],
+    "description": "Header guard"
+  },
+  "Class Cpp": {
+    "scope": "cpp",
+    "prefix": "class",
+    "body": [
+      "class ${1:${TM_FILENAME_BASE/(\\w+)(?:\\.|$)/${1:/capitalize}/g}}\n{",
+      "\tpublic: virtual ~${1}();",
+      "\t${1}();",
+      "\t${1}(const ${1} & src);",
+      "\t${1} & operator=(const ${1} & rhs);",
+      "};${0}",
+    ],
+    "description": "Canonical Class"
+  },
+  "Canonical Class Cpp": {
+    "scope": "cpp",
+    "prefix": "canon",
+    "body": [
+      "${1:${TM_FILENAME_BASE/(\\w+)(?:\\.|$)/${1:/capitalize}/g}}::~${1}() {}",
+      "${1}::${1}() {}",
+      "${1}::${1}(const ${1} & src) { (void)src; }",
+      "${1} & ${1}::operator=(const ${1} & rhs) { (void)rhs; return (*this); }\n${0}",
+    ],
+    "description": "Canonical Class implementaion"
+  },
+  "Interface Cpp": {
+    "scope": "cpp",
+    "prefix": "interface",
+    "body": [
+      "class ${1:${TM_FILENAME_BASE/(\\w+)(?:\\.|$)/${1:/capitalize}/g}}\n{",
+      "\tpublic: virtual ~${1}() {};",
+      "};${0}",
+    ],
+    "description": "Interface Class"
+  },
+  "Structure Cpp": {
+    "scope": "cpp",
+    "prefix": "struct",
+    "body": [
+      "struct ${1:${TM_FILENAME_BASE/(\\w+)(?:\\.|$)/${1:/capitalize}/g}}\n{",
+      "\t${0}",
+      "};",
+    ],
+    "description": "Canonical Structure"
+  }
+}
