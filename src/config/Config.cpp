@@ -36,7 +36,9 @@ void	Config::parse()
 {
 
 	TokenU::setSymRef("#;{}");
-	std::vector<Token> tokens = Lexer::tokenize(_file->getData());
+
+	std::string content = Sanitizer::sanitize(_file->getData());
+	std::vector<Token> tokens = Lexer::tokenize(content);
 	TokenStream ss(tokens);
 	DirectiveParser parser(ss);
 	_root = parser.parse();

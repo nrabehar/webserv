@@ -31,6 +31,7 @@ DIRVALIDATOR = validator/
 BASESRC += base.cpp
 TOOLSSRC += Logger.cpp
 TOOLSSRC += Signal.cpp
+TOOLSSRC += String.cpp
 TOOLSSRC += Token.cpp
 TOOLSSRC += TokenExtractor.cpp
 TOOLSSRC += Lexer.cpp
@@ -55,6 +56,7 @@ CONFIGSRC += Config.cpp \
 
 CONFIGSRC += Server.cpp
 CONFIGSRC += Transformer.cpp
+CONFIGSRC += Sanitizer.cpp
 
 BASESRC += base.cpp
 

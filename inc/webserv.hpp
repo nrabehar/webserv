@@ -87,6 +87,7 @@ enum e_LogLevel
 #include "tools/Logger.hpp"
 #include "tools/Signal.ipp"
 #include "tools/Signal.hpp"
+#include "tools/String.hpp"
 #include "tools/Token.hpp"
 #include "tools/TokenExtractor.hpp"
 
@@ -117,6 +118,7 @@ enum e_LogLevel
 #include "config/Config.hpp"
 #include "config/Server.hpp"
 #include "config/Transformer.hpp"
+#include "config/Sanitizer.hpp"
 
 
 #endif

@@ -3,6 +3,7 @@
 
 #include "../webserv.hpp"
 
+//? Use this like namespace
 class Config
 {
 
@@ -16,6 +17,7 @@ class Config
 
 		struct Server;
 		class Transformer;
+		class Sanitizer;
 
 
 		Config(const std::string &);
