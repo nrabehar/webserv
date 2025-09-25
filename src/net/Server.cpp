@@ -12,12 +12,17 @@ Net::Server::~Server() {}
 void	Net::Server::handle(short e)
 {
 
-	if (e == POLLIN)
+	switch (e)
 	{
-
-		if (!acceptConnection())
-			throw std::runtime_error("Could not accept client");
-
+		case POLLIN:
+			if (!acceptConnection())
+				throw std::runtime_error("Could not accept client");
+			break;
+		case POLLOUT:
+			break;		
+		default:
+			throw std::runtime_error("Server jsut down");
+			break;
 	}
 
 }
