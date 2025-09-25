@@ -79,12 +79,31 @@ void Config::Transformer::parseListen(Node<Token> * listen_node, ServerConfig::L
 {
 
 	const std::vector<Token> & arg = listen_node->getData();
-	if (arg.size() >= 1)
+	if (arg.size() == 2)
+	{
+		if (String::isNumeric(arg[0].value))
+		{
+			listen.port = arg[0].value;
+			listen.host = arg[1].value;
+			return ;
+		}
+		listen.port = arg[1].value;
+		listen.host = arg[0].value;
+		return ;
+	}
+	size_t	coln_pos = arg[0].value.find_last_of(':');
+	if (coln_pos != std::string::npos)
+	{
+		listen.port = arg[0].value.substr(coln_pos + 1);
+		listen.host = arg[0].value.substr(0, coln_pos);
+		return ;
+	}
+	if (String::isNumeric(arg[0].value))
+	{
 		listen.port = arg[0].value;
-	if (arg.size() >= 2)
-		listen.host = arg[1].value;
-
-	// ! @todo make full parsing here or do it on validator
+		return ;
+	}
+	listen.host = arg[0].value;
 
 }
 

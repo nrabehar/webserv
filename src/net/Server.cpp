@@ -32,7 +32,7 @@ void	Net::Server::setup()
 
 	int	s = getAddrInfo();
 	if (s != 0)
-		throw std::runtime_error("getaddrinfo: " + std::string(gai_strerror(s)));
+		throw std::runtime_error(std::string(gai_strerror(s)));
 
 	_fd = socket(AF_INET, SOCK_STREAM, 0);
 	if (_fd == -1)
@@ -42,14 +42,13 @@ void	Net::Server::setup()
 	if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &opt_val, sizeof(opt_val)) < 0)
 		throw std::runtime_error("Cannot set SO_REUSEADDR");
 
-	if (bind(_fd, _infos->ai_addr, _infos->ai_addrlen) == 0)
-	{	
+	if (bind(_fd, _infos->ai_addr, _infos->ai_addrlen) == -1)
+	{
 		freeaddrinfo(_infos);
 		throw std::runtime_error("Could not bind " + _listen.host + ":" + _listen.port + " " + std::string(strerror(errno)));
 	}
 	freeaddrinfo(_infos);
 
-	::close(_fd);
 	if (listen(_fd, LISTEN_BACKLOG) == -1)
 		throw std::runtime_error("Could not listen " + _listen.host + ":" + _listen.port);
 

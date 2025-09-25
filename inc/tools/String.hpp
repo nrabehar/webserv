@@ -23,6 +23,16 @@ class String
 
 		static bool	isNumeric(const std::string & s);
 
+		template<typename T>
+		static std::string str(const T & v)
+		{
+
+			std::ostringstream oss;
+			oss << v;
+			return (oss.str());
+
+		}
+
 	private:
 
 		String();
