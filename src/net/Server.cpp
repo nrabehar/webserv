@@ -34,54 +34,36 @@ void	Net::Server::setup()
 	if (s != 0)
 		throw std::runtime_error("getaddrinfo: " + std::string(gai_strerror(s)));
 
-	struct addrinfo *rp;
-	for (rp = _infos; rp != NULL; rp = rp->ai_next)
-	{
+	_fd = socket(AF_INET, SOCK_STREAM, 0);
+	if (_fd == -1)
+		throw std::runtime_error("Could not create socket");
 
-		_fd = socket(rp->ai_family, rp->ai_socktype, rp->ai_protocol);
-		if (_fd == -1)
-			continue ;
+	int opt_val = 1;
+	if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &opt_val, sizeof(opt_val)) < 0)
+		throw std::runtime_error("Cannot set SO_REUSEADDR");
 
-		int opt_val = 1;
-		if (setsockopt(_fd, SOL_SOCKET, SO_REUSEADDR, &opt_val, sizeof(opt_val)) < 0)
-			throw std::runtime_error("Cannot set SO_REUSEADDR");
-
-		if (bind(_fd, rp->ai_addr, rp->ai_addrlen) == 0)
-			break ;
-
-		std::cout << "try" << std::endl;
-
-		::close(_fd);
-
+	if (bind(_fd, _infos->ai_addr, _infos->ai_addrlen) == 0)
+	{	
+		freeaddrinfo(_infos);
+		throw std::runtime_error("Could not bind " + _listen.host + ":" + _listen.port + " " + std::string(strerror(errno)));
 	}
-
 	freeaddrinfo(_infos);
 
-	if (rp == NULL)
-		throw std::runtime_error("Could not bind " + _listen.host + ":" + _listen.port + " " + std::string(strerror(errno)));
-
+	::close(_fd);
 	if (listen(_fd, LISTEN_BACKLOG) == -1)
 		throw std::runtime_error("Could not listen " + _listen.host + ":" + _listen.port);
 
 }
 
+
 int	Net::Server::getAddrInfo()
 {
-
-	struct addrinfo hints;
-
-	std::memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_INET; //! maybe set family in  listen parser
-	hints.ai_socktype = SOCK_STREAM;
-	hints.ai_protocol = 0;
-	hints.ai_canonname = NULL;
-	hints.ai_addr = NULL;
-	hints.ai_next = NULL;
 
 	const char * host = _listen.host.c_str();
 	const char * port = _listen.port.c_str();
 
-	return (::getaddrinfo(host, port, &hints, &_infos));
+	std::cout << "Try to getaddrinfo: " << host << "===" << port << std::endl;
+	return (::getaddrinfo(host, port, NULL, &_infos));
 
 }
 
