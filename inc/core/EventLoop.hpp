@@ -12,18 +12,6 @@ class EventLoop
 		bool	_running;
 		static EventLoop	*	_inst;
 
-		enum OpType { OP_ADD, OP_MOD, OP_DEL };
-		struct PendingOp
-		{
-
-			OpType	type;
-			IEventHandler *	handler;
-			short	event;
-
-		};
-
-		std::vector<PendingOp>	_pending;
-
 	public:
 
 		~EventLoop();
@@ -43,8 +31,6 @@ class EventLoop
 		EventLoop();
 		EventLoop(const EventLoop &);
 		EventLoop & operator=(const EventLoop &);
-
-		void	applyPending();
 
 };
 

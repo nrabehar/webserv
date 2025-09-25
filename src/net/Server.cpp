@@ -1,7 +1,7 @@
 #include "webserv.hpp"
 
 Net::Server::Server(const ServerConfig::Listen & listen, const ServerConfig & conf)
-	: EventHandler(), _conf(conf), _listen(listen), _infos(NULL)
+	: EventHandler(-1), _conf(conf), _listen(listen), _infos(NULL)
 {
 
 	setup();
@@ -11,7 +11,15 @@ Net::Server::~Server() {}
 
 void	Net::Server::handle(short e)
 {
-	(void)e;
+
+	if (e == POLLIN)
+	{
+
+		if (!acceptConnection())
+			throw std::runtime_error("Could not accept client");
+
+	}
+
 }
 
 void	Net::Server::setup()
@@ -36,6 +44,8 @@ void	Net::Server::setup()
 		if (bind(_fd, rp->ai_addr, rp->ai_addrlen) == 0)
 			break ;
 
+		std::cout << "try" << std::endl;
+
 		::close(_fd);
 
 	}
@@ -43,7 +53,7 @@ void	Net::Server::setup()
 	freeaddrinfo(_infos);
 
 	if (rp == NULL)
-		throw std::runtime_error("Could not bind " + _listen.host + ":" + _listen.port);
+		throw std::runtime_error("Could not bind " + _listen.host + ":" + _listen.port + " " + std::string(strerror(errno)));
 
 	if (listen(_fd, LISTEN_BACKLOG) == -1)
 		throw std::runtime_error("Could not listen " + _listen.host + ":" + _listen.port);
@@ -80,9 +90,8 @@ bool	Net::Server::acceptConnection()
 	if (c_fd == -1)
 		return (false);
 
-	// TODO: create new Client connection and register to poll
-	//! just close client fd for now
-	::close(c_fd);
+	Connection * client = new Connection(c_fd, this);
+	EventLoop::instance().addHandler(client, POLLIN | POLLOUT);
 
 	return (true);
 

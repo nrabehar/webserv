@@ -23,6 +23,7 @@ class EventHandler: public IEventHandler
 	public:
 
 		EventHandler();
+		EventHandler(int fd = -1);
 		~EventHandler();
 
 		virtual int 	fd() const;

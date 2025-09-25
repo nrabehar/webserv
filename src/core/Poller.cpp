@@ -4,8 +4,9 @@ Poller::Poller() {}
 Poller::~Poller()
 {
 
-	for (size_t i = 0; i < _pfds.size(); ++i)
-		del(_handlers[_pfds[i].fd]);
+	std::map<int, IEventHandler * >::const_iterator it;
+	for (it = _handlers.begin(); it != _handlers.end(); ++it)
+		delete (it->second);
 	_pfds.clear();
 	_handlers.clear();
 
@@ -21,6 +22,7 @@ void Poller::add(IEventHandler * h, short events)
 	p.revents = 0;
 
 	_pfds.push_back(p);
+	_handlers[p.fd] = h;
 
 }
 

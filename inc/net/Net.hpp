@@ -14,6 +14,7 @@ class Net
 		~Net();
 
 		class Server;
+		class Connection;
 
 	private:
 

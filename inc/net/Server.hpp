@@ -2,9 +2,7 @@
 #define SERVER_HPP
 
 #include "Net.hpp"
-#include "../config/Config.hpp"
-#include "../core/EventHandler.hpp"
-#include "../core/Poller.hpp"
+#include "Connection.hpp"
 
 #define	LISTEN_BACKLOG	128
 

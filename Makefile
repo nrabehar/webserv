@@ -60,6 +60,7 @@ CONFIGSRC += Server.cpp
 CONFIGSRC += Transformer.cpp
 
 NETSRC += Server.cpp
+NETSRC += Connection.cpp
 
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 

@@ -19,7 +19,6 @@ static void _run(const char * configfile)
 	}
 
 	EventLoop::instance().run();
-	EventLoop::instance().destroy();
 }
 
 int main(int ac, char **av)
@@ -27,7 +26,16 @@ int main(int ac, char **av)
 	if (ac != 2) { ERR("Usage: ./webserv <configfile>"); return (1); }
 	LOG("Starting web server...");
 	try { _run(av[1]); }
-	catch (std::exception & e) { ERR(e.what()); return (1); }
+	catch (std::exception & e)
+	{
+
+		ERR(e.what());
+		EventLoop::destroy();
+		LOG("Shutting down web server...");
+		return (1);
+
+	}
+	EventLoop::destroy();
 	LOG("Shutting down web server...");
 	return (Signal::existcode);
 }
