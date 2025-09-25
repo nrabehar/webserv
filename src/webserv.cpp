@@ -10,8 +10,20 @@ static void _run(const char * configfile)
 	Signal().setup();
 	Config cm(configfile);
 	cm.load();
-	cm.parse();
+	const std::vector<ServerConfig>	& servers = cm.servers();
+
+	for (size_t i = 0; i < servers.size(); ++i)
+	{
+		const std::vector<ServerConfig::Listen> & listens = servers[i].listen;
+		for (size_t i = 0; i < listens.size(); ++i)
+		{
+			Net::Server * server = new Net::Server(listens[i], servers[i]);
+			EventLoop::instance().addHandler(server, POLLIN);
+		}
+	}
+
 	EventLoop::instance().run();
+	EventLoop::instance().destroy();
 }
 
 int main(int ac, char **av)

@@ -3,10 +3,10 @@
 Config::Transformer::Transformer() {}
 Config::Transformer::~Transformer() {}
 
-std::vector<Config::Server>	Config::Transformer::transform(Node<Token> * root)
+std::vector<ServerConfig>	Config::Transformer::transform(Node<Token> * root)
 {
 
-	std::vector<Server>	servers;
+	std::vector<ServerConfig>	servers;
 
 	if (!root)
 	{
@@ -22,7 +22,7 @@ std::vector<Config::Server>	Config::Transformer::transform(Node<Token> * root)
 		Node<Token> * node = child[i];
 		if (node->getName() == "server")
 		{
-			Server server;
+			ServerConfig server;
 			parseServer(node, server);
 			servers.push_back(server);
 		}
@@ -30,7 +30,7 @@ std::vector<Config::Server>	Config::Transformer::transform(Node<Token> * root)
 		else
 		{
 	
-			std::vector<Config::Server> nested = transform(node);
+			std::vector<ServerConfig> nested = transform(node);
 			servers.insert(servers.end(), nested.begin(), nested.end());
 
 		}
@@ -41,7 +41,7 @@ std::vector<Config::Server>	Config::Transformer::transform(Node<Token> * root)
 
 }
 
-void Config::Transformer::parseServer(Node<Token> * svr_node, Server & svr)
+void Config::Transformer::parseServer(Node<Token> * svr_node, ServerConfig & svr)
 {
 
 	const std::vector<Node<Token>* > & child = svr_node->getChild();
@@ -53,7 +53,7 @@ void Config::Transformer::parseServer(Node<Token> * svr_node, Server & svr)
 		if (node->getName() == "listen")
 		{
 
-			Server::Listen listen;
+			ServerConfig::Listen listen;
 			parseListen(node, listen);
 			svr.listen.push_back(listen);
 
@@ -61,7 +61,7 @@ void Config::Transformer::parseServer(Node<Token> * svr_node, Server & svr)
 		else if (node->getName() == "location")
 		{
 
-			Server::Location location;
+			LocationConfig location;
 			parseLocation(node, location);
 			svr.location.push_back(location);
 
@@ -75,7 +75,7 @@ void Config::Transformer::parseServer(Node<Token> * svr_node, Server & svr)
 
 }
 
-void Config::Transformer::parseListen(Node<Token> * listen_node, Server::Listen & listen)
+void Config::Transformer::parseListen(Node<Token> * listen_node, ServerConfig::Listen & listen)
 {
 
 	const std::vector<Token> & arg = listen_node->getData();
@@ -88,7 +88,7 @@ void Config::Transformer::parseListen(Node<Token> * listen_node, Server::Listen 
 
 }
 
-void Config::Transformer::parseLocation(Node<Token> * loc_node, Server::Location & loc)
+void Config::Transformer::parseLocation(Node<Token> * loc_node, LocationConfig & loc)
 {
 
 	loc.path = loc_node->getData()[0].value;

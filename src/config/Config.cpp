@@ -10,6 +10,8 @@ Config::~Config()
 		delete _root;
 }
 
+const std::vector<ServerConfig> &	Config::servers() const { return (_servers); }
+
 void	Config::load()
 {
 	
@@ -28,6 +30,7 @@ void	Config::load()
 	if (!_file)
 		throw std::runtime_error(handler.getReason());
 	_file->read();
+	parse();
 	std::cout << "Configuration file loaded: " << _path << std::endl;
 
 }
@@ -52,13 +55,4 @@ void	Config::parse()
 
 	_servers = Transformer::transform(_root);
 
-	std::cout << "Server size " << _servers.size() << std::endl;
-
-	for (size_t i = 0; i < _servers.size(); ++i)
-	{
-		std::cout << "SERVER " << i + 1 << " :" << std::endl << std::endl;
-		_servers[i].print();
-		std::cout << std::endl;
-	}
-	
 }

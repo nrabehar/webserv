@@ -11,16 +11,16 @@ class Config::Transformer
 		Transformer();
 		~Transformer();
 
-		static std::vector<Config::Server> transform(Node<Token>* root);
+		static std::vector<ServerConfig> transform(Node<Token>* root);
 
 	private:
 
 		Transformer(const Transformer &);
 		Transformer & operator=(const Transformer &);
 
-		static void parseServer(Node<Token>* svr_node, Server& svr);
-		static void parseListen(Node<Token>* listen_node, Server::Listen& listen);
-		static void parseLocation(Node<Token>* loc_node, Server::Location& loc);
+		static void parseServer(Node<Token>* svr_node, ServerConfig& svr);
+		static void parseListen(Node<Token>* listen_node, ServerConfig::Listen& listen);
+		static void parseLocation(Node<Token>* loc_node, LocationConfig& loc);
 
 };
 

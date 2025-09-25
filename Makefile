@@ -22,7 +22,7 @@ DIRHANDLER = handler/
 DIRHTTP = http/
 DIRINTERFACE = interface/
 DIRLOCATION = location/
-DIRNETWORK = network/
+DIRNET = net/
 DIRPARSER = parser/
 DIRSERVER = server/
 DIRTOOLS = tools/
@@ -40,6 +40,7 @@ CORESRC += directive/Directive.cpp
 CORESRC += directive/DirectiveParser.cpp
 CORESRC += directive/DirectiveRegistry.cpp
 CORESRC += EventLoop.cpp
+CORESRC += EventHandler.cpp
 CORESRC += Poller.cpp
 
 CORESRC += node/NodeChecker.cpp
@@ -60,6 +61,8 @@ CONFIGSRC += Server.cpp
 CONFIGSRC += Transformer.cpp
 
 BASESRC += base.cpp
+
+NETSRC += Server.cpp
 
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 
@@ -88,7 +91,7 @@ SRC += $(addprefix $(DIRINTERFACE), $(INTERFACESRC))
 
 SRC += $(addprefix $(DIRLOCATION), $(LOCATIONSRC))
 
-SRC += $(addprefix $(DIRNETWORK), $(NETWORKSRC))
+SRC += $(addprefix $(DIRNET), $(NETSRC))
 
 SRC += $(addprefix $(DIRPARSER), $(PARSERSRC))
 

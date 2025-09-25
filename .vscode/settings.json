@@ -96,6 +96,14 @@
 		"typeinfo": "cpp",
 		"variant": "cpp",
 		"semaphore": "cpp",
-		"executor": "cpp"
+		"executor": "cpp",
+		"io_context": "cpp",
+		"socket": "cpp",
+		"forward_list": "cpp",
+		"buffer": "cpp",
+		"internet": "cpp",
+		"netfwd": "cpp",
+		"timer": "cpp",
+		"future": "cpp"
 	},
 }

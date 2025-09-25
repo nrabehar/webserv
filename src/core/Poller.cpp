@@ -4,6 +4,8 @@ Poller::Poller() {}
 Poller::~Poller()
 {
 
+	for (size_t i = 0; i < _pfds.size(); ++i)
+		del(_handlers[_pfds[i].fd]);
 	_pfds.clear();
 	_handlers.clear();
 
@@ -55,6 +57,7 @@ void Poller::del(IEventHandler * h)
 	}
 
 	_pfds.swap(pfds);
+	delete _handlers[fd];
 	_handlers.erase(fd);
 
 }

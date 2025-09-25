@@ -3,7 +3,10 @@
 
 #include "../webserv.hpp"
 
-struct Config::Server
+
+struct LocationConfig;
+
+struct ServerConfig
 {
 	struct Listen
 	{
@@ -14,26 +17,26 @@ struct Config::Server
 
 	};
 
-	struct Location
-	{
-		std::string 																			path;
-		std::string 																			root;
-		bool																							autoindex;
-		std::vector<std::string> 													index;
-		std::map<int, std::string>												err_page;
-		std::vector<std::pair<std::string, std::string> > cgi;
-
-		Location();
-
-	};
-
 	size_t								keepalive_timeout;
 	std::vector<Listen> 	listen;
-	std::vector<Location> location;
+	std::vector<LocationConfig> location;
 
-	Server();
+	ServerConfig();
 
 	void print() const;
+
+};
+
+struct LocationConfig
+{
+	std::string 																			path;
+	std::string 																			root;
+	bool																							autoindex;
+	std::vector<std::string> 													index;
+	std::map<int, std::string>												err_page;
+	std::vector<std::pair<std::string, std::string> > cgi;
+
+	LocationConfig();
 
 };
 

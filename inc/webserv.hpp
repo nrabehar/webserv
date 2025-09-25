@@ -107,6 +107,9 @@ enum e_LogLevel
 #include "core/directive/DirectiveRegistry.hpp"
 #include "core/directive/DirectiveChecker.hpp"
 
+#include "net/Server.hpp"
+
+
 /* Class includes *********************************************************** */
 
 #include "base.hpp"

@@ -1,9 +1,9 @@
 #include "webserv.hpp"
 
-Config::Server::Server()
+ServerConfig::ServerConfig()
 	: keepalive_timeout(0) {}
 
-void	Config::Server::print() const
+void	ServerConfig::print() const
 {
 	std::cout << "Server:" << std::endl;
 	std::cout << "  Keepalive timeout: " << keepalive_timeout << std::endl;
@@ -15,7 +15,7 @@ void	Config::Server::print() const
 	std::cout << "  Locations:" << std::endl;
 	for (size_t i = 0; i < location.size(); ++i)
 	{
-		const Location &loc = location[i];
+		const LocationConfig &loc = location[i];
 		std::cout << "    Path: " << loc.path << std::endl;
 		std::cout << "      Root: " << loc.root << std::endl;
 		std::cout << "      Autoindex: " << (loc.autoindex ? "on" : "off") << std::endl;
@@ -35,9 +35,9 @@ void	Config::Server::print() const
 	}
 }
 
-Config::Server::Listen::Listen()
+ServerConfig::Listen::Listen()
 	: port("80"), host("0.0.0.0") {}
 
-Config::Server::Location::Location()
+LocationConfig::LocationConfig()
 	: path(""), root(""), autoindex(false) {}
 

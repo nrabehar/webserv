@@ -2,6 +2,7 @@
 #define CONFIG_HPP
 
 #include "../webserv.hpp"
+#include "Server.hpp"
 
 //? Use this like namespace
 class Config
@@ -15,7 +16,6 @@ class Config
 
 	public:
 
-		struct Server;
 		class Transformer;
 		class Sanitizer;
 		class Parser;
@@ -26,15 +26,18 @@ class Config
 		Config(const std::string &);
 		~Config();
 		void	load();
-		void	parse();
+
+		const std::vector<ServerConfig> &	servers() const;
 
 	private:
 
-		std::vector<Server> _servers;
+		std::vector<ServerConfig> _servers;
 
 		Config();
 		Config(const Config &);
 		Config & operator=(const Config &);
+
+		void	parse();
 
 };
 
