@@ -48,7 +48,7 @@ void Config::Validator::checkHttp(Node<Token> * node)
 		return ;
 
 	_checked = true;
-	
+
 	Directive http(node);
 	http.acceptParent("base")
 		.reqChild();
@@ -64,9 +64,9 @@ void Config::Validator::checkServer(Node<Token> * node)
 
 	if (node->getName() != "server")
 		return ;
-	
+
 	_checked = true;
-	
+
 	Directive server(node);
 	server.acceptParent("http base")
 	.reqChild();
@@ -99,6 +99,7 @@ void Config::Validator::checkLocation(Node<Token> * node)
 		_valid = false;
 
 }
+
 void Config::Validator::checkListen(Node<Token> * node)
 {
 
@@ -119,7 +120,66 @@ void Config::Validator::checkListen(Node<Token> * node)
 
 	// @todo check valid port/ip
 
+	if (!_valid)
+		return ;
+
+	const std::vector<Token> & arg = node->getData();
+	// ! ip:port ( with ':' separator )
+	if (arg.size() == 1 && arg[0].value.find(':') != std::string::npos)
+	{
+		size_t pos = arg[0].value.find(':');
+		std::string ip = arg[0].value.substr(0, pos);
+		std::string port = arg[0].value.substr(pos + 1);
+		DBG("ip: " + ip + " port: " + port);
+		if (ip.empty() || port.empty())
+		{
+			_valid = false;
+			return ;
+		}
+		if (!String::isNumeric(port) || port <= "0" || port > "65535")
+		{
+			_valid = false;
+			return ;
+		}
+	}
+	// ! port ( default ip 0.0.0.0 )
+	else if (arg.size() == 1 && String::isNumeric(arg[0].value))
+	{
+		DBG("port: " + arg[0].value);
+		std::string port = arg[0].value;
+		if (port <= "0" || port > "65535")
+		{
+			_valid = false;
+			return ;
+		}
+	}
+	// ! ip ( default port 80 )
+	else if (arg.size() == 1 && !String::isNumeric(arg[0].value))
+	{
+		DBG("ip: " + arg[0].value);
+		// ? No check for ip, let bind fail
+		// ? default port 80
+	}
+	// ! ip port (with space separator)
+	else if (arg.size() == 2)
+	{
+		DBG("ip: " + arg[0].value + " port: " + arg[1].value);
+		std::string ip = arg[0].value;
+		std::string port = arg[1].value;
+		if (!String::isNumeric(port) || port <= "0" || port > "65535")
+		{
+			_valid = false;
+			return ;
+		}
+	}
+	// ! invalid
+	else
+	{
+		_valid = false;
+		return ;
+	}
 }
+
 void Config::Validator::checkRoot(Node<Token> * node)
 {
 
@@ -184,7 +244,7 @@ void Config::Validator::checkErrorPage(Node<Token> * node)
 		return ;
 
 	_checked = true;
-	
+
 	Directive error_page(node);
 	error_page.acceptParent("server location")
 	.argCount(1, -1).argType("number string");
@@ -192,7 +252,7 @@ void Config::Validator::checkErrorPage(Node<Token> * node)
 	_valid = DirectiveChecker::check(error_page);
 
 	const std::vector<Token> &arg = node->getData();
-	
+
 	TokenType type = TokenU::inferType(arg[arg.size() - 1].value);
 	if (type != TK_STRING)
 		throw std::runtime_error("invalid error_page location");
