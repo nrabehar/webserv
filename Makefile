@@ -39,6 +39,8 @@ TOOLSSRC += Lexer.cpp
 CORESRC += directive/Directive.cpp
 CORESRC += directive/DirectiveParser.cpp
 CORESRC += directive/DirectiveRegistry.cpp
+CORESRC += EventLoop.cpp
+CORESRC += Poller.cpp
 
 CORESRC += node/NodeChecker.cpp
 

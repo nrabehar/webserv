@@ -11,6 +11,7 @@ static void _run(const char * configfile)
 	Config cm(configfile);
 	cm.load();
 	cm.parse();
+	EventLoop::instance().run();
 }
 
 int main(int ac, char **av)

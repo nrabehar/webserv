@@ -30,6 +30,7 @@ void Signal::handle(int n)
 	{
 		WRN("Received signal " + signals[n]);
 		Signal::terminate = true; Signal::existcode = 128 + n;
+		EventLoop::instance().stop();
 	}
 }
 

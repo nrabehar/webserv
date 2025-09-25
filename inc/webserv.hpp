@@ -94,6 +94,7 @@ enum e_LogLevel
 #include "tools/Lexer.hpp"
 
 
+#include "core/EventLoop.hpp"
 #include "core/File.ipp"
 #include "core/Cache.ipp"
 #include "core/Manager.ipp"
