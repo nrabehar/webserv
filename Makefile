@@ -28,7 +28,6 @@ DIRSERVER = server/
 DIRTOOLS = tools/
 DIRVALIDATOR = validator/
 
-BASESRC += base.cpp
 TOOLSSRC += Logger.cpp
 TOOLSSRC += Signal.cpp
 TOOLSSRC += String.cpp
@@ -59,8 +58,6 @@ CONFIGSRC += Merger.cpp
 CONFIGSRC += Validator.cpp
 CONFIGSRC += Server.cpp
 CONFIGSRC += Transformer.cpp
-
-BASESRC += base.cpp
 
 NETSRC += Server.cpp
 

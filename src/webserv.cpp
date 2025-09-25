@@ -1,10 +1,6 @@
 #include "webserv.hpp"
 #include <poll.h>
 
-void test(IOriginator<Config> &)
-{
-}
-
 static void _run(const char * configfile)
 {
 	Signal().setup();

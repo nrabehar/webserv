@@ -59,11 +59,6 @@
 
 /* Forward declarations ***************************************************** */
 
-template <typename GuestType, typename HostType> class IGuest;
-template <typename HostType, typename GuestType> class IHost;
-template <typename Element> class IMemento;
-template <typename Element> class IOriginator;
-template <typename Element> class ICaretaker;
 class ISignal;
 
 /* Enumerations ************************************************************* */
@@ -80,9 +75,6 @@ enum e_LogLevel
 
 /* Interfaces *************************************************************** */
 
-#include "base/behavioral.ipp"
-
-
 #include "tools/Logger.ipp"
 #include "tools/Logger.hpp"
 #include "tools/Signal.ipp"
@@ -93,11 +85,9 @@ enum e_LogLevel
 
 #include "tools/Lexer.hpp"
 
-
 #include "core/EventLoop.hpp"
 #include "core/File.ipp"
 #include "core/Cache.ipp"
-#include "core/Manager.ipp"
 
 #include "core/node/Node.hpp"
 #include "core/node/NodeValidator.hpp"
@@ -109,10 +99,8 @@ enum e_LogLevel
 
 #include "net/Server.hpp"
 
-
 /* Class includes *********************************************************** */
 
-#include "base.hpp"
 #include "file/FileCache.hpp"
 #include "file/FileHandler.hpp"
 
