@@ -19,9 +19,12 @@ void	Net::Server::handle(short e)
 				throw std::runtime_error("Could not accept client");
 			break;
 		case POLLOUT:
-			break;		
+			break;
+		case POLLHUP:
+			EventLoop::instance().delHandler(this);
+			break;
 		default:
-			throw std::runtime_error("Server jsut down");
+			throw std::runtime_error("Socket " + String::str(_fd) + " errpr");
 			break;
 	}
 
@@ -47,6 +50,7 @@ void	Net::Server::setup()
 		freeaddrinfo(_infos);
 		throw std::runtime_error("Could not bind " + _listen.host + ":" + _listen.port + " " + std::string(strerror(errno)));
 	}
+
 	freeaddrinfo(_infos);
 
 	if (listen(_fd, LISTEN_BACKLOG) == -1)
@@ -61,7 +65,6 @@ int	Net::Server::getAddrInfo()
 	const char * host = _listen.host.c_str();
 	const char * port = _listen.port.c_str();
 
-	std::cout << "Try to getaddrinfo: " << host << "===" << port << std::endl;
 	return (::getaddrinfo(host, port, NULL, &_infos));
 
 }
