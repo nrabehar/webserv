@@ -14,5 +14,16 @@ void	Net::Connection::handle(short e)
 {
 
 	(void) e;
+	//TODO: create Handlers
+	/**//* the begining of webserv project
+	 * - POLLIN |	Requests 	- Methods
+	 * 											-	Cgi
+	 * - POLLOUT |	Response - Methods
+	 * 											 - Cgi
+	 * - POLLHUP |	Clean close
+	 * 
+	 * - errors
+	 */
+	
 
 }
