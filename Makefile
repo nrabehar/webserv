@@ -64,6 +64,10 @@ CONFIGSRC += Transformer.cpp
 NETSRC += Server.cpp
 NETSRC += Client.cpp
 
+HTTPSRC += Request.cpp
+HTTPSRC += Response.cpp
+HTTPSRC += Parser.cpp
+
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 
 SRC += $(addprefix $(DIRBASE), $(BASESRC))

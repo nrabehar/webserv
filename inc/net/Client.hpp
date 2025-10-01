@@ -4,6 +4,8 @@
 #include "../config/Config.hpp"
 #include "../core/EventHandler.hpp"
 #include "../core/Poller.hpp"
+#include "../http/Parser.hpp"
+#include "../http/Request.hpp"
 
 namespace Net
 {
@@ -19,6 +21,9 @@ namespace Net
 
 			Buffer   _in;
 			Buffer   _out;
+
+			Http::Parser	_parser;
+			Http::Request	_req;
 
 			bool 		_keep_alive;
 			time_t	_last_active;

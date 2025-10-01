@@ -13,7 +13,10 @@ Client::Client(int fd, Server * server)
 
 }
 
-Client::~Client() {}
+Client::~Client()
+{
+	LOG("Client disconnected: " + String::str(_fd));
+}
 
 void	Client::handle(short e)
 {
@@ -37,8 +40,12 @@ void	Client::onRead()
 
 	if (!readSocket())
 		return ;
-
-	LOG("Client read data on fd: " + String::str(_fd));
+	
+	if (_parser.parseNext(_in, _req))
+		return ;
+	
+	_last_active = time(NULL);
+	LOG("Request parsed successfully");
 
 }
 
