@@ -1,12 +1,17 @@
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
-#include "Net.hpp"
-#include "Connection.hpp"
+#include "../webserv.hpp"
+#include "Client.hpp"
+#include <netdb.h>
 
 #define	LISTEN_BACKLOG	128
 
-class Net::Server: public EventHandler
+namespace Net
+{
+
+
+class Server: public EventHandler
 {
 
 	private:
@@ -34,5 +39,7 @@ class Net::Server: public EventHandler
 		bool	acceptConnection();
 
 };
+	
+}
 
 #endif // SERVER_HPP

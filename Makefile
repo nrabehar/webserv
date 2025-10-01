@@ -42,6 +42,7 @@ CORESRC += directive/DirectiveRegistry.cpp
 CORESRC += EventLoop.cpp
 CORESRC += EventHandler.cpp
 CORESRC += Poller.cpp
+CORESRC += Buffer.cpp
 
 CORESRC += node/NodeChecker.cpp
 
@@ -61,7 +62,7 @@ CONFIGSRC += Server.cpp
 CONFIGSRC += Transformer.cpp
 
 NETSRC += Server.cpp
-NETSRC += Connection.cpp
+NETSRC += Client.cpp
 
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 

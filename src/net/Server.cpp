@@ -1,15 +1,17 @@
 #include "webserv.hpp"
 
-Net::Server::Server(const ServerConfig::Listen & listen, const ServerConfig & conf)
+using namespace Net;
+
+Server::Server(const ServerConfig::Listen & listen, const ServerConfig & conf)
 	: EventHandler(-1), _conf(conf), _listen(listen), _infos(NULL)
 {
 
 	setup();
 
 }
-Net::Server::~Server() {}
+Server::~Server() {}
 
-void	Net::Server::handle(short e)
+void	Server::handle(short e)
 {
 
 	switch (e)
@@ -30,7 +32,7 @@ void	Net::Server::handle(short e)
 
 }
 
-void	Net::Server::setup()
+void	Server::setup()
 {
 
 	int	s = getAddrInfo();
@@ -59,7 +61,7 @@ void	Net::Server::setup()
 }
 
 
-int	Net::Server::getAddrInfo()
+int	Server::getAddrInfo()
 {
 
 	const char * host = _listen.host.c_str();
@@ -69,7 +71,7 @@ int	Net::Server::getAddrInfo()
 
 }
 
-bool	Net::Server::acceptConnection()
+bool	Server::acceptConnection()
 {
 
 	struct sockaddr_in	c_addr;
@@ -79,7 +81,7 @@ bool	Net::Server::acceptConnection()
 	if (c_fd == -1)
 		return (false);
 
-	Connection * client = new Connection(c_fd, this);
+	Client * client = new Client(c_fd, this);
 	EventLoop::instance().addHandler(client, POLLIN | POLLOUT);
 
 	return (true);
