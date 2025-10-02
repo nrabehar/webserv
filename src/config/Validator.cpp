@@ -28,6 +28,7 @@ bool	Config::Validator::validate(Node<Token> *node)
 	checkServerName(node);
 	checkCgi(node);
 	checkAllowedMethod(node);
+	checkReturn(node);
 
 	if (!_checked && !(!node->getParent() && node->getName() == "base"))
 		throw std::runtime_error("Unknown directive `" + node->getName() + "`");
@@ -354,7 +355,7 @@ void Config::Validator::checkAllowedMethod(Node<Token> * node)
 	if (!node || !_valid || _checked)
 		return ;
 
-	if (node->getName() != "allowed_method")
+	if (node->getName() != "methods")
 		return ;
 
 	_checked = true;
@@ -364,5 +365,34 @@ void Config::Validator::checkAllowedMethod(Node<Token> * node)
 	.argCount(0, -1).argType("string");
 
 	_valid = DirectiveChecker::check(allowed_method);
+
+}
+
+void Config::Validator::checkReturn(Node<Token> * node)
+{
+
+	if (!node || !_valid || _checked)
+		return ;
+
+	if (node->getName() != "return")
+		return ;
+
+	_checked = true;
+
+	Directive ret(node);
+	ret.acceptParent("location")
+	.argCount(2, 2).argType("number string");
+
+	_valid = DirectiveChecker::check(ret);
+
+	const std::vector<Token> &arg = node->getData();
+
+	TokenType type = TokenU::inferType(arg[0].value);
+	if (type != TK_NUMBER)
+		throw std::runtime_error("invalid return status code");
+
+	int code = std::atoi(arg[0].value.c_str());
+	if (code < 300 || code >= 400)
+		throw std::runtime_error("invalid return status code");
 
 }

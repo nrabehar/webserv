@@ -40,6 +40,7 @@ namespace Http
 			bool parseNext(Buffer & buf, Request & req);
 
 			ParseState state() const;
+			void reset();
 	
 		private:
 
@@ -49,7 +50,6 @@ namespace Http
 			Parser & operator=(const Parser &);
 
 			void setState(State state);
-			void reset();
 
 			bool parseReqLine(Buffer & buf, Request & req);
 			bool parseHeaders(Buffer & buf, Request & req);

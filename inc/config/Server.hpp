@@ -35,8 +35,13 @@ struct LocationConfig
 	std::vector<std::string> 													index;
 	std::map<int, std::string>												err_page;
 	std::vector<std::pair<std::string, std::string> > cgi;
+	std::vector<std::string> 													methods;
+	size_t 																						client_max_body_size;
+	std::pair<int, std::string> 											redirect;
 
 	LocationConfig();
+
+	bool allowsMethod(const std::string & method) const;
 
 };
 

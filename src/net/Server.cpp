@@ -87,3 +87,5 @@ bool	Server::acceptConnection()
 	return (true);
 
 }
+
+const ServerConfig & Server::getConfig() const { return (_conf); }

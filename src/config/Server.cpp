@@ -39,5 +39,16 @@ ServerConfig::Listen::Listen()
 	: port("80"), host("0.0.0.0") {}
 
 LocationConfig::LocationConfig()
-	: path(""), root(""), autoindex(false) {}
+	: path(""), root(""), autoindex(false), redirect(std::make_pair(0, "")) {}
 
+bool	LocationConfig::allowsMethod(const std::string & method) const
+{
+
+	for (size_t i = 0; i < methods.size(); ++i)
+	{
+		if (methods[i] == method)
+			return (true);
+	}
+	return (false);
+
+}

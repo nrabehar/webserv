@@ -27,13 +27,8 @@ void Buffer::hasRead(size_t n)
 {
 
 	if (n >= readable())
-	{
+		clear();
 
-		_rpos = 0;
-		_wpos = 0;
-		_data.clear();
-
-	}
 	else
 	{
 
@@ -92,17 +87,25 @@ void Buffer::compact()
 		return ;
 
 	if (_rpos >= _wpos)
-	{
-
-		_rpos = 0;
-		_wpos = 0;
-		_data.clear();
-		return ;
-
-	}
+		return (clear());
 
 	std::memmove(const_cast<char *>(_data.c_str()), _data.c_str() + _rpos, readable());
 	_wpos -= _rpos;
 	_rpos = 0;
+
+}
+
+void	Buffer::clear()
+{
+	_rpos = 0;
+	_wpos = 0;
+	_data.clear();
+}
+
+void	Buffer::append(const std::string & str)
+{
+
+	_data.append(str);
+	_wpos += str.size();
 
 }

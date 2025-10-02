@@ -51,6 +51,9 @@ class Buffer
 		 */
 		void	reserve(size_t size);
 
+		void	clear();
+		void  append(const std::string & str);
+
 	private:
 
 		Buffer(const Buffer &);

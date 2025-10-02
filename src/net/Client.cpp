@@ -5,7 +5,7 @@ using namespace Net;
 #include "webserv.hpp"
 
 Client::Client(int fd, Server * server)
-	: EventHandler(fd), _server(server),
+	: EventHandler(fd), _server(server), _handler(this),
 	_keep_alive(false), _last_active(time(NULL))
 {
 
@@ -45,15 +45,28 @@ void	Client::onRead()
 		return ;
 	
 	_last_active = time(NULL);
-	LOG("Request parsed successfully");
+	_handler.handle(_req, _res);
+	_parser.reset();
+	EventLoop::instance().modHandler(this, POLLOUT|POLLIN);
 
 }
 
 void	Client::onWrite()
 {
 
+	if (_handler.state() == Handler::HS_DONE)
+	{
+		if (_res.header().find("Connection") != _res.header().end() &&
+			_res.header().find("Connection")->second == "keep-alive")
+			_keep_alive = true;
+		else
+			_keep_alive = false;
+		_out.append(_res.str());
+	}
 	if (_out.readable() == 0)
 		return ;
+	LOG(_req.method() + " " + _req.uri() + " -> " + String::str(_res.statusCode()) + " on fd: " + String::str(_fd));
+	LOG("Sending: (" + String::str(_out.readable()) + " bytes)" + std::string(_out.readPtr()));
 	const char * buf = _out.readPtr();
 	size_t len = _out.readable();
 	ssize_t ret = ::write(_fd, buf, len);
@@ -68,7 +81,18 @@ void	Client::onWrite()
 	}
 	else
 		_out.hasRead(ret);
-	LOG("Client write data on fd: " + String::str(_fd));
+	if (!_out.readable())
+		_out.clear();
+	if (_handler.state() == Handler::HS_DONE)
+	{
+		_handler.reset();
+		if (_keep_alive)
+			EventLoop::instance().modHandler(this, POLLIN | POLLOUT);
+		else
+			EventLoop::instance().delHandler(this);
+		_req = Http::Request();
+		_res = Http::Response();
+	}
 
 }
 
@@ -109,3 +133,8 @@ bool	Client::readSocket()
 	return (true);
 
 }
+
+bool	Client::keepAlive() const { return (_keep_alive); }
+void	Client::setKeepAlive(bool keep_alive) { _keep_alive = keep_alive; }
+time_t	Client::lastActive() const { return (_last_active); }
+Server *Client::getServer() const { return (_server); }

@@ -20,6 +20,7 @@ namespace Http
 		public:
 	
 			Request();
+			Request & operator=(const Request &);
 			~Request();
 
 			const std::string & method() const;
@@ -38,7 +39,6 @@ namespace Http
 		private:
 	
 			Request(const Request &);
-			Request & operator=(const Request &);
 	
 	};
 	

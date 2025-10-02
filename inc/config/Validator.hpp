@@ -36,6 +36,7 @@ class Config::Validator
 		static void checkServerName(Node<Token> * node);
 		static void checkCgi(Node<Token> * node);
 		static void checkAllowedMethod(Node<Token> * node);
+		static void checkReturn(Node<Token> * node);
 
 };
 

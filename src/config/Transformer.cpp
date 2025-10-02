@@ -132,6 +132,13 @@ void Config::Transformer::parseLocation(Node<Token> * loc_node, LocationConfig &
 				loc.err_page[std::atoi(arg[j].value.c_str())] = arg[arg.size() - 1].value;
 		else if (name == "cgi" && arg.size() >= 2)
 			loc.cgi.push_back(std::make_pair(arg[0].value, arg[1].value));
+		else if (name == "methods")
+			for (size_t j = 0; j <  arg.size(); ++j)
+				loc.methods.push_back(arg[j].value);
+		else if (name == "client_max_body_size")
+			loc.client_max_body_size = static_cast<size_t>(std::atoi(arg[0].value.c_str())) * 1024 * 1024;
+		else if (name == "return" && arg.size() == 2)
+			loc.redirect = std::make_pair(std::atoi(arg[0].value.c_str()), arg[1].value);
 
 	}
 	

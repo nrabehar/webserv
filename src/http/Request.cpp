@@ -10,6 +10,19 @@ Request::Request()
 	 _body()
 {}
 
+Request & Request::operator=(const Request & other)
+{
+	if (this != &other)
+	{
+		this->_method = other._method;
+		this->_uri = other._uri;
+		this->_version = other._version;
+		this->_headers = other._headers;
+		this->_body = other._body;
+	}
+	return (*this);
+}
+
 Request::~Request() {}
 
 const std::string & Request::method() const

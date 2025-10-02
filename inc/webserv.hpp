@@ -106,6 +106,8 @@ enum e_LogLevel
 #include "http/Response.hpp"
 #include "http/Parser.hpp"
 
+#include "handler/RequestHandler.hpp"
+
 /* Class includes *********************************************************** */
 
 #include "file/FileCache.hpp"
