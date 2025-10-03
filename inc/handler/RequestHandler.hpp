@@ -13,29 +13,53 @@ namespace Net
 namespace Handler
 {
 
-	enum HandlerState
+	enum State
 	{
-		HS_DONE,
-		HS_PROGRESS
+
+		HS_OK = 200,
+
+		HS_FORBIDDEN = 403,
+		HS_NOT_FOUND = 404,
+
+		HS_FOLDER_LISTING = 1000,
+		HS_PROGRESS = 1001,
+		HS_WAITING = 1002,
+		HS_CGI = 1003,
+	
 	};
 
-	class RequestHandler
+	class ErrorHandler;
+
+	class IRequestHandler
 	{
 	
-		protected:
+		public:
+	
+			virtual ~IRequestHandler() {}
+			virtual	void	handle(Http::Request & req, Http::Response & res) = 0;
+	
+	};
+	
+
+	class RequestHandler : public IRequestHandler
+	{
+	
+		private:
 	
 			Net::Client *	_client;
-			HandlerState	_state;
+			State	_state;
 	
 		public:
 	
 			RequestHandler(Net::Client * client);
 			~RequestHandler();
 
-			void	handle(Http::Request & req, Http::Response & res);
-			HandlerState	state() const;
+			virtual void	handle(Http::Request & req, Http::Response & res);
+			State	state() const;
+			
+			void	setState(State state);
 			void  reset();
-
+			Net::Client * client() const;
 	
 		private:
 	
@@ -45,14 +69,13 @@ namespace Handler
 
 			const LocationConfig * findLocation(const std::string & uri) const;
 			void	mergeHeaders(Http::Request & req, Http::Response & res);
-
-		protected:
-			
-			void	setState(HandlerState state);
 	
 	};
 	
 
 } // namespace Handler
+
+#include "UriHandler.hpp"
+#include "ErrorHandler.hpp"
 
 #endif // REQUESTHANDLER_HPP

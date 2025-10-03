@@ -11,48 +11,41 @@ RequestHandler::~RequestHandler()
 {
 }
 
-HandlerState	RequestHandler::state() const { return (_state); }
-void	RequestHandler::setState(HandlerState state) { _state = state; }
+State	RequestHandler::state() const { return (_state); }
+void	RequestHandler::setState(State state) { _state = state; }
 
 void	RequestHandler::handle(Http::Request & req, Http::Response & res)
 {
 
+	ErrorHandler error_handler(this);
 	const std::string & method = req.method();
 	const std::string & uri = req.uri();
 
 	mergeHeaders(req, res);
 	const LocationConfig * loc = findLocation(uri);
-	if (!loc)
-	{
-		//TODO custom error page
-		res.setStatusCode(404);
-		res.setReason("Not Found");
-		res.appendBody("404 Not Found");
-		res.setHeader("Content-Length", String::str(res.body().length()));
-		setState(HS_DONE);
-		return ;
-	}
-	LOG("Matched location: " + loc->path + " for uri: " + uri);
+
 	if (!loc->allowsMethod(method))
 	{
-		//TODO custom error page
-		res.setStatusCode(405);
-		res.setReason("Method Not Allowed");
-		res.appendBody("405 Method Not Allowed");
-		res.setHeader("Content-Length", String::str(res.body().length()));
-		setState(HS_DONE);
-		return ;
+		setState(HS_FORBIDDEN);
+		return (error_handler.handle(loc, res));
 	}
+
 	if (loc->redirect.first != 0)
 	{
-		res.setStatusCode(loc->redirect.first);
+		res.setStatus(loc->redirect.first);
 		res.setReason("Redirect");
 		res.setHeader("Location", loc->redirect.second);
-		setState(HS_DONE);
+		setState(HS_OK);
 		return ;
 	}
-	setState(HS_DONE); //TODO actual handling
-	res.setStatusCode(200);
+
+	UriHandler uri_handler(uri, loc, this);
+	std::string path = uri_handler.buildPath();
+	if (state() == HS_NOT_FOUND || state() == HS_FORBIDDEN)
+		return (error_handler.handle(loc, res));
+
+	setState(HS_OK); //TODO actual handling
+	res.setStatus(200);
 	res.setReason("OK");
 	res.appendBody("<html><body><h1>It works!</h1></body></html>");
 	res.setHeader("Content-Length", String::str(res.body().length()));
@@ -89,7 +82,7 @@ void	RequestHandler::mergeHeaders(Http::Request & req, Http::Response & res)
 
 	res.setVersion(req.version());
 	// res.setHeader("Date", String::httpDate(time(NULL)));
-	res.setHeader("Server", "webserv/0.1");
+	res.setHeader("Server", "webserv");
 	if (req.header().find("Connection") != req.header().end())
 		res.setHeader("Connection", req.header("Connection"));
 	else if (res.version() == "HTTP/1.1")
@@ -100,7 +93,6 @@ void	RequestHandler::mergeHeaders(Http::Request & req, Http::Response & res)
 
 }
 
-void	RequestHandler::reset()
-{
-	_state = HS_PROGRESS;
-}
+void	RequestHandler::reset() { _state = HS_PROGRESS; }
+
+Net::Client *	RequestHandler::client() const { return (_client); }

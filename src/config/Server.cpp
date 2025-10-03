@@ -44,11 +44,15 @@ LocationConfig::LocationConfig()
 bool	LocationConfig::allowsMethod(const std::string & method) const
 {
 
+	if (methods.empty())
+		return (true);
+
 	for (size_t i = 0; i < methods.size(); ++i)
 	{
 		if (methods[i] == method)
 			return (true);
 	}
+
 	return (false);
 
 }

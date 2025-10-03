@@ -69,6 +69,8 @@ HTTPSRC += Response.cpp
 HTTPSRC += Parser.cpp
 
 HANDLERSRC += RequestHandler.cpp
+HANDLERSRC += UriHandler.cpp
+HANDLERSRC += ErrorHandler.cpp
 
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 

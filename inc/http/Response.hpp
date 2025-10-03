@@ -27,8 +27,8 @@ namespace Http
 			const std::string & version() const;
 			void setVersion(const std::string & version);
 
-			int statusCode() const;
-			void setStatusCode(int status);
+			int status() const;
+			void setStatus(int status);
 
 			const std::map<std::string, std::string> & header() const;
 			const std::string & header(const std::string & key) const;
@@ -36,6 +36,7 @@ namespace Http
 			const std::string & body() const;
 			void appendBody(const std::string & body);
 			const std::string & reason() const;
+			std::string reason(int status) const;
 			void setReason(const std::string & reason);
 
 			std::string str() const;
