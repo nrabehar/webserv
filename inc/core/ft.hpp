@@ -80,6 +80,6 @@ struct ft
 	static bool _simulate_failure;
 };
 
-#include "core/mid.hpp"
+#include "mid.hpp"
 
 #endif
