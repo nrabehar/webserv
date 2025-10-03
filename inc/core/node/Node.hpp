@@ -89,6 +89,15 @@ class Node
 		const std::string &	getName() const { return (_name); };
 		const std::vector<T> &	getData() const { return (_data); };
 		std::vector<Node<T> *> & getChild() { return (_child); };
+		void getChild(std::vector<Node<T> * > &out, const std::string & name)
+		{
+			for (size_t i = 0; i < _child.size(); ++i)
+			{
+				if (_child[i] && _child[i]->_name == name)
+					out.push_back(_child[i]);
+				_child[i]->getChild(out, name);
+			}
+		}
 		const std::vector<Node<T> *> & getChild() const { return (_child); };
 		Node<T>*	getParent() const { return (_parent); };
 

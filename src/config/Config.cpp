@@ -45,14 +45,14 @@ void	Config::parse()
 	TokenStream ss(tokens);
 	DirectiveParser parser(ss);
 	_root = parser.parse();
-	_root->print();
 	Validator::validate(_root);
 
-	std::vector<Node<Token>* > & childs = _root->getChild();
-
-	for (size_t i = 0; i < childs.size(); ++i)
-		Merger::merge(_root, childs[i]);
+	Merger::defLocation(_root);
+	Merger::merge(_root);
 
 	_servers = Transformer::transform(_root);
+	Transformer::validate(_servers);
+
+	TokenU::resetSymRef();
 
 }

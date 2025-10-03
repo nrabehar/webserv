@@ -12,6 +12,7 @@ class Config::Transformer
 		~Transformer();
 
 		static std::vector<ServerConfig> transform(Node<Token>* root);
+		static void validate(std::vector<ServerConfig> & servers);
 
 	private:
 

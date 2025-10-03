@@ -143,3 +143,27 @@ void Config::Transformer::parseLocation(Node<Token> * loc_node, LocationConfig &
 	}
 	
 }
+
+void Config::Transformer::validate(std::vector<ServerConfig> & servers)
+{
+
+	if (servers.empty())
+		throw std::runtime_error("No server defined in configuration");
+	for (size_t i = 0; i < servers.size(); ++i)
+	{
+
+		ServerConfig & svr = servers[i];
+		if (svr.listen.empty())
+			throw std::runtime_error("Server has no listen directive");
+		std::vector<LocationConfig> & locs = svr.location;
+		if (locs.empty())
+			throw std::runtime_error("Server has no location directive");
+		for (size_t j = 0; j < locs.size(); ++j)
+		{
+			LocationConfig & loc = locs[j];
+			if (loc.root.empty())
+				throw std::runtime_error("Location " + loc.path + " has no root directive");
+		}
+	}
+
+}
