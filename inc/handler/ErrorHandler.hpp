@@ -2,10 +2,11 @@
 #define ERRORHANDLER_HPP
 
 #include "../webserv.hpp"
-#include "RequestHandler.hpp"
 
 namespace Handler
 {
+
+	class RequestHandler;
 
 	class ErrorHandler
 	{

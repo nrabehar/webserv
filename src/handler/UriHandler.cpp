@@ -37,13 +37,13 @@ std::string	UriHandler::buildPath()
 	path += _uri;
 
 	if (!fileExists(path))
-		_handler->setState(HS_NOT_FOUND);
+		_handler->setStatus(HS_NOT_FOUND);
 	else if (isDirectory(path))
 		getIndexPath(path);
 	else if (!isReadable(path))
-		_handler->setState(HS_FORBIDDEN);
+		_handler->setStatus(HS_FORBIDDEN);
 	else if (isCgiPath(path))
-		_handler->setState(HS_CGI);
+		_handler->setStatus(HS_CGI);
 
 	return (path);
 
@@ -80,9 +80,9 @@ void	UriHandler::getIndexPath(std::string & path)
 	if (_loc->index.empty())
 	{
 		if (_loc->autoindex)
-			_handler->setState(HS_FOLDER_LISTING);
+			_handler->setStatus(HS_FOLDER_LISTING);
 		else
-			_handler->setState(HS_FORBIDDEN);
+			_handler->setStatus(HS_FORBIDDEN);
 		return ;
 	}
 
@@ -104,9 +104,9 @@ void	UriHandler::getIndexPath(std::string & path)
 	if (path != og_path)
 		return ;
 	if (_loc->autoindex)
-		_handler->setState(HS_FOLDER_LISTING);
+		_handler->setStatus(HS_FOLDER_LISTING);
 	else
-		_handler->setState(HS_FORBIDDEN);
+		_handler->setStatus(HS_FORBIDDEN);
 
 }
 

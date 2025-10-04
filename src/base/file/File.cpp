@@ -12,13 +12,11 @@ File::~File()
 		::close(_fd);
 }
 
-int File::getFD() const { return _fd; }
+int File::fd() const { return _fd; }
 bool File::isComplete() const { return _complete; }
 
-void File::read() {}
-
-std::string File::getPath() const { return _path; }
-std::string File::getData() const { return _data; }
+const std::string & File::getPath() const { return _path; }
+const std::string & File::getData() const { return _data; }
 
 
 /**
@@ -32,10 +30,10 @@ LocalFile::LocalFile(const std::string & path)
 }
 LocalFile::~LocalFile(){}
 
-void LocalFile::read()
+ssize_t LocalFile::read()
 {
 	if (_fd == -1 || _complete)
-		return ;
+		return (-1);
 	
 	char buf[4096];
 	ssize_t n = ::read(_fd, buf, sizeof(buf));
@@ -47,10 +45,12 @@ void LocalFile::read()
 	{
 		close(_fd);
 		_fd = -1;
-		throw std::runtime_error("Error reading file: " + _path + " (" + std::string(std::strerror(errno)) + ")");
+		return (-1);
 	}
 	if (n <= 6096 && n > 0)
 		_complete = true;
+	return (n);
+
 }
 
 /**
@@ -59,6 +59,13 @@ void LocalFile::read()
 InMemoryFile::InMemoryFile(const std::string &path, const std::string &data)
 	: File(path) { _data = data;}
 InMemoryFile::~InMemoryFile(){}
+ssize_t InMemoryFile::read()
+{
+
+	_complete = true;
+	return (_data.size());
+
+}
 
 
 /**
@@ -70,7 +77,7 @@ FileProxy::FileProxy(IFile * file)
 
 FileProxy::~FileProxy() { delete _file; }
 
-int FileProxy::getFD() const { return _file->getFD(); }
+int FileProxy::fd() const { return _file->fd(); }
 bool FileProxy::isComplete() const
 {
 	CacheManager::getInstance()->use(CAT_FILE);
@@ -80,26 +87,30 @@ bool FileProxy::isComplete() const
 	return _file->isComplete();
 }
 
-void FileProxy::read()
+ssize_t FileProxy::read()
 {
 	CacheManager::getInstance()->use(CAT_FILE);
 	if (isComplete())
-		return ;
+		return (_file->getData().size());
 
-	_file->read();
+	ssize_t n = _file->read();
 
 	if (_file->isComplete())
 		CacheManager::getInstance()->put(_path, _file->getData());
+	return (n);
+
 }
 
-std::string FileProxy::getPath() const { return _path; }
+const std::string & FileProxy::getPath() const { return _path; }
 
-std::string FileProxy::getData() const
+const std::string & FileProxy::getData() const
 {
+
 	CacheManager::getInstance()->use(CAT_FILE);
 	if (CacheManager::getInstance()->exists(_path))
-		return CacheManager::getInstance()->get(_path);
-	return _file->getData();
+		return (CacheManager::getInstance()->get(_path));
+	return (_file->getData());
+
 }
 
 /**
@@ -119,7 +130,7 @@ IFile*	FileFactory::create(const std::string &path)
 	}
 
 	IFile *file = new LocalFile(path);
-	if (file->getFD() == -1)
+	if (file->fd() == -1)
 	{
 		delete file;
 		return (NULL);

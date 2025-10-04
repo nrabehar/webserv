@@ -3,7 +3,7 @@
 using namespace Handler;
 
 RequestHandler::RequestHandler(Net::Client * client)
-	: _client(client), _state(HS_PROGRESS)
+	: _client(client), _status(HS_PROGRESS), _error_handler(this)
 {
 }
 
@@ -11,13 +11,19 @@ RequestHandler::~RequestHandler()
 {
 }
 
-State	RequestHandler::state() const { return (_state); }
-void	RequestHandler::setState(State state) { _state = state; }
+Status	RequestHandler::status() const { return (_status); }
+void	RequestHandler::setStatus(Status state) { _status = state; }
+bool	RequestHandler::isError() const
+{
+
+	int s = (int)_status;
+	return (s >= 400 && s < 600);
+
+}
 
 void	RequestHandler::handle(Http::Request & req, Http::Response & res)
 {
 
-	ErrorHandler error_handler(this);
 	const std::string & method = req.method();
 	const std::string & uri = req.uri();
 
@@ -26,8 +32,8 @@ void	RequestHandler::handle(Http::Request & req, Http::Response & res)
 
 	if (!loc->allowsMethod(method))
 	{
-		setState(HS_FORBIDDEN);
-		return (error_handler.handle(loc, res));
+		setStatus(HS_METHOD_NOT_ALLOWED);
+		return (_error_handler.handle(loc, res));
 	}
 
 	if (loc->redirect.first != 0)
@@ -35,16 +41,16 @@ void	RequestHandler::handle(Http::Request & req, Http::Response & res)
 		res.setStatus(loc->redirect.first);
 		res.setReason("Redirect");
 		res.setHeader("Location", loc->redirect.second);
-		setState(HS_OK);
+		setStatus(HS_OK);
 		return ;
 	}
 
 	UriHandler uri_handler(uri, loc, this);
 	std::string path = uri_handler.buildPath();
-	if (state() == HS_NOT_FOUND || state() == HS_FORBIDDEN)
-		return (error_handler.handle(loc, res));
+	if (isError())
+		return (_error_handler.handle(loc, res));
 
-	setState(HS_OK); //TODO actual handling
+	setStatus(HS_OK); //TODO actual handling
 	res.setStatus(200);
 	res.setReason("OK");
 	res.appendBody("<html><body><h1>It works!</h1></body></html>");
@@ -93,6 +99,17 @@ void	RequestHandler::mergeHeaders(Http::Request & req, Http::Response & res)
 
 }
 
-void	RequestHandler::reset() { _state = HS_PROGRESS; }
+void	RequestHandler::reset() { _status = HS_PROGRESS; }
 
 Net::Client *	RequestHandler::client() const { return (_client); }
+
+void	RequestHandler::serveError(Status status, const LocationConfig * loc, Http::Response & res)
+{
+	setStatus(status);
+	serveError(loc, res);
+}
+
+void	RequestHandler::serveError(const LocationConfig * loc, Http::Response & res)
+{
+	_error_handler.handle(loc, res);
+}

@@ -71,6 +71,7 @@ HTTPSRC += Parser.cpp
 HANDLERSRC += RequestHandler.cpp
 HANDLERSRC += UriHandler.cpp
 HANDLERSRC += ErrorHandler.cpp
+HANDLERSRC += StaticHandler.cpp
 
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 

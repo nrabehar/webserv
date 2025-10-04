@@ -3,11 +3,11 @@ class IFile
 	public:
 
 		virtual ~IFile() {}
-		virtual int  getFD() const = 0;
+		virtual int  fd() const = 0;
 		virtual bool isComplete() const = 0;
-		virtual void read() = 0;
-		virtual std::string getPath() const = 0;
-		virtual std::string getData() const = 0;
+		virtual ssize_t read() = 0;
+		virtual const std::string & getPath() const = 0;
+		virtual const std::string & getData() const = 0;
 		
 };
 
@@ -27,11 +27,11 @@ class File : public IFile
 		File(const std::string &);
 		virtual ~File();
 
-		virtual int  getFD() const;
+		virtual int  fd() const;
 		virtual bool isComplete() const;
-		virtual void read();
-		virtual std::string getPath() const;
-		virtual std::string getData() const;
+		virtual ssize_t read() = 0;
+		virtual const std::string & getPath() const;
+		virtual const std::string & getData() const;
 
 	private:
 
@@ -49,7 +49,7 @@ class LocalFile : public File
 		LocalFile(const std::string &);
 		virtual ~LocalFile();
 
-		virtual void read();
+		virtual ssize_t read();
 
 	private:
 
@@ -66,6 +66,7 @@ class InMemoryFile : public File
 
 			InMemoryFile(const std::string&, const std::string&);
 			virtual ~InMemoryFile();
+			virtual ssize_t read() ;
 
 	private:
 
@@ -88,11 +89,11 @@ class FileProxy : public IFile
 		FileProxy(IFile *);
 		virtual ~FileProxy();
 
-		virtual int  getFD() const;
+		virtual int  fd() const;
 		virtual bool isComplete() const;
-		virtual void read();
-		virtual std::string getPath() const;
-		virtual std::string getData() const;
+		virtual ssize_t read();
+		virtual const std::string & getPath() const;
+		virtual const std::string & getData() const;
 	
 	private:
 

@@ -23,7 +23,7 @@ class FileCache: public ICacheStrategy
         virtual ~FileCache();
 
         virtual void put(const std::string &, const std::string &);
-        virtual std::string get(const std::string &);
+        virtual const std::string & get(const std::string &);
         virtual bool exists(const std::string &);
         virtual void update(std::string const &);
 

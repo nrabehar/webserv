@@ -4,6 +4,7 @@
 #include "../webserv.hpp"
 #include "../http/Request.hpp"
 #include "../http/Response.hpp"
+#include "ErrorHandler.hpp"
 
 namespace Net
 {
@@ -13,13 +14,22 @@ namespace Net
 namespace Handler
 {
 
-	enum State
+	enum Status
 	{
 
 		HS_OK = 200,
 
 		HS_FORBIDDEN = 403,
 		HS_NOT_FOUND = 404,
+		HS_METHOD_NOT_ALLOWED = 405,
+		HS_REQUEST_ENTITY_TOO_LARGE = 413,
+		HS_URI_TOO_LONG = 414,
+		HS_UNSUPPORTED_MEDIA_TYPE = 415,
+		HS_INTERNAL_SERVER_ERROR = 500,
+		HS_NOT_IMPLEMENTED = 501,
+		HS_BAD_GATEWAY = 502,
+		HS_SERVICE_UNAVAILABLE = 503,
+		HS_GATEWAY_TIMEOUT = 504,
 
 		HS_FOLDER_LISTING = 1000,
 		HS_PROGRESS = 1001,
@@ -47,7 +57,8 @@ namespace Handler
 		private:
 	
 			Net::Client *	_client;
-			State	_state;
+			Status	_status;
+			ErrorHandler _error_handler;
 	
 		public:
 	
@@ -55,11 +66,15 @@ namespace Handler
 			~RequestHandler();
 
 			virtual void	handle(Http::Request & req, Http::Response & res);
-			State	state() const;
+			Status	status() const;
 			
-			void	setState(State state);
+			void	setStatus(Status state);
 			void  reset();
 			Net::Client * client() const;
+			bool isError() const;
+			
+			void serveError(Status status, const LocationConfig * loc, Http::Response & res);
+			void serveError(const LocationConfig * loc, Http::Response & res);
 	
 		private:
 	
@@ -76,6 +91,6 @@ namespace Handler
 } // namespace Handler
 
 #include "UriHandler.hpp"
-#include "ErrorHandler.hpp"
+#include "StaticHandler.hpp"
 
 #endif // REQUESTHANDLER_HPP

@@ -9,7 +9,7 @@ ErrorHandler::~ErrorHandler() {}
 void	ErrorHandler::handle(const  LocationConfig * loc, Http::Response & res)
 {
 	
-	res.setStatus((int)_handler->state());
+	res.setStatus((int)_handler->status());
 	res.setHeader("Content-Type", "text/html; charset=UTF-8");
 
 	std::string custom_page;
@@ -25,7 +25,7 @@ void	ErrorHandler::handle(const  LocationConfig * loc, Http::Response & res)
 		return (serveCustomPage(custom_page, res));
 
 	loadHtmlErrorPage(res.status(), res);
-	_handler->setState(HS_OK);
+	_handler->setStatus(HS_OK);
 
 }
 
@@ -36,17 +36,20 @@ void	ErrorHandler::serveCustomPage(const std::string & path, Http::Response & re
 	// TODO create static file server (EventHandler) to serve the file
 	// TODO serve the file at path
 	// TODO set state to waiting and return
-	// _handler->setState(HS_WAITING);
-	loadHtmlErrorPage(res.status(), res);
-	_handler->setState(HS_OK);
-	return ;
-
+	_handler->setStatus(HS_WAITING);
+	StaticHandler * static_handler = new StaticHandler(_handler);
+	if (!static_handler->handle(path, &res))
+	{
+		delete static_handler;
+		return (loadHtmlErrorPage(_handler->status(), res));
+	}
+	EventLoop::instance().addHandler(static_handler, POLLIN);
 }
 
 void	ErrorHandler::loadHtmlErrorPage(int status, Http::Response & res)
 {
 
-	std::string body = "<!DOCTYPE html>"; 
+	std::string body = "<!DOCTYPE html>";
 	body += "<html><head><title>";
 	body += String::str(status) + " " + res.reason() + "</title></head>";
 	body += "<body><h1>" + String::str(status) + " " + res.reason() + "</h1>";
@@ -54,5 +57,6 @@ void	ErrorHandler::loadHtmlErrorPage(int status, Http::Response & res)
 
 	res.appendBody(body);
 	res.setHeader("Content-Length", String::str(res.body().length()));
+	_handler->setStatus(HS_OK);
 
 }

@@ -13,7 +13,7 @@ class ICacheStrategy
 
         virtual ~ICacheStrategy() {}
         virtual void put(const std::string &, const std::string &) = 0;
-        virtual std::string get(const std::string &) = 0;
+        virtual const std::string & get(const std::string &) = 0;
         virtual bool exists(const std::string &) = 0;
 
 };
@@ -31,7 +31,7 @@ class CacheManager
         static CacheManager * getInstance();
 
         bool exists(const std::string &);
-        std::string get(const std::string &);
+        const std::string & get(const std::string &);
         void put(const std::string &, const std::string &);
         void use(CacheType);
     

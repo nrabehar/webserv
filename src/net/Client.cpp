@@ -54,7 +54,7 @@ void	Client::onRead()
 void	Client::onWrite()
 {
 
-	if (_handler.state() == Handler::HS_OK)
+	if (_handler.status() == Handler::HS_OK)
 	{
 		if (_res.header().find("Connection") != _res.header().end() &&
 			_res.header().find("Connection")->second == "keep-alive")
@@ -83,7 +83,7 @@ void	Client::onWrite()
 		_out.hasRead(ret);
 	if (!_out.readable())
 		_out.clear();
-	if (_handler.state() == Handler::HS_OK)
+	if (_handler.status() == Handler::HS_OK)
 	{
 		_handler.reset();
 		if (_keep_alive)
