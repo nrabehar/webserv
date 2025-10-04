@@ -32,11 +32,7 @@ void	ErrorHandler::handle(const  LocationConfig * loc, Http::Response & res)
 
 void	ErrorHandler::serveCustomPage(const std::string & path, Http::Response & res)
 {
-
-	(void)path;
-	// TODO create static file server (EventHandler) to serve the file
-	// TODO serve the file at path
-	// TODO set state to waiting and return
+	
 	_handler->setStatus(HS_WAITING);
 	StaticHandler * static_handler = new StaticHandler(_handler);
 	if (!static_handler->handle(path, &res))

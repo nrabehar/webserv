@@ -1,3 +1,8 @@
+#ifndef FILE_IPP
+#define FILE_IPP
+
+#define IN_MEMORY_FD -2
+
 class IFile
 {
 	public:
@@ -117,3 +122,5 @@ class FileFactory
 		FileFactory & operator=(const FileFactory &);
 
 };
+
+#endif // FILE_IPP

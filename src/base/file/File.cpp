@@ -57,7 +57,7 @@ ssize_t LocalFile::read()
  * InMemoryFile
  */
 InMemoryFile::InMemoryFile(const std::string &path, const std::string &data)
-	: File(path) { _data = data;}
+	: File(path) { _data = data; _fd = IN_MEMORY_FD; _complete = true; }
 InMemoryFile::~InMemoryFile(){}
 ssize_t InMemoryFile::read()
 {

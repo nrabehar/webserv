@@ -28,6 +28,10 @@ namespace Handler
 			MethodHandler();
 			MethodHandler(const MethodHandler &);
 			MethodHandler & operator=(const MethodHandler &);
+
+			void handleGet(Http::Request & req, Http::Response & res);
+			void handlePost(Http::Request & req, Http::Response & res);
+			void handleDelete(Http::Request & req, Http::Response & res);
 	
 	};
 	

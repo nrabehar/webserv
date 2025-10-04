@@ -73,13 +73,12 @@ bool StaticHandler::handle(const std::string & path, Http::Response * res)
 		_handler->setStatus(HS_INTERNAL_SERVER_ERROR);
 		return (false);
 	}
-	if (_file->fd() == -1)
+	_fd = _file->fd();
+	if (_fd == IN_MEMORY_FD)
 	{
 		_response->appendBody(_file->getData());
 		_response->setHeader("Content-Length", String::str(_response->body().length()));
 	}
-	_fd = _file->fd();
-
 	return (true);
 
 }
