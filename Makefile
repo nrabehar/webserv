@@ -72,6 +72,7 @@ HANDLERSRC += RequestHandler.cpp
 HANDLERSRC += UriHandler.cpp
 HANDLERSRC += ErrorHandler.cpp
 HANDLERSRC += StaticHandler.cpp
+HANDLERSRC += MethodHandler.cpp
 
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 

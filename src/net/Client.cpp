@@ -55,14 +55,7 @@ void	Client::onWrite()
 {
 
 	if (_handler.status() == Handler::HS_OK)
-	{
-		if (_res.header().find("Connection") != _res.header().end() &&
-			_res.header().find("Connection")->second == "keep-alive")
-			_keep_alive = true;
-		else
-			_keep_alive = false;
 		_out.append(_res.str()); //TODO optimize this [chunked encoding or change _res.str() to build into a buffer directly]
-	}
 	if (_out.readable() == 0)
 		return ;
 	LOG(_req.method() + " " + _req.uri() + " -> " + String::str(_res.status()) + " on fd: " + String::str(_fd));

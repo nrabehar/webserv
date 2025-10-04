@@ -15,10 +15,13 @@ StaticHandler::~StaticHandler()
 void	StaticHandler::handle(short e)
 {
 
-	if (!_loc)
-		return ;
+	LOG("StaticHandler::handle: event " + String::str(e) + " on fd " + String::str(fd()));
 	if (e & (POLLERR | POLLHUP | POLLNVAL))
+	{
+		EventLoop::instance().delHandler(this);
+		ERR("StaticHandler::handle: poll error");
     return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
+	}
 
 	if (e & POLLIN)
 	{
@@ -26,11 +29,17 @@ void	StaticHandler::handle(short e)
 		{
 			ssize_t n = _file->read();
 			if (n <= 0 && !_file->isComplete())
+			{
+				EventLoop::instance().delHandler(this);
+				ERR("StaticHandler::handle: read error or connection closed");
 			  return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
+			}
 			_response->appendBody(_file->getData().substr(_offset, n));
 			_offset += n;
+			LOG("StaticHandler::handle: read " + String::str(n) + " bytes");
 			if (_file->isComplete())
 			{
+				_response->setHeader("Content-Length", String::str(_response->body().length()));
 				EventLoop::instance().delHandler(this);
 				return (_handler->setStatus(HS_OK));
 			}
@@ -61,10 +70,18 @@ bool StaticHandler::handle(const std::string & path, Http::Response * res)
 	_file = FileFactory::create(_path);
 	if (!_file)
 	{
-		_handler->setStatus(HS_NOT_FOUND);
+		_handler->setStatus(HS_INTERNAL_SERVER_ERROR);
 		return (false);
 	}
+	if (_file->fd() == -1)
+	{
+		_response->appendBody(_file->getData());
+		_response->setHeader("Content-Length", String::str(_response->body().length()));
+	}
+	_fd = _file->fd();
 
 	return (true);
 
 }
+
+

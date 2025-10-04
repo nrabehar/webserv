@@ -49,13 +49,8 @@ void	RequestHandler::handle(Http::Request & req, Http::Response & res)
 	std::string path = uri_handler.buildPath();
 	if (isError())
 		return (_error_handler.handle(loc, res));
-
-	setStatus(HS_OK); //TODO actual handling
-	res.setStatus(200);
-	res.setReason("OK");
-	res.appendBody("<html><body><h1>It works!</h1></body></html>");
-	res.setHeader("Content-Length", String::str(res.body().length()));
-
+	MethodHandler method_handler(this, path, loc);
+	method_handler.handle(req, res);
 }
 
 const LocationConfig *	RequestHandler::findLocation(const std::string & uri) const

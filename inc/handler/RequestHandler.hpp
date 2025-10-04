@@ -93,4 +93,6 @@ namespace Handler
 #include "UriHandler.hpp"
 #include "StaticHandler.hpp"
 
+#include "MethodHandler.hpp"
+
 #endif // REQUESTHANDLER_HPP
