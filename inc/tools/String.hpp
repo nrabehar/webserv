@@ -21,6 +21,9 @@ class String
 		static std::vector<std::string>	split(const std::string & s, const std::string & delim);
 		static std::vector<std::string> split(const std::string & s);
 
+		static std::string toLower(const std::string & s);
+		static std::string toCamelCase(const std::string & s, char sep = '-');
+
 		static bool	isNumeric(const std::string & s);
 
 		template<typename T>

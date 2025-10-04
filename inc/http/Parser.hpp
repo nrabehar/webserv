@@ -55,6 +55,16 @@ namespace Http
 			bool parseHeaders(Buffer & buf, Request & req);
 			bool parseBody(Buffer & buf, Request & req);
 
+			bool parseUrlEncoded(Request & req);
+			bool parseMultiPartBody(Request & req);
+			bool parseChunkedBody(Buffer & buf, Request & req);
+
+			std::string getBoundary(const std::string & ct);
+			void parseField(const std::string & part, Request & req);
+			std::string parseDisposition(const std::string & disp, const std::string & field);
+
+			std::string parsePercentEncoding(const std::string & str);
+
 
 	};
 	

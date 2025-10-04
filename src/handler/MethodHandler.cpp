@@ -26,6 +26,7 @@ void MethodHandler::handle(Http::Request & req, Http::Response & res)
 
 void MethodHandler::handleGet(Http::Request & req, Http::Response & res)
 {
+	(void)req;
 	StaticHandler * static_handler = new StaticHandler(_handler);
 	if (!static_handler->handle(_path, &res))
 	{
@@ -42,16 +43,40 @@ void MethodHandler::handleGet(Http::Request & req, Http::Response & res)
 
 void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
 {
-	// Handle POST method (not implemented in this snippet)
-	return (_handler->setStatus(HS_NOT_IMPLEMENTED));
+
+	const std::string & ct = req.header("Content-Type");
+	if (ct.find("application/x-www-form-urlencoded") != std::string::npos
+		|| ct.find("multipart/form-data") != std::string::npos)
+	{
+		const std::vector<Http::RequestBody> & body_fields = req.bodyFields();
+		for (size_t i = 0; i < body_fields.size(); ++i)
+		{
+			if (!body_fields[i].filename.empty())
+			{
+
+				continue ; // TODO: handle file upload
+			}	
+			res.appendBody(
+				"<p>" + body_fields[i].field + ": " + body_fields[i].value + "</p>"
+			);
+		}
+	}
+	else
+	{
+		return (_handler->serveError(HS_UNSUPPORTED_MEDIA_TYPE, _loc, res));
+	}
+
 }
 
 void MethodHandler::handleDelete(Http::Request & req, Http::Response & res)
 {
+
+	(void)req;
 	if (remove(_path.c_str()) != 0)
 		return (_handler->serveError(HS_FORBIDDEN, _loc, res));
 	res.setStatus(200);
 	res.setReason("OK");
 	res.appendBody("<html><body><h1>File deleted successfully</h1></body></html>");
 	return (_handler->setStatus(HS_OK));
+
 }

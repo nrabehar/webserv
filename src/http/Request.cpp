@@ -6,8 +6,7 @@ Request::Request()
  : _method("GET"),
 	 _uri("/"),
 	 _version("HTTP/1.1"),
-	 _headers(),
-	 _body()
+	 _headers()
 {}
 
 Request & Request::operator=(const Request & other)
@@ -77,3 +76,26 @@ void Request::setHeader(const std::string & key, const std::string & value)
 	_headers[key] = value;
 }
 
+const std::string & Request::body() const
+{
+	return (_raw_body);
+}
+
+const std::vector<RequestBody> & Request::bodyFields() const
+{
+	return (_body);
+}
+
+void Request::appendBody(const std::string & body)
+{
+	_raw_body += body;
+}
+
+void Request::addBodyField(const std::string & field, const std::string & filename, const std::string & value)
+{
+	RequestBody rb;
+	rb.field = field;
+	rb.filename = filename;
+	rb.value = value;
+	_body.push_back(rb);
+}

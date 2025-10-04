@@ -5,6 +5,15 @@
 
 namespace Http
 {
+
+	struct RequestBody
+	{
+
+		std::string field;
+		std::string filename;
+		std::string value;
+
+	};
 	
 	class Request
 	{
@@ -15,7 +24,8 @@ namespace Http
 			std::string					_uri;
 			std::string					_version;
 			std::map<std::string, std::string>	_headers;
-			std::string					_body;
+			std::vector<RequestBody>	_body;
+			std::string					_raw_body;
 				
 		public:
 	
@@ -35,6 +45,11 @@ namespace Http
 			const std::map<std::string, std::string> & header() const;
 			const std::string & header(const std::string & key) const;
 			void setHeader(const std::string & key, const std::string & value);
+
+			const std::string & body() const;
+			const std::vector<RequestBody> & bodyFields() const;
+			void appendBody(const std::string & body);
+			void addBodyField(const std::string & field, const std::string & filename, const std::string & value);
 	
 		private:
 	

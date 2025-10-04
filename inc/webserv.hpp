@@ -83,6 +83,7 @@ enum e_LogLevel
 #include "tools/Token.hpp"
 #include "tools/TokenExtractor.hpp"
 #include "tools/NetUtil.hpp"
+#include "tools/Mime.hpp"
 
 
 #include "tools/Lexer.hpp"

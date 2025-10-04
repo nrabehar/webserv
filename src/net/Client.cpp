@@ -58,8 +58,8 @@ void	Client::onWrite()
 		_out.append(_res.str()); //TODO optimize this [chunked encoding or change _res.str() to build into a buffer directly]
 	if (_out.readable() == 0)
 		return ;
-	LOG(_req.method() + " " + _req.uri() + " -> " + String::str(_res.status()) + " on fd: " + String::str(_fd));
-	LOG("Sending: (" + String::str(_out.readable()) + " bytes)" + std::string(_out.readPtr()));
+	LOG("Client " + String::str(_fd) + ": " + _req.method() + " " + 
+			_req.uri() + " " + String::str(_res.status()));
 	const char * buf = _out.readPtr();
 	size_t len = _out.readable();
 	ssize_t ret = ::write(_fd, buf, len);
@@ -78,6 +78,7 @@ void	Client::onWrite()
 		_out.clear();
 	if (_handler.status() == Handler::HS_OK)
 	{
+		_keep_alive = _res.header("Connection") == "keep-alive";
 		_handler.reset();
 		if (_keep_alive)
 			EventLoop::instance().modHandler(this, POLLIN | POLLOUT);

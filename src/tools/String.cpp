@@ -71,3 +71,42 @@ bool String::isNumeric(const std::string & s)
 	return (s.find_first_not_of(n) == std::string::npos);
 
 }
+
+std::string String::toLower(const std::string & s)
+{
+
+	std::string result = s;
+	std::transform(result.begin(), result.end(), result.begin(), ::tolower);
+	return (result);
+
+}
+
+std::string String::toCamelCase(const std::string & s, char sep)
+{
+
+	std::string result;
+	bool capitalize = false;
+
+	for (size_t i = 0; i < s.length(); ++i)
+	{
+		if (s[i] == sep)
+		{
+			capitalize = true;
+		}
+		else
+		{
+			if (capitalize)
+			{
+				result += std::toupper(s[i]);
+				capitalize = false;
+			}
+			else
+			{
+				result += std::tolower(s[i]);
+			}
+		}
+	}
+
+	return (result);
+
+}

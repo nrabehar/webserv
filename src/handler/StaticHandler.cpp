@@ -79,6 +79,7 @@ bool StaticHandler::handle(const std::string & path, Http::Response * res)
 		_response->appendBody(_file->getData());
 		_response->setHeader("Content-Length", String::str(_response->body().length()));
 	}
+	_response->setHeader("Content-Type", Mime::getType(_path));
 	return (true);
 
 }
