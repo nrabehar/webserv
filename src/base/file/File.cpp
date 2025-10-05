@@ -37,17 +37,14 @@ ssize_t LocalFile::read()
 	
 	char buf[4096];
 	ssize_t n = ::read(_fd, buf, sizeof(buf));
-	if (n > 0)
-		_data.append(buf, n);
-	else if (n == 0)
-		_complete = true;
-	else
+	if (n <= 0)
 	{
 		close(_fd);
 		_fd = -1;
 		return (-1);
 	}
-	if (n <= 6096 && n > 0)
+	_data.append(buf, n);
+	if (n < 4096)
 		_complete = true;
 	return (n);
 

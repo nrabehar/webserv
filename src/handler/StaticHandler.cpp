@@ -36,9 +36,10 @@ void	StaticHandler::handle(short e)
 			}
 			_response->appendBody(_file->getData().substr(_offset, n));
 			_offset += n;
-			LOG("StaticHandler::handle: read " + String::str(n) + " bytes");
+			LOG("StaticHandler::handle: read " + String::str(n) + " bytes " + _file->getPath());
 			if (_file->isComplete())
 			{
+				LOG("StaticHandler::handle: file read complete");
 				_response->setHeader("Content-Length", String::str(_response->body().length()));
 				EventLoop::instance().delHandler(this);
 				return (_handler->setStatus(HS_OK));
