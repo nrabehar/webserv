@@ -10,9 +10,6 @@ MethodHandler::~MethodHandler() {}
 void MethodHandler::handle(Http::Request & req, Http::Response & res)
 {
 
-	if (!_loc->allowsMethod(req.method()))
-		return (_handler->serveError(HS_METHOD_NOT_ALLOWED, _loc, res));
-
 	if (req.method() == "GET")
 		return (handleGet(req, res));
 	else if (req.method() == "POST")
@@ -27,6 +24,10 @@ void MethodHandler::handle(Http::Request & req, Http::Response & res)
 void MethodHandler::handleGet(Http::Request & req, Http::Response & res)
 {
 	(void)req;
+
+	if (_handler->status() == HS_FOLDER_LISTING)
+		return (_handler->serveDirectory(_path, req.uri(), res));
+
 	StaticHandler * static_handler = new StaticHandler(_handler);
 	if (!static_handler->handle(_path, &res))
 	{

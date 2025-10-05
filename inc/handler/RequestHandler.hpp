@@ -75,6 +75,8 @@ namespace Handler
 			
 			void serveError(Status status, const LocationConfig * loc, Http::Response & res);
 			void serveError(const LocationConfig * loc, Http::Response & res);
+
+			void serveDirectory(const std::string & path, const std::string & uri, Http::Response & res);
 	
 		private:
 	
@@ -84,6 +86,7 @@ namespace Handler
 
 			const LocationConfig * findLocation(const std::string & uri) const;
 			void	mergeHeaders(Http::Request & req, Http::Response & res);
+			void  redirect(const std::pair<int, std::string> & redirect, Http::Response & res);
 	
 	};
 	

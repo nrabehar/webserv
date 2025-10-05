@@ -36,6 +36,7 @@ TOOLSSRC += TokenExtractor.cpp
 TOOLSSRC += Lexer.cpp
 TOOLSSRC += NetUtil.cpp
 TOOLSSRC += Mime.cpp
+TOOLSSRC += UI.cpp
 
 CORESRC += directive/Directive.cpp
 CORESRC += directive/DirectiveParser.cpp

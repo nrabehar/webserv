@@ -37,13 +37,7 @@ void	RequestHandler::handle(Http::Request & req, Http::Response & res)
 	}
 
 	if (loc->redirect.first != 0)
-	{
-		res.setStatus(loc->redirect.first);
-		res.setReason("Redirect");
-		res.setHeader("Location", loc->redirect.second);
-		setStatus(HS_OK);
-		return ;
-	}
+	  return (redirect(loc->redirect, res));
 
 	UriHandler uri_handler(uri, loc, this);
 	std::string path = uri_handler.buildPath();
@@ -107,4 +101,33 @@ void	RequestHandler::serveError(Status status, const LocationConfig * loc, Http:
 void	RequestHandler::serveError(const LocationConfig * loc, Http::Response & res)
 {
 	_error_handler.handle(loc, res);
+}
+
+void RequestHandler::serveDirectory(const std::string & path, const std::string & uri, Http::Response & res)
+{
+
+	if (access(path.c_str(), R_OK) != 0)
+	  return (serveError(HS_FORBIDDEN, NULL, res));
+
+	std::string clean_uri = uri;
+	if (uri.find("?") != std::string::npos)
+		clean_uri = clean_uri.substr(0, uri.find("?"));
+
+	std::string body = UI::getDirListing(path, clean_uri);
+	res.setStatus(HS_OK);
+	res.setReason("OK");
+	res.setHeader("Content-Type", "text/html");
+	res.setHeader("Content-Length", String::str(body.length()));
+	res.appendBody(body);
+	setStatus(HS_OK);
+}
+
+void RequestHandler::redirect(const std::pair<int, std::string> & redirect, Http::Response & res)
+{
+
+	res.setStatus(redirect.first);
+	res.setReason("Redirect");
+	res.setHeader("Location", redirect.second);
+	setStatus(HS_OK);
+
 }

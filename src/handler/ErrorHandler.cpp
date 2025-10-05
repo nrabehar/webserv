@@ -11,7 +11,6 @@ void	ErrorHandler::handle(const  LocationConfig * loc, Http::Response & res)
 	
 	res.setStatus((int)_handler->status());
 	res.setHeader("Content-Type", "text/html; charset=UTF-8");
-	res.setHeader("Connection", "close");
 
 	std::string custom_page;
 	std::map<int, std::string>::const_iterator it = loc->err_page.find(res.status());
@@ -46,11 +45,7 @@ void	ErrorHandler::serveCustomPage(const std::string & path, Http::Response & re
 void	ErrorHandler::loadHtmlErrorPage(int status, Http::Response & res)
 {
 
-	std::string body = "<!DOCTYPE html>";
-	body += "<html><head><title>";
-	body += String::str(status) + " " + res.reason() + "</title></head>";
-	body += "<body><h1>" + String::str(status) + " " + res.reason() + "</h1>";
-	body += "<hr><em>webserv</em></body></html>";
+	std::string body = UI::getErrorPage(status, res.reason(status));
 
 	res.appendBody(body);
 	res.setHeader("Content-Length", String::str(res.body().length()));
