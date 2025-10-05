@@ -42,9 +42,12 @@ std::string UI::getFooter()
 
 }
 
-std::string UI::getCss()
+const std::string & UI::getCss()
 {
 	std::ostringstream oss;
+
+	if (!_css.empty())
+		return (_css);
 
 	oss << "*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}\n"
 		<< "a,a:active{text-decoration:none}\n"
@@ -95,7 +98,8 @@ std::string UI::getCss()
 		<< ".footer-links a:hover{color:#109E82}\n"
 		<< ".footer-copy{font-size:0.95rem;color:#666;margin-top:0.5rem}";
 
-	return (oss.str());
+	_css = oss.str();
+	return (_css);
 
 }
 
@@ -265,10 +269,13 @@ std::string UI::getPermission(const std::string & file)
 	return ("---------");
 }
 
-std::string UI::getActionScript()
+const std::string & UI::getActionScript()
 {
 
 	std::ostringstream	oss;
+
+	if (!_js.empty())
+		return (_js);
 
 	oss << "<script>\n"
 		<< "function deleteFile(filePath) {\n"
@@ -300,6 +307,7 @@ std::string UI::getActionScript()
 		<< "});\n"
 		<< "</script>\n";
 
-	return (oss.str());
+	_js = oss.str();
+	return (_js);
 
 }
