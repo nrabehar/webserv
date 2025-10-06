@@ -38,6 +38,7 @@ struct LocationConfig
 	std::vector<std::string> 													methods;
 	size_t 																						client_max_body_size;
 	std::pair<int, std::string> 											redirect;
+	std::string																				upload_store;
 
 	LocationConfig();
 

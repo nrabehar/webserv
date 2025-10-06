@@ -19,22 +19,7 @@ const std::string & UriHandler::uri() const { return (_uri); }
 std::string	UriHandler::buildPath()
 {
 
-	std::string path = _loc->root;
-
-	if (path[path.size() - 1] == '/')
-		path = path.substr(0, path.size() - 1);
-	
-	std::string loc_path = _loc->path;
-	if (loc_path[loc_path.size() - 1] == '/')
-		loc_path = loc_path.substr(0, loc_path.size() - 1);
-
-	if (loc_path != "/" && _uri.find(loc_path) == 0)
-		_uri = _uri.substr(loc_path.size());
-
-	if (!_uri.empty() && _uri[0] != '/')
-		path += '/';
-
-	path += _uri;
+	std::string path = UriHandler::buildPath(_uri, _loc);
 
 	if (!fileExists(path))
 		_handler->setStatus(HS_NOT_FOUND);
@@ -44,6 +29,31 @@ std::string	UriHandler::buildPath()
 		_handler->setStatus(HS_FORBIDDEN);
 	else if (isCgiPath(path))
 		_handler->setStatus(HS_CGI);
+
+	return (path);
+
+}
+
+std::string	UriHandler::buildPath(const std::string & uri, const LocationConfig * loc)
+{
+
+	std::string path = loc->root;
+	std::string c_uri = uri;
+
+	if (path[path.size() - 1] == '/')
+		path = path.substr(0, path.size() - 1);
+
+	std::string loc_path = loc->path;
+	if (loc_path[loc_path.size() - 1] == '/')
+		loc_path = loc_path.substr(0, loc_path.size() - 1);
+
+	if (loc_path != "/" && uri.find(loc_path) == 0)
+		c_uri = uri.substr(loc_path.size());
+
+	if (!c_uri.empty() && c_uri[0] != '/')
+		path += '/';
+
+	path += c_uri;
 
 	return (path);
 

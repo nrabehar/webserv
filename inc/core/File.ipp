@@ -11,6 +11,7 @@ class IFile
 		virtual int  fd() const = 0;
 		virtual bool isComplete() const = 0;
 		virtual ssize_t read() = 0;
+		virtual	ssize_t	write(const char * data, size_t n) = 0;
 		virtual const std::string & getPath() const = 0;
 		virtual const std::string & getData() const = 0;
 		
@@ -35,6 +36,7 @@ class File : public IFile
 		virtual int  fd() const;
 		virtual bool isComplete() const;
 		virtual ssize_t read() = 0;
+		virtual ssize_t write(const char * data, size_t n);
 		virtual const std::string & getPath() const;
 		virtual const std::string & getData() const;
 
@@ -97,6 +99,7 @@ class FileProxy : public IFile
 		virtual int  fd() const;
 		virtual bool isComplete() const;
 		virtual ssize_t read();
+		virtual ssize_t	write(const char * data, size_t n);
 		virtual const std::string & getPath() const;
 		virtual const std::string & getData() const;
 	

@@ -25,6 +25,7 @@ namespace Handler
 		HS_REQUEST_ENTITY_TOO_LARGE = 413,
 		HS_URI_TOO_LONG = 414,
 		HS_UNSUPPORTED_MEDIA_TYPE = 415,
+		HS_UPROCESSABLE_ENTITY = 422,
 		HS_INTERNAL_SERVER_ERROR = 500,
 		HS_NOT_IMPLEMENTED = 501,
 		HS_BAD_GATEWAY = 502,
@@ -95,6 +96,7 @@ namespace Handler
 
 #include "UriHandler.hpp"
 #include "StaticHandler.hpp"
+#include "UploadHandler.hpp"
 
 #include "MethodHandler.hpp"
 

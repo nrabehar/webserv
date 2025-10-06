@@ -8,7 +8,7 @@ File::File(const std::string & path)
 
 File::~File()
 {
-	if (_fd != -1)
+	if (_fd >= 0)
 		::close(_fd);
 }
 
@@ -17,6 +17,22 @@ bool File::isComplete() const { return _complete; }
 
 const std::string & File::getPath() const { return _path; }
 const std::string & File::getData() const { return _data; }
+ssize_t	File::write(const char * data, size_t n)
+{
+
+	if (_fd < 0)
+		return (0);
+
+	ssize_t	bytes = ::write(_fd, data, n);
+	if (bytes <= 0)
+	{
+		::close(_fd);
+		_fd = -1;
+		return (-1);
+	}
+	return (bytes);
+
+}
 
 
 /**
@@ -95,6 +111,13 @@ ssize_t FileProxy::read()
 	if (_file->isComplete())
 		CacheManager::getInstance()->put(_path, _file->getData());
 	return (n);
+
+}
+
+ssize_t	FileProxy::write(const char * data, size_t n)
+{
+
+	return (_file->write(data, n));
 
 }
 

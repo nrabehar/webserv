@@ -54,17 +54,29 @@ void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
 		{
 			if (!body_fields[i].filename.empty())
 			{
-
-				continue ; // TODO: handle file upload
-			}	
-			res.appendBody(
-				"<p>" + body_fields[i].field + ": " + body_fields[i].value + "</p>"
-			);
+				std::string file_name = __TIMESTAMP__ + body_fields[i].filename;
+				UploadHandler *	up_h = new UploadHandler(_handler, file_name, _loc);
+				if (!up_h->upload(file_name, body_fields[i].value, res))
+				{
+					delete up_h;
+					return (_handler->serveError(_loc, res));
+				}
+				EventLoop::instance().addHandler(up_h, POLLOUT);
+			}
+			else
+			{
+				res.appendBody(
+					"<p>" + body_fields[i].field + ": " + body_fields[i].value + "</p>"
+				);
+			}
 		}
 	}
 	else
 	{
-		return (_handler->serveError(HS_UNSUPPORTED_MEDIA_TYPE, _loc, res));
+		res.setHeader("Content-type", req.header("Content-Type"));
+		res.appendBody(req.body());
+		res.setHeader("Content-Length", String::str(req.body().size()));
+		_handler->setStatus(HS_OK);
 	}
 
 }
