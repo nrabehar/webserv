@@ -39,7 +39,7 @@ void MethodHandler::handleGet(Http::Request & req, Http::Response & res)
 		delete static_handler;
 		return (_handler->setStatus(HS_OK));
 	}
-	return (EventLoop::instance().addHandler(static_handler, POLLIN));
+	return (_handler->addProcess(static_handler, POLLIN));
 }
 
 void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
@@ -61,7 +61,7 @@ void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
 					delete up_h;
 					return (_handler->serveError(_loc, res));
 				}
-				EventLoop::instance().addHandler(up_h, POLLOUT);
+				_handler->addProcess(up_h, POLLOUT);
 			}
 			else
 			{

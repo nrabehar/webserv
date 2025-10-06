@@ -18,7 +18,6 @@ void	StaticHandler::handle(short e)
 	LOG("StaticHandler::handle: event " + String::str(e) + " on fd " + String::str(fd()));
 	if (e & (POLLERR | POLLHUP | POLLNVAL))
 	{
-		EventLoop::instance().delHandler(this);
 		ERR("StaticHandler::handle: poll error");
     return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
 	}
@@ -30,7 +29,6 @@ void	StaticHandler::handle(short e)
 			ssize_t n = _file->read();
 			if (n <= 0 && !_file->isComplete())
 			{
-				EventLoop::instance().delHandler(this);
 				ERR("StaticHandler::handle: read error or connection closed");
 			  return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
 			}
@@ -41,14 +39,13 @@ void	StaticHandler::handle(short e)
 			{
 				LOG("StaticHandler::handle: file read complete");
 				_response->setHeader("Content-Length", String::str(_response->body().length()));
-				EventLoop::instance().delHandler(this);
+				_handler->delProcess(this);
 				return (_handler->setStatus(HS_OK));
 			}
 		}
 		catch (std::exception & e)
 		{
 			ERR("StaticHandler::handle: " + std::string(e.what()));
-			EventLoop::instance().delHandler(this);
 			return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
 		}
 	}

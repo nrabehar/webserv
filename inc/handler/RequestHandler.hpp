@@ -48,9 +48,12 @@ namespace Handler
 	
 			virtual ~IRequestHandler() {}
 			virtual	void	handle(Http::Request & req, Http::Response & res) = 0;
+
+			virtual	void	addProcess(IEventHandler * h, short e) = 0;
+			virtual	void	delProcess(IEventHandler * h) = 0;
 	
 	};
-	
+
 
 	class RequestHandler : public IRequestHandler
 	{
@@ -60,6 +63,8 @@ namespace Handler
 			Net::Client *	_client;
 			Status	_status;
 			ErrorHandler _error_handler;
+
+			std::vector<IEventHandler *> _process;
 	
 		public:
 	
@@ -67,6 +72,8 @@ namespace Handler
 			~RequestHandler();
 
 			virtual void	handle(Http::Request & req, Http::Response & res);
+			virtual	void	addProcess(IEventHandler * h, short e);
+			virtual	void	delProcess(IEventHandler * h);
 			Status	status() const;
 			
 			void	setStatus(Status state);
@@ -78,6 +85,8 @@ namespace Handler
 			void serveError(const LocationConfig * loc, Http::Response & res);
 
 			void serveDirectory(const std::string & path, const std::string & uri, Http::Response & res);
+
+
 	
 		private:
 	

@@ -5,7 +5,13 @@ using namespace Handler;
 UploadHandler::UploadHandler(RequestHandler * handler, const std::string & path, const LocationConfig * loc)
 	: EventHandler(-1) , _handler(handler), _path(path), _loc(loc), _file(NULL) {}
 
-UploadHandler::~UploadHandler() {}
+UploadHandler::~UploadHandler()
+{
+
+	if (_file)
+		delete _file;
+
+}
 
 bool UploadHandler::upload(const std::string &file, const std::string &data, Http::Response &res)
 {
@@ -50,7 +56,6 @@ void UploadHandler::handle(short e)
 	LOG("UploadHandler::handle: event " + String::str(e) + " on fd " + String::str(fd()));
 	if (e & (POLLERR | POLLHUP | POLLNVAL))
 	{
-		EventLoop::instance().delHandler(this);
 		ERR("UploadHandler::handle: poll error");
     return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
 	}
@@ -63,7 +68,6 @@ void UploadHandler::handle(short e)
 			ssize_t n = _file->write(_file_buf.readPtr(), 4096);
 			if (n <= 0)
 			{
-				EventLoop::instance().delHandler(this);
 				ERR("UploadHandler::handle: write error");
 				return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
 			}
@@ -71,14 +75,13 @@ void UploadHandler::handle(short e)
 			if (_file_buf.readable() == 0)
 			{
 				LOG(_file->getPath() + " uploaded successfully");
-				EventLoop::instance().delHandler(this);
+				_handler->delProcess(this);
 				_handler->setStatus(HS_OK);
 			}
 		}
 		catch(const std::exception& e)
 		{
 			ERR("UploadHandler::handle: " + std::string(e.what()));
-			EventLoop::instance().delHandler(this);
 			return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
 		}
 	}

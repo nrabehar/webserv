@@ -9,10 +9,48 @@ RequestHandler::RequestHandler(Net::Client * client)
 
 RequestHandler::~RequestHandler()
 {
+
+	for (size_t i = 0; i < _process.size(); ++i)
+		EventLoop::instance().delHandler(_process[i]);
+
 }
 
 Status	RequestHandler::status() const { return (_status); }
-void	RequestHandler::setStatus(Status state) { _status = state; }
+void	RequestHandler::addProcess(IEventHandler * h, short e)
+{
+	_process.push_back(h);
+	EventLoop::instance().addHandler(h, e);
+}
+void	RequestHandler::delProcess(IEventHandler * h)
+{
+
+	for (size_t i = 0; i < _process.size(); ++i)
+	{
+		if (_process[i] == h)
+		{
+			_process.erase(_process.begin() + i);
+			break ;
+		}
+	}
+	EventLoop::instance().delHandler(h);
+}
+
+void	RequestHandler::setStatus(Status state)
+{
+
+	_status = state;
+	if (state == HS_OK && _process.size())
+		_status = HS_PROGRESS;
+	else if (isError())
+	{
+		for (size_t i = 0; i < _process.size(); ++i)
+			EventLoop::instance().delHandler(_process[i]);
+		_process.clear();
+	}
+
+}
+
+
 bool	RequestHandler::isError() const
 {
 
