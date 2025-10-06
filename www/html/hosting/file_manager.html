@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>File Manager - Webserv Hosting</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+	
+	<header class="header">
+		<div class="header-container">
+			<a href="/" class="logo">
+				<img src="/icons/logo.svg" alt="Webserv">
+				<span>WEBSERV</span>
+			</a>
+			<nav class="nav">
+				<a href="/" class="nav-link">Home</a>
+				<a href="/directory.html" class="nav-link">Directory</a>
+				<a href="/hosting/forms.html" class="nav-link">Upload</a>
+				<a href="/hosting/file_manager.html" class="nav-link">File Manager</a>
+				<a href="/about.html" class="nav-link">About</a>
+				<a href="/contact.html" class="nav-link">Contact</a>
+				<a href="/monitor.html" class="nav-link">Monitor</a>
+			</nav>
+			<button class="icon-btn source-code">
+				<img src="/icons/github.png" alt="GitHub" class="icon">
+			</button>
+		</div>
+	</header>
+
+	<main class="container">
+		<div class="page-header">
+			<h1>File Manager</h1>
+			<p>Manage your hosted files.</p>
+		</div>
+		<div class="file-manager">
+			<div class="upload-section">
+				<h2>Upload New File</h2>
+				<form action="/cgi-bin/upload.py" method="post" enctype="multipart/form-data" class="upload-form">
+					<div class="form-group">
+						<label for="file">Choose File</label>
+						<input type="file" id="file" name="file" required>
+					</div>
+					<button type="submit" class="upload-btn">Upload</button>
+				</form>
+			</div>
+			<div class="files-list">
+				<h2>Your Files</h2>
+				<div id="files-container" class="files-container">
+					<p>Loading files...</p>
+				</div>
+			</div>
+		</div>
+	</main>
+
+	<script>
+		fetch('/cgi-bin/list_files.py')
+			.then(response => response.text())
+			.then(data => {
+				document.getElementById('files-container').innerHTML = data;
+			})
+			.catch(error => {
+				document.getElementById('files-container').innerHTML = '<p>Error loading files.</p>';
+			});
+	</script>
+
+	<footer class="footer">
+		<div class="footer-content">
+			<img src="/icons/logo.svg" alt="Webserv Logo" class="footer-logo">
+			<span class="footer-title">Webserv</span>
+		</div>
+		<div class="footer-links">
+			<a href="/">Home</a>
+			<a href="/directory.html">Directory</a>
+			<a href="/forms.html">Upload</a>
+			<a href="/about.html">About</a>
+			<a href="/contact.html">Contact</a>
+			<a href="/monitor.html">Monitor</a>
+		</div>
+		<div class="footer-copy">&copy; 2025 Webserv Hosting</div>
+	</footer>
+
+	<script>
+		const urlParams = new URLSearchParams(window.location.search);
+		if (urlParams.has('deleted')) {
+			alert('File deleted successfully!');
+		} else if (urlParams.has('error')) {
+			alert('Error deleting file.');
+		}
+
+		fetch('/cgi-bin/list_files.py')
+			.then(response => response.text())
+			.then(data => {
+				document.getElementById('files-container').innerHTML = data;
+			})
+			.catch(error => {
+				document.getElementById('files-container').innerHTML = '<p>Error loading files.</p>';
+			});
+	</script>
+
+</body>
+</html>
