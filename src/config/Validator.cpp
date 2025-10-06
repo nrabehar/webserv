@@ -29,6 +29,7 @@ bool	Config::Validator::validate(Node<Token> *node)
 	checkCgi(node);
 	checkAllowedMethod(node);
 	checkReturn(node);
+	checkUploadStore(node);
 
 	if (!_checked && !(!node->getParent() && node->getName() == "base"))
 		throw std::runtime_error("Unknown directive `" + node->getName() + "`");
@@ -368,6 +369,24 @@ void Config::Validator::checkAllowedMethod(Node<Token> * node)
 
 }
 
+void Config::Validator::checkUploadStore(Node<Token> * node)
+{
+
+	if (!node || !_valid || _checked)
+		return ;
+
+	if (node->getName() != "upload_store")
+		return ;
+
+	_checked = true;
+
+	Directive upload_store(node);
+	upload_store.acceptParent("location")
+	.argCount(1, 1).argType("string");
+
+	_valid = DirectiveChecker::check(upload_store);
+
+}
 void Config::Validator::checkReturn(Node<Token> * node)
 {
 

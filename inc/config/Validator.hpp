@@ -37,7 +37,7 @@ class Config::Validator
 		static void checkCgi(Node<Token> * node);
 		static void checkAllowedMethod(Node<Token> * node);
 		static void checkReturn(Node<Token> * node);
-
+		static void checkUploadStore(Node<Token> * node);
 };
 
 

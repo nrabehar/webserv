@@ -15,12 +15,8 @@ StaticHandler::~StaticHandler()
 void	StaticHandler::handle(short e)
 {
 
-	LOG("StaticHandler::handle: event " + String::str(e) + " on fd " + String::str(fd()));
 	if (e & (POLLERR | POLLHUP | POLLNVAL))
-	{
-		ERR("StaticHandler::handle: poll error");
     return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
-	}
 
 	if (e & POLLIN)
 	{
@@ -28,16 +24,12 @@ void	StaticHandler::handle(short e)
 		{
 			ssize_t n = _file->read();
 			if (n <= 0 && !_file->isComplete())
-			{
-				ERR("StaticHandler::handle: read error or connection closed");
 			  return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
-			}
+
 			_response->appendBody(_file->getData().substr(_offset, n));
 			_offset += n;
-			LOG("StaticHandler::handle: read " + String::str(n) + " bytes " + _file->getPath());
 			if (_file->isComplete())
 			{
-				LOG("StaticHandler::handle: file read complete");
 				_response->setHeader("Content-Length", String::str(_response->body().length()));
 				_handler->delProcess(this);
 				return (_handler->setStatus(HS_OK));

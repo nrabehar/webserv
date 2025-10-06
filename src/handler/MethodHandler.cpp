@@ -54,6 +54,7 @@ void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
 		{
 			if (!body_fields[i].filename.empty())
 			{
+				LOG("Upload request for file: " + body_fields[i].filename);
 				std::string file_name = __TIMESTAMP__ + body_fields[i].filename;
 				UploadHandler *	up_h = new UploadHandler(_handler, file_name, _loc);
 				if (!up_h->upload(file_name, body_fields[i].value, res))

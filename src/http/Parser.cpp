@@ -49,8 +49,7 @@ bool Parser::parseNext(Buffer & buf, Request & req)
 				ret = parseHeaders(buf, req);
 				break;
 			case BODY:
-				ret = parseBody(buf, req);
-				break;
+				return (parseBody(buf, req));
 			case DONE:
 			case ERROR:
 				ret = false;
@@ -116,8 +115,11 @@ bool Parser::parseHeaders(Buffer & buf, Request & req)
 	if (line_len == 2)
 	{
 		buf.hasRead(line_len);
-		setState(BODY);
-		return (false);
+		if (req.method() == "POST")
+			setState(BODY);
+		else
+			setState(DONE);
+		return (true);
 	}
 
 	std::string line(ptr, line_len - 2);
@@ -129,7 +131,7 @@ bool Parser::parseHeaders(Buffer & buf, Request & req)
 	}
 
 	std::string key = String::toCamelCase(String::trim(line.substr(0, colon)), '-');
-	std::string value = String::toLower(String::trim(line.substr(colon + 1)));
+	std::string value = String::trim(line.substr(colon + 1));
 	req.setHeader(key, value);
 
 	buf.hasRead(line_len);
@@ -167,7 +169,7 @@ bool Parser::parseBody(Buffer & buf, Request & req)
 		setState(ERROR);
 		return (false);
 	}
-	if (buf.readable() < content_len)
+	if (content_len - buf.readable())
 		return (true);
 	req.appendBody(std::string(buf.readPtr(), buf.readable()));
 	const std::string &ct = req.header("Content-Type");
@@ -215,6 +217,10 @@ bool Parser::parseMultiPartBody(Request & req)
 	std::string end_boundary = boundary + "--";
 	const std::string & body = req.body();
 	size_t start = body.find(boundary);
+	{
+		setState(ERROR);
+		return (false);
+	}
 	size_t end = 0;
 	while (start != std::string::npos && _state != ERROR)
 	{

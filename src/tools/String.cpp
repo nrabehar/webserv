@@ -92,10 +92,11 @@ std::string String::toCamelCase(const std::string & s, char sep)
 		if (s[i] == sep)
 		{
 			capitalize = true;
+			result += sep;
 		}
 		else
 		{
-			if (capitalize)
+			if (capitalize || i == 0)
 			{
 				result += std::toupper(s[i]);
 				capitalize = false;
