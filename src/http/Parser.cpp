@@ -38,7 +38,7 @@ bool Parser::parseNext(Buffer & buf, Request & req)
 		return (false);
 
 	bool ret = true;
-	while (ret && _usr_state == PS_INCOMPLETE && buf.readable() > 0)
+	while (ret)
 	{
 		switch (_state)
 		{
@@ -49,12 +49,21 @@ bool Parser::parseNext(Buffer & buf, Request & req)
 				ret = parseHeaders(buf, req);
 				break;
 			case BODY:
-				return (parseBody(buf, req));
+				ret = parseBody(buf, req);
+				break;
 			case DONE:
 			case ERROR:
 				ret = false;
 				break;
 		}
+		if (_state == BODY)
+			ret = false;
+	}
+	if (!ret)
+	{
+		if (_state == BODY)
+			ret = true;
+		LOG("Request parsed: " + req.method() + " success: " + String::str(_state == DONE ? "Yes" : "No"));
 	}
 	return (ret);
 
@@ -114,12 +123,15 @@ bool Parser::parseHeaders(Buffer & buf, Request & req)
 
 	if (line_len == 2)
 	{
+		LOG("End of headers");
 		buf.hasRead(line_len);
-		if (req.method() == "POST")
+		if (req.method() == "POST" )
+		{
 			setState(BODY);
-		else
-			setState(DONE);
-		return (true);
+			return (true);
+		}
+		setState(DONE);
+		return (false);
 	}
 
 	std::string line(ptr, line_len - 2);
@@ -133,7 +145,6 @@ bool Parser::parseHeaders(Buffer & buf, Request & req)
 	std::string key = String::toCamelCase(String::trim(line.substr(0, colon)), '-');
 	std::string value = String::trim(line.substr(colon + 1));
 	req.setHeader(key, value);
-
 	buf.hasRead(line_len);
 
 	return (true);
@@ -171,6 +182,7 @@ bool Parser::parseBody(Buffer & buf, Request & req)
 	}
 	if (content_len - buf.readable())
 		return (true);
+	LOG("Copying data to req raw body: " + String::str(buf.readable()) + " bytes");
 	req.appendBody(std::string(buf.readPtr(), buf.readable()));
 	const std::string &ct = req.header("Content-Type");
 	if (ct.find("application/x-www-form-urlencoded") == 0)
@@ -211,13 +223,16 @@ bool Parser::parseMultiPartBody(Request & req)
 	std::string boundary = getBoundary(req.header("Content-Type"));
 	if (boundary.empty())
 	{
+		ERR("Content-type not found");
 		setState(ERROR);
 		return (false);
 	}
 	std::string end_boundary = boundary + "--";
 	const std::string & body = req.body();
 	size_t start = body.find(boundary);
+	if (start == std::string::npos)
 	{
+		ERR("Boundary not found");
 		setState(ERROR);
 		return (false);
 	}

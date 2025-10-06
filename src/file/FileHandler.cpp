@@ -123,7 +123,7 @@ IFile*	FileOpener::handle(const std::string &path)
 {
 	if (_file)
 		delete _file;
-	_file = FileFactory::create(path);
+	_file = FileFactory::create(path, O_RDONLY);
 	if (!_file)
 		setReason("Failed to open file");
 	return (FileHandler::handle(path));

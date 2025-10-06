@@ -53,7 +53,7 @@ class LocalFile : public File
 
 	public:
 
-		LocalFile(const std::string &);
+		LocalFile(const std::string &, int oflag);
 		virtual ~LocalFile();
 
 		virtual ssize_t read();
@@ -116,7 +116,7 @@ class FileFactory
 	public:
 		
 		~FileFactory();
-		static IFile*	create(const std::string &);
+		static IFile*	create(const std::string &, int oflag);
 	
 	private:
 

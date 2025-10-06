@@ -57,7 +57,7 @@ bool StaticHandler::handle(const std::string & path, Http::Response * res)
 		_file = NULL;
 	}
 
-	_file = FileFactory::create(_path);
+	_file = FileFactory::create(_path, O_RDONLY);
 	if (!_file)
 	{
 		_handler->setStatus(HS_INTERNAL_SERVER_ERROR);

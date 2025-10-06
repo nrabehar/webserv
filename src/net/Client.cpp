@@ -43,11 +43,12 @@ void	Client::onRead()
 	
 	if (_parser.parseNext(_in, _req))
 		return ;
+	if (_parser.state() == _parser.PS_ERROR)
+		_handler.setStatus(Handler::HS_BAD_REQUEST);
 	
 	_last_active = time(NULL);
 	_handler.handle(_req, _res);
 	_parser.reset();
-	EventLoop::instance().modHandler(this, POLLOUT|POLLIN);
 
 }
 
@@ -62,7 +63,7 @@ void	Client::onWrite()
 			_req.uri() + " " + String::str(_res.status()));
 	const char * buf = _out.readPtr();
 	size_t len = _out.readable();
-	ssize_t ret = ::write(_fd, buf, len);
+	ssize_t ret = ::send(_fd, buf, len, MSG_DONTWAIT);
 	if (ret <= 0)
 	{
 
@@ -111,7 +112,7 @@ bool	Client::readSocket()
 		cap = _in.writable();
 	
 	}
-	ssize_t ret = ::read(_fd, buf, cap);
+	ssize_t ret = ::recv(_fd, buf, cap, MSG_DONTWAIT);
 	if (ret <= 0)
 	{
 
@@ -121,9 +122,8 @@ bool	Client::readSocket()
 		return (false);
 
 	}
-	else
-		_in.hasWritten(ret);
-	
+	_in.hasWritten(ret);
+	LOG("Client " + String::str(_fd) + " receive: " + String::str(ret) + " bytes | it's buff is now: " + String::str(_in.readable()));	
 	return (true);
 
 }

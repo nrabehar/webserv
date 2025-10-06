@@ -39,10 +39,10 @@ ssize_t	File::write(const char * data, size_t n)
  * LocalFile
  */
 
-LocalFile::LocalFile(const std::string & path)
+LocalFile::LocalFile(const std::string & path, int oflag)
 	: File(path)
 {
-	_fd = ::open(path.c_str(), O_RDONLY|O_NONBLOCK);
+	_fd = ::open(path.c_str(), oflag | O_NONBLOCK, 00644);
 }
 LocalFile::~LocalFile(){}
 
@@ -137,19 +137,21 @@ const std::string & FileProxy::getData() const
  * FileFactory
  */
 FileFactory::~FileFactory() {}
-IFile*	FileFactory::create(const std::string &path)
+IFile*	FileFactory::create(const std::string &path, int oflag)
 {
 	CacheManager *cache = CacheManager::getInstance();
+	IFile	* file = NULL;
 
 	cache->use(CAT_FILE);
 	
 	if (cache->exists(path))
-	{
-		std::cout << "File: " << path << " is in cache" << std::endl;
-		return (new InMemoryFile(path, cache->get(path)));
-	}
+		file = new InMemoryFile(path, cache->get(path));
+	else
+		file = new LocalFile(path, oflag);
 
-	IFile *file = new LocalFile(path);
+	if (!file)
+		return (NULL);
+
 	if (file->fd() == -1)
 	{
 		delete file;

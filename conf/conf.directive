@@ -45,3 +45,30 @@ autoindex {
 	max_arg							1
 	arg_type						on off
 }
+
+methods {
+	allowed_in					location
+	min_arg							1
+	arg_type						string
+}
+
+cgi {
+	allowed_in					location
+	min_arg							2
+	max_arg							2
+	arg_type						string
+}
+
+client_max_body_size {
+	allowed_in					http server location
+	min_arg							1
+	max_arg							1
+	arg_type						string
+}
+
+upload_store {
+	allowed_in					location
+	min_arg							1
+	max_arg							1
+	arg_type						string
+}

@@ -10,8 +10,12 @@ RequestHandler::RequestHandler(Net::Client * client)
 RequestHandler::~RequestHandler()
 {
 
-	for (size_t i = 0; i < _process.size(); ++i)
-		EventLoop::instance().delHandler(_process[i]);
+	if (!Signal::terminate)
+	{
+		for (size_t i = 0; i < _process.size(); ++i)
+			EventLoop::instance().delHandler(_process[i]);
+	}
+	_process.clear();
 
 }
 
