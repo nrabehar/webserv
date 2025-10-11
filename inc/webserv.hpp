@@ -86,10 +86,8 @@ enum e_LogLevel
 #include "tools/Mime.hpp"
 #include "tools/UI.hpp"
 
-
 #include "tools/Lexer.hpp"
 
-#include "core/mid.hpp"
 #include "core/EventLoop.hpp"
 #include "core/Buffer.hpp"
 #include "core/File.ipp"
@@ -123,6 +121,5 @@ enum e_LogLevel
 #include "config/Merger.hpp"
 #include "config/Validator.hpp"
 #include "config/Transformer.hpp"
-
 
 #endif
