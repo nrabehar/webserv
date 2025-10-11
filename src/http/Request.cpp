@@ -6,7 +6,8 @@ Request::Request()
  : _method("GET"),
 	 _uri("/"),
 	 _version("HTTP/1.1"),
-	 _headers()
+	 _headers(),
+	 _body()
 {}
 
 Request & Request::operator=(const Request & other)
@@ -99,3 +100,9 @@ void Request::addBodyField(const std::string & field, const std::string & filena
 	rb.value = value;
 	_body.push_back(rb);
 }
+
+size_t	Request::contentLength() const { return (_ct_len); }
+void	Request::setContentLength(size_t cl) { _ct_len = cl; }
+
+const std::string &	Request::contentType() const { return (_ct_type); }
+void	Request::setContentType(const std::string & ct) { _ct_type = ct; }

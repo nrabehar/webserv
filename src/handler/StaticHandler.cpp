@@ -56,7 +56,6 @@ bool StaticHandler::handle(const std::string & path, Http::Response * res)
 		delete _file;
 		_file = NULL;
 	}
-
 	_file = FileFactory::create(_path, O_RDONLY);
 	if (!_file)
 	{
@@ -70,6 +69,7 @@ bool StaticHandler::handle(const std::string & path, Http::Response * res)
 		_response->setHeader("Content-Length", String::str(_response->body().length()));
 	}
 	_response->setHeader("Content-Type", Mime::getType(_path));
+
 	return (true);
 
 }

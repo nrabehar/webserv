@@ -72,12 +72,14 @@ void	RequestHandler::handle(Http::Request & req, Http::Response & res)
 	mergeHeaders(req, res);
 	const LocationConfig * loc = findLocation(uri);
 
+	if (isError())
+		return (serveError(loc, res));
+
 	if (!loc->allowsMethod(method))
 	{
 		setStatus(HS_METHOD_NOT_ALLOWED);
 		return (_error_handler.handle(loc, res));
 	}
-
 	if (loc->redirect.first != 0)
 	  return (redirect(loc->redirect, res));
 

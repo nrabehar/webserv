@@ -21,10 +21,37 @@ namespace Http
 				BODY,
 				DONE,
 				ERROR
-			};	
+			};
+
+			enum MultipartState
+			{
+				BS_BOUNDARY,
+				BS_HEADER,
+				BS_PART,
+				BS_DONE,
+				BS_ERROR
+			};
+
+			enum BodyType
+			{
+				MULTIPART,
+				URLENCODED,
+				CHUNKED,
+				Raw,
+			};
 
 			State	_state;
-						
+			MultipartState	_mp_state;
+			BodyType	_body_type;
+
+			std::string	_field;
+			std::string _filename;
+			std::string _value;
+			std::string _tmp_filename;
+
+			IFile	* _tmp_file;
+			std::string	_boundary;
+			
 		public:
 	
 			Parser();
@@ -44,8 +71,6 @@ namespace Http
 	
 		private:
 
-			ParseState	_usr_state;
-	
 			Parser(const Parser &);
 			Parser & operator=(const Parser &);
 
@@ -55,8 +80,8 @@ namespace Http
 			bool parseHeaders(Buffer & buf, Request & req);
 			bool parseBody(Buffer & buf, Request & req);
 
-			bool parseUrlEncoded(Request & req);
-			bool parseMultiPartBody(Request & req);
+			bool parseUrlEncoded(Buffer & buf, Request & req);
+			bool parseMultiPartBody(Buffer & buf, Request & req);
 			bool parseChunkedBody(Buffer & buf, Request & req);
 
 			std::string getBoundary(const std::string & ct);
@@ -64,7 +89,6 @@ namespace Http
 			std::string parseDisposition(const std::string & disp, const std::string & field);
 
 			std::string parsePercentEncoding(const std::string & str);
-
 
 	};
 	

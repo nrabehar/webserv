@@ -26,6 +26,9 @@ namespace Http
 			std::map<std::string, std::string>	_headers;
 			std::vector<RequestBody>	_body;
 			std::string					_raw_body;
+
+			size_t			_ct_len;
+			std::string	_ct_type;
 				
 		public:
 	
@@ -50,6 +53,12 @@ namespace Http
 			const std::vector<RequestBody> & bodyFields() const;
 			void appendBody(const std::string & body);
 			void addBodyField(const std::string & field, const std::string & filename, const std::string & value);
+
+			size_t	contentLength() const;
+			void	setContentLength(size_t cl);
+
+			const std::string & contentType() const;
+			void	setContentType(const std::string & ct);
 	
 		private:
 	

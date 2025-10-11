@@ -55,14 +55,12 @@ void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
 			if (!body_fields[i].filename.empty())
 			{
 				LOG("Upload request for file: " + body_fields[i].filename);
-				std::string file_name = __TIMESTAMP__ + body_fields[i].filename;
-				UploadHandler *	up_h = new UploadHandler(_handler, file_name, _loc);
-				if (!up_h->upload(file_name, body_fields[i].value, res))
-				{
-					delete up_h;
-					return (_handler->serveError(_loc, res));
-				}
-				_handler->addProcess(up_h, POLLOUT);
+				std::string filename = "www/uploads/" + body_fields[i].filename;
+				if (std::rename(body_fields[i].value.c_str(), filename.c_str()) < 0)
+					return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
+				res.appendBody(
+					"<p> File uploaded: " + filename + "</p>"
+				);
 			}
 			else
 			{
@@ -71,6 +69,8 @@ void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
 				);
 			}
 		}
+		res.setHeader("Content-Length", String::str(res.body().size()));
+		_handler->setStatus(HS_OK);
 	}
 	else
 	{

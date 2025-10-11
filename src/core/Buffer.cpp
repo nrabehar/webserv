@@ -9,7 +9,7 @@ const char * Buffer::readPtr() const
 	if (!readable())
 		return (NULL);
 
-	return (_data.c_str() + _rpos);
+	return (&_data[_rpos]);
 
 }
 
@@ -43,8 +43,9 @@ void Buffer::hasRead(size_t n)
 char * Buffer::writePtr()
 {
 
-	reserve(_wpos + 4096); // ? reserve at least 4KB more if needed
-	return (const_cast<char *>(_data.c_str()) + _wpos);
+	if (writable() == 0)
+		reserve(_wpos + 4096); // ? reserve at least 4KB more if needed
+	return (&_data[_wpos]);
 
 }
 
@@ -89,7 +90,7 @@ void Buffer::compact()
 	if (_rpos >= _wpos)
 		return (clear());
 
-	std::memmove(const_cast<char *>(_data.c_str()), _data.c_str() + _rpos, readable());
+	std::memmove(&_data[0], &_data[_rpos], readable());
 	_wpos -= _rpos;
 	_rpos = 0;
 
@@ -105,7 +106,48 @@ void	Buffer::clear()
 void	Buffer::append(const std::string & str)
 {
 
-	_data.append(str);
+	size_t old_size = _data.size();
+	_data.resize(old_size + str.size());
+	std::memcpy(&_data[old_size], str.c_str(), str.size());
 	_wpos += str.size();
 
+}
+
+size_t Buffer::find(const std::string & s) const
+{
+	if (!readable() || s.empty())
+		return (std::string::npos);
+
+	size_t readable_size = readable();
+	const char * data = readPtr();
+
+	for (size_t i = 0; i <= readable_size - s.size(); ++i)
+	{
+		bool found = true;
+		for (size_t j = 0; j < s.size(); ++j)
+		{
+			if (data[i + j] != s[j])
+			{
+				found = false;
+				break;
+			}
+		}
+		if (found)
+			return (i);
+	}
+
+	return (std::string::npos);
+}
+
+std::string Buffer::substr(size_t start, size_t n) const
+{
+	size_t readable_size = readable();
+
+	if (start >= readable_size)
+		return ("");
+
+	size_t len = std::min(n, readable_size - start);
+	const char * data = readPtr() + start;
+
+	return (std::string(data, len));
 }

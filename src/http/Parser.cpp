@@ -2,7 +2,9 @@
 
 using namespace Http;
 
-Parser::Parser() : _state(REQUEST_LINE), _usr_state(PS_INCOMPLETE)
+Parser::Parser()
+	: _state(REQUEST_LINE), _mp_state(BS_BOUNDARY), _body_type(Raw),
+		_field(), _filename(), _value(), _tmp_filename(), _tmp_file(NULL)
 {
 }
 
@@ -13,28 +15,39 @@ Parser::~Parser()
 void Parser::setState(State state)
 {
 	_state = state;
-	if (state == DONE)
-		_usr_state = PS_DONE;
-	else if (state == ERROR)
-		_usr_state = PS_ERROR;
 }
 
 Parser::ParseState Parser::state() const
 {
-	return (_usr_state);
+
+	if (_state == DONE)
+		return (PS_DONE);
+	if (_state == ERROR || _mp_state == BS_ERROR)
+		return (PS_ERROR);
+	return (PS_INCOMPLETE);
 }
 
 void Parser::reset()
 {
 
 	_state = REQUEST_LINE;
-	_usr_state = PS_INCOMPLETE;
+	_mp_state = BS_BOUNDARY;
+	_body_type = Raw;
+	_field.clear();
+	_filename.clear();
+	_value.clear();
+	_tmp_filename.clear();
+	if (_tmp_file)
+	{
+		delete _tmp_file;
+		_tmp_file = NULL;
+	}
 
 }
 
 bool Parser::parseNext(Buffer & buf, Request & req)
 {
-	if (_usr_state == PS_DONE || _usr_state == PS_ERROR)
+	if (state() == PS_DONE || state() == PS_ERROR)
 		return (false);
 
 	bool ret = true;
@@ -63,7 +76,6 @@ bool Parser::parseNext(Buffer & buf, Request & req)
 	{
 		if (_state == BODY)
 			ret = true;
-		LOG("Request parsed: " + req.method() + " success: " + String::str(_state == DONE ? "Yes" : "No"));
 	}
 	return (ret);
 
@@ -123,7 +135,6 @@ bool Parser::parseHeaders(Buffer & buf, Request & req)
 
 	if (line_len == 2)
 	{
-		LOG("End of headers");
 		buf.hasRead(line_len);
 		if (req.method() == "POST" )
 		{
@@ -147,6 +158,22 @@ bool Parser::parseHeaders(Buffer & buf, Request & req)
 	req.setHeader(key, value);
 	buf.hasRead(line_len);
 
+	if (key == "Content-Type")
+	{
+		req.setContentType(value);
+		if (value.find("multipart/form-data") == 0)
+		{
+			_boundary = getBoundary(value);
+			_body_type = MULTIPART;
+		}
+		else if (value.find("application/x-www-form-urlencoded") == 0)
+			_body_type = URLENCODED;
+	}
+	else if (key == "Content-Length")
+		req.setContentLength(static_cast<size_t>(std::atoi(value.c_str())));
+	else if (key == "Transfer-Encoding" && value.find("chunked") != std::string::npos)
+		_body_type = CHUNKED;
+
 	return (true);
 
 }
@@ -154,53 +181,34 @@ bool Parser::parseHeaders(Buffer & buf, Request & req)
 bool Parser::parseBody(Buffer & buf, Request & req)
 {
 
-	const std::string &cl = req.header("Content-Length");
-	const std::string &te = req.header("Transfer-Encoding");
-
-	if (!cl.empty() && !te.empty())
+	LOG("Parsing body: " + String::str(_body_type));
+	switch (_body_type)
 	{
-		setState(ERROR);
-		return false;
-	}
-	bool has_cl = !cl.empty() && String::isNumeric(cl);
-	bool is_chunked = te == "chunked";
-
-	if (buf.readable() == 0)
-		return (true);
-	if (is_chunked)
-		return (parseChunkedBody(buf, req));
-	if (!has_cl)
-	{
-		setState(DONE);
-		return (false);
-	}
-	size_t content_len = static_cast<size_t>(std::atoi(cl.c_str()));
-	if (buf.readable() > content_len)
-	{
-		setState(ERROR);
-		return (false);
-	}
-	if (content_len - buf.readable())
-		return (true);
-	LOG("Copying data to req raw body: " + String::str(buf.readable()) + " bytes");
-	req.appendBody(std::string(buf.readPtr(), buf.readable()));
-	const std::string &ct = req.header("Content-Type");
-	if (ct.find("application/x-www-form-urlencoded") == 0)
-		return (parseUrlEncoded(req));
-	else if (ct.find("multipart/form-data") == 0)
-		return (parseMultiPartBody(req));
-	else
-	{
-		buf.hasRead(content_len);
-		setState(DONE);
-		return (false);
+		case MULTIPART:
+			return (parseMultiPartBody(buf, req));
+		case URLENCODED:
+			return (parseUrlEncoded(buf, req));
+		case CHUNKED:
+			return (parseChunkedBody(buf, req));
+		default:
+		{
+			req.appendBody(std::string(buf.readPtr(), buf.readable()));
+			buf.hasRead(buf.readable());
+			return (buf.readable());
+		}
 	}
 	
 }
 
-bool Parser::parseUrlEncoded(Request & req)
+bool Parser::parseUrlEncoded(Buffer & buf, Request & req)
 {
 
+	if (req.body().size() < req.contentLength())
+	{
+		req.appendBody(std::string(buf.readPtr(), buf.readable()));
+		buf.hasRead(buf.readable());
+		return (true);
+	}
 	std::string body = req.body();
 	std::vector<std::string> pairs = String::split(body, "&");
 	for (size_t i = 0; i < pairs.size(); ++i)
@@ -217,42 +225,125 @@ bool Parser::parseUrlEncoded(Request & req)
 
 }
 
-bool Parser::parseMultiPartBody(Request & req)
+bool Parser::parseMultiPartBody(Buffer & buf, Request & req)
 {
 
-	std::string boundary = getBoundary(req.header("Content-Type"));
-	if (boundary.empty())
+	while (buf.readable())
 	{
-		ERR("Content-type not found");
-		setState(ERROR);
-		return (false);
+		switch (_mp_state)
+		{
+			case BS_BOUNDARY:
+			{
+				size_t	pos = buf.find(_boundary);
+				if (pos == std::string::npos)
+					return (true);
+				if (pos >= 2)
+				{
+					LOG("Boundary found");
+					_mp_state = BS_PART;
+					break ;
+				}
+				if (_tmp_file)
+				{
+					delete _tmp_file;
+					_tmp_file = NULL;
+				}
+				buf.hasRead(pos + _boundary.size());
+				if (buf.readable() >= 2 && buf.readPtr()[0] == '-' && buf.readPtr()[1] == '-')
+				{
+					buf.hasRead(2); // End of boundary
+					setState(DONE);
+					_mp_state = BS_DONE;
+					return (false);
+				}
+				_mp_state = BS_HEADER;
+				break;
+			}
+			case BS_HEADER:
+			{
+				LOG("Pass at header");
+				size_t	header_end = buf.find("\r\n\r\n");
+				if (header_end == std::string::npos)
+					return (true);
+				std::string hdr = buf.substr(0, header_end);
+				buf.hasRead(header_end + 4);
+				size_t ct_disp = hdr.find("Content-Disposition");
+				if (ct_disp == std::string::npos)
+				{
+					setState(ERROR);
+					return (false);
+				}
+				hdr = hdr.substr(ct_disp);
+				_field = parseDisposition(hdr, "name");
+				_filename = parseDisposition(hdr, "filename");
+				if (!_filename.empty())
+				{
+					_tmp_filename = "tmp/" + _filename + ".tmp";
+					_tmp_file = FileFactory::create(_tmp_filename, O_CREAT | O_RDWR);
+					if (!_tmp_file)
+					{
+						setState(ERROR);
+						ERR("Could not upload: " + _filename);
+						// set request status to 500;
+						return (false);
+					}
+					req.addBodyField(_field, _filename, _tmp_filename);
+					_field = "";
+					_filename = "";
+				}
+				_mp_state = BS_PART;
+				break ;
+			}
+			case BS_PART:
+			{
+				size_t	b_pos = buf.find("\r\n" + _boundary);
+				if (b_pos != std::string::npos)
+				{
+					_mp_state = BS_BOUNDARY;
+					if (b_pos == 0)
+					{
+						buf.hasRead(2);
+						break ;
+					}
+				}
+				if (_tmp_file)
+				{
+					LOG("We have: " + String::str(buf.readable()) + " bytes to write");
+					std::string	data = buf.substr(0, b_pos);
+					size_t	cap = std::min(b_pos, buf.readable());
+					ssize_t n = _tmp_file->write(buf.readPtr(), cap);
+					if (n <= 0)
+					{
+						// TODO: remove all created tmp files
+						setState(ERROR);
+						ERR("Could not write to temporary file: " + std::string(strerror(errno)));
+						delete _tmp_file;
+						_tmp_file = NULL;
+						if (!_tmp_filename.empty() && access(_tmp_filename.c_str(), R_OK))
+							std::remove(_tmp_filename.c_str());
+						return (false);
+					}
+					LOG("We just written " + String::str(n) + " bytes into " +  _tmp_filename);
+					LOG("Buffer read end size: " + String::str(buf.readable()));
+					buf.hasRead(n);
+					LOG("Buffer read end size after: " + String::str(buf.readable()));
+				}
+				else
+				{
+					if (b_pos == std::string::npos)
+						return (true);
+
+					std::string val = String::trim(std::string(buf.readPtr(), b_pos));
+					req.addBodyField(_field, _filename, parsePercentEncoding(val));
+					buf.hasRead(buf.readable());
+				}
+				break ;
+			}
+			default:
+				break;
+		}
 	}
-	std::string end_boundary = boundary + "--";
-	const std::string & body = req.body();
-	size_t start = body.find(boundary);
-	if (start == std::string::npos)
-	{
-		ERR("Boundary not found");
-		setState(ERROR);
-		return (false);
-	}
-	size_t end = 0;
-	while (start != std::string::npos && _state != ERROR)
-	{
-		start += boundary.length();
-		end = body.find(boundary, start);
-		if (end == std::string::npos)
-			end = body.find(end_boundary, start);
-		if (end == std::string::npos)
-			break ;
-		std::string part = body.substr(start, end - start);
-		parseField(part, req);
-		start = end;
-	}
-	if (_state == ERROR)
-		return (false);
-	setState(DONE);
-	return (false);
+	return (true);
 
 }
 

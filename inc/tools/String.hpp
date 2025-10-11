@@ -24,6 +24,9 @@ class String
 		static std::string toLower(const std::string & s);
 		static std::string toCamelCase(const std::string & s, char sep = '-');
 
+		static std::string urlDecode(const std::string & s);
+		static std::string urlEncode(const std::string & s);
+
 		static bool	isNumeric(const std::string & s);
 
 		template<typename T>

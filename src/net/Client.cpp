@@ -56,7 +56,7 @@ void	Client::onWrite()
 {
 
 	if (_handler.status() == Handler::HS_OK)
-		_out.append(_res.str()); //TODO optimize this [chunked encoding or change _res.str() to build into a buffer directly]
+		_out.append(_res.str());
 	if (_out.readable() == 0)
 		return ;
 	LOG("Client " + String::str(_fd) + ": " + _req.method() + " " + 

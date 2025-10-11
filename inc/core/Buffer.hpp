@@ -18,7 +18,7 @@ class Buffer
 
 	private:
 
-		std::string _data;
+		std::vector<char> _data;
 		size_t			_rpos;
 		size_t			_wpos;
 
@@ -53,6 +53,9 @@ class Buffer
 
 		void	clear();
 		void  append(const std::string & str);
+
+		size_t	find(const std::string & s) const;
+		std::string substr(size_t start = 0, size_t n = std::string::npos) const;
 
 	private:
 
