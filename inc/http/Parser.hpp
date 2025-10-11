@@ -70,7 +70,7 @@ namespace Http
 				PS_ERROR
 			};
 
-			bool parseNext(Buffer & buf, Request & req);
+			bool parseNext(Buffer & buf, Request & req, Response & res);
 
 			ParseState state() const;
 			void reset();
@@ -83,7 +83,7 @@ namespace Http
 			void setState(State state);
 
 			bool parseReqLine(Buffer & buf, Request & req);
-			bool parseHeaders(Buffer & buf, Request & req);
+			bool parseHeaders(Buffer & buf, Request & req, Response & res);
 			bool parseBody(Buffer & buf, Request & req);
 
 			bool parseUrlEncoded(Buffer & buf, Request & req);

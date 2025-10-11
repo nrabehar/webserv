@@ -4,13 +4,15 @@ using namespace Handler;
 
 RequestHandler::RequestHandler(Net::Client * client)
 	: _client(client), _status(HS_PROGRESS), _error_handler(this),
-		_req(NULL), _res(NULL)
+		_cgi_handler(NULL), _req(NULL), _res(NULL)
 {
 }
 
 RequestHandler::~RequestHandler()
 {
 
+	if (_cgi_handler)
+		delete _cgi_handler;
 	if (!Signal::terminate)
 	{
 		for (size_t i = 0; i < _process.size(); ++i)
@@ -108,6 +110,49 @@ bool	RequestHandler::isCgiRequest(Http::Request & req)
 	return (status() == HS_CGI);
 
 }
+
+void	RequestHandler::initCgiHandler(Http::Request & req, Http::Response & res)
+{
+
+	if (_cgi_handler)
+	{
+		delete _cgi_handler;
+		_cgi_handler = NULL;
+	}
+
+	const LocationConfig * loc = findLocation(req.uri());
+	if (!loc)
+		return (setStatus(HS_INTERNAL_SERVER_ERROR));
+
+	UriHandler	uri_handler(req.uri(), loc, this);
+	std::string path = uri_handler.buildPath();
+
+	std::string ext;
+	size_t dot = path.rfind('.');
+	ext = path.substr(dot);
+
+	std::string bin;
+	for (size_t i = 0; i < loc->cgi.size(); ++i)
+	{
+		if (loc->cgi[i].second == ext)
+		{
+			bin = loc->cgi[i].first;
+			break ;
+		}
+	}
+
+	_cgi_handler = new CgiHandler(this, &req, &res);
+	_cgi_handler->launch(bin, path);
+	if (isError())
+	{
+		delete _cgi_handler;
+		_cgi_handler = NULL;
+		return ;
+	}
+
+}
+
+CgiHandler * RequestHandler::cgiHandler() { return (_cgi_handler); }
 
 const LocationConfig *	RequestHandler::findLocation(const std::string & uri) const
 {

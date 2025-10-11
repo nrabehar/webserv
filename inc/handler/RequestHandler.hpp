@@ -14,6 +14,8 @@ namespace Net
 namespace Handler
 {
 
+	class CgiHandler;
+
 	enum Status
 	{
 
@@ -65,6 +67,7 @@ namespace Handler
 			Net::Client *	_client;
 			Status	_status;
 			ErrorHandler _error_handler;
+			CgiHandler	 * _cgi_handler;
 
 			std::vector<IEventHandler *> _process;
 
@@ -92,6 +95,8 @@ namespace Handler
 			void serveDirectory(const std::string & path, const std::string & uri, Http::Response & res);
 
 			bool	isCgiRequest(Http::Request & req);
+			void	initCgiHandler(Http::Request & req, Http::Response & res);
+			CgiHandler *	cgiHandler();
 			const LocationConfig * findLocation(const std::string & uri) const;
 	
 		private:

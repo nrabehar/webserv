@@ -46,7 +46,7 @@ void Parser::reset()
 
 }
 
-bool Parser::parseNext(Buffer & buf, Request & req)
+bool Parser::parseNext(Buffer & buf, Request & req, Response & res)
 {
 	if (state() == PS_DONE || state() == PS_ERROR)
 		return (false);
@@ -60,7 +60,7 @@ bool Parser::parseNext(Buffer & buf, Request & req)
 				ret = parseReqLine(buf, req);
 				break;
 			case HEADERS:
-				ret = parseHeaders(buf, req);
+				ret = parseHeaders(buf, req, res);
 				break;
 			case BODY:
 				ret = parseBody(buf, req);
@@ -118,7 +118,7 @@ bool Parser::parseReqLine(Buffer & buf, Request & req)
 
 }
 
-bool Parser::parseHeaders(Buffer & buf, Request & req)
+bool Parser::parseHeaders(Buffer & buf, Request & req, Response & res)
 {
 
 	const char *ptr = buf.readPtr();
@@ -137,6 +137,8 @@ bool Parser::parseHeaders(Buffer & buf, Request & req)
 
 	if (line_len == 2)
 	{
+		if (_is_cgi)
+			_req_handler->initCgiHandler(req, res);
 		buf.hasRead(line_len);
 		if (req.method() == "POST" )
 		{
