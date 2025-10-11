@@ -59,8 +59,6 @@ void Poller::del(IEventHandler * h)
 	}
 
 	_pfds.swap(pfds);
-	delete _handlers[fd];
-	_handlers.erase(fd);
 
 }
 
@@ -76,7 +74,7 @@ std::vector<std::pair<IEventHandler *, short> > Poller::pollOnce(int timeout)
 		return (ready);
 
 	for (size_t i = 0; i < _pfds.size(); ++i) {
-		
+
 		if (_pfds[i].revents != 0)
 		{
 
@@ -85,7 +83,7 @@ std::vector<std::pair<IEventHandler *, short> > Poller::pollOnce(int timeout)
 			if (it != _handlers.end())
 				ready.push_back(std::make_pair(it->second, _pfds[i].revents));
 			_pfds[i].revents = 0;
-		
+
 		}
 
 	}

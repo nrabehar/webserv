@@ -16,6 +16,9 @@ Client::Client(int fd, Server * server)
 Client::~Client()
 {
 	LOG("Client disconnected: " + String::str(_fd));
+	if (_fd > -1)
+		::close(_fd);
+	_fd = -1;
 }
 
 void	Client::handle(short e)
@@ -45,7 +48,7 @@ void	Client::onRead()
 		return ;
 	if (_parser.state() == _parser.PS_ERROR)
 		_handler.setStatus(Handler::HS_BAD_REQUEST);
-	
+
 	_last_active = time(NULL);
 	_handler.handle(_req, _res);
 	_parser.reset();
@@ -59,7 +62,7 @@ void	Client::onWrite()
 		_out.append(_res.str());
 	if (_out.readable() == 0)
 		return ;
-	LOG("Client " + String::str(_fd) + ": " + _req.method() + " " + 
+	LOG("Client " + String::str(_fd) + ": " + _req.method() + " " +
 			_req.uri() + " " + String::str(_res.status()));
 	const char * buf = _out.readPtr();
 	size_t len = _out.readable();
@@ -110,7 +113,7 @@ bool	Client::readSocket()
 		_in.reserve(4096);
 		buf = _in.writePtr();
 		cap = _in.writable();
-	
+
 	}
 	ssize_t ret = ::recv(_fd, buf, cap, MSG_DONTWAIT);
 	if (ret <= 0)
@@ -123,7 +126,7 @@ bool	Client::readSocket()
 
 	}
 	_in.hasWritten(ret);
-	LOG("Client " + String::str(_fd) + " receive: " + String::str(ret) + " bytes | it's buff is now: " + String::str(_in.readable()));	
+	LOG("Client " + String::str(_fd) + " receive: " + String::str(ret) + " bytes | it's buff is now: " + String::str(_in.readable()));
 	return (true);
 
 }

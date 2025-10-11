@@ -4,16 +4,7 @@ EventLoop *	EventLoop::_inst = NULL;
 
 EventLoop::~EventLoop()
 {
-
-	for (size_t i = 0; i < _pending.size(); ++i)
-	{
-
-		if (_pending[i].type == OP_ADD)
-			delete _pending[i].handler;
-
-	}
 	_pending.clear();
-
 }
 
 EventLoop::EventLoop(): _running(false) {}
@@ -42,36 +33,36 @@ void	EventLoop::destroy()
 
 void EventLoop::addHandler(IEventHandler * h, short events)
 {
-	
+
 	PendingOp pending;
 	pending.type = OP_ADD;
 	pending.event = events;
 	pending.handler = h;
-	
+
 	_pending.push_back(pending);
 
 }
 
 void EventLoop::modHandler(IEventHandler * h, short events)
 {
-	
+
 	PendingOp pending;
 	pending.type = OP_MOD;
 	pending.event = events;
 	pending.handler = h;
-	
+
 	_pending.push_back(pending);
 
 }
 
 void EventLoop::delHandler(IEventHandler * h)
 {
-	
+
 	PendingOp pending;
 	pending.type = OP_DEL;
 	pending.event = 0;
 	pending.handler = h;
-	
+
 	_pending.push_back(pending);
 
 }
@@ -88,12 +79,12 @@ void EventLoop::run(int poll_timeout)
 
 		for (size_t i = 0; i < events.size(); ++i)
 		{
-		
+
 			IEventHandler *h = events[i].first;
 			short revents = events[i].second;
 
 			h->handle(revents);
-		
+
 		}
 
 	}

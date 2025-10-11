@@ -9,7 +9,12 @@ Server::Server(const ServerConfig::Listen & listen, const ServerConfig & conf)
 	setup();
 
 }
-Server::~Server() {}
+Server::~Server()
+{
+	if (_fd > -1)
+		::close(_fd);
+	_fd = -1;
+}
 
 void	Server::handle(short e)
 {
