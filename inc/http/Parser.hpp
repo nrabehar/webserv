@@ -6,6 +6,10 @@
 #include "Request.hpp"
 #include "Response.hpp"
 
+namespace Handler
+{
+	class RequestHandler;
+}
 namespace Http
 {
 	
@@ -37,7 +41,7 @@ namespace Http
 				MULTIPART,
 				URLENCODED,
 				CHUNKED,
-				Raw,
+				RAW,
 			};
 
 			State	_state;
@@ -51,10 +55,12 @@ namespace Http
 
 			IFile	* _tmp_file;
 			std::string	_boundary;
+			Handler::RequestHandler * _req_handler;
+			bool	_is_cgi;
 			
 		public:
 	
-			Parser();
+			Parser(Handler::RequestHandler * req_handler);
 			~Parser();
 
 			enum ParseState

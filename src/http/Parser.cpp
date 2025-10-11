@@ -2,9 +2,10 @@
 
 using namespace Http;
 
-Parser::Parser()
-	: _state(REQUEST_LINE), _mp_state(BS_BOUNDARY), _body_type(Raw),
-		_field(), _filename(), _value(), _tmp_filename(), _tmp_file(NULL)
+Parser::Parser(Handler::RequestHandler * req_handler)
+	: _state(REQUEST_LINE), _mp_state(BS_BOUNDARY), _body_type(RAW),
+		_field(), _filename(), _value(), _tmp_filename(), _tmp_file(NULL),
+		_req_handler(req_handler), _is_cgi(false)
 {
 }
 
@@ -32,7 +33,7 @@ void Parser::reset()
 
 	_state = REQUEST_LINE;
 	_mp_state = BS_BOUNDARY;
-	_body_type = Raw;
+	_body_type = RAW;
 	_field.clear();
 	_filename.clear();
 	_value.clear();
@@ -112,6 +113,7 @@ bool Parser::parseReqLine(Buffer & buf, Request & req)
 
 	buf.hasRead(line_len);
 	setState(HEADERS);
+	_is_cgi = _req_handler->isCgiRequest(req);
 	return (true);
 
 }

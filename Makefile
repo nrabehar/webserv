@@ -76,6 +76,7 @@ HANDLERSRC += ErrorHandler.cpp
 HANDLERSRC += StaticHandler.cpp
 HANDLERSRC += MethodHandler.cpp
 HANDLERSRC += UploadHandler.cpp
+HANDLERSRC += CgiHandler.cpp
 
 SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
 

@@ -67,6 +67,9 @@ namespace Handler
 			ErrorHandler _error_handler;
 
 			std::vector<IEventHandler *> _process;
+
+			Http::Request * _req;
+			Http::Response * _res;
 	
 		public:
 	
@@ -88,7 +91,8 @@ namespace Handler
 
 			void serveDirectory(const std::string & path, const std::string & uri, Http::Response & res);
 
-
+			bool	isCgiRequest(Http::Request & req);
+			const LocationConfig * findLocation(const std::string & uri) const;
 	
 		private:
 	
@@ -96,7 +100,6 @@ namespace Handler
 			RequestHandler(const RequestHandler &);
 			RequestHandler & operator=(const RequestHandler &);
 
-			const LocationConfig * findLocation(const std::string & uri) const;
 			void	mergeHeaders(Http::Request & req, Http::Response & res);
 			void  redirect(const std::pair<int, std::string> & redirect, Http::Response & res);
 	
@@ -108,6 +111,7 @@ namespace Handler
 #include "UriHandler.hpp"
 #include "StaticHandler.hpp"
 #include "UploadHandler.hpp"
+#include "CgiHandler.hpp"
 
 #include "MethodHandler.hpp"
 

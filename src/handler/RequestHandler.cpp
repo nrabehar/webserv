@@ -3,7 +3,8 @@
 using namespace Handler;
 
 RequestHandler::RequestHandler(Net::Client * client)
-	: _client(client), _status(HS_PROGRESS), _error_handler(this)
+	: _client(client), _status(HS_PROGRESS), _error_handler(this),
+		_req(NULL), _res(NULL)
 {
 }
 
@@ -50,6 +51,10 @@ void	RequestHandler::setStatus(Status state)
 		for (size_t i = 0; i < _process.size(); ++i)
 			EventLoop::instance().delHandler(_process[i]);
 		_process.clear();
+		if (!_req || !_res)
+			return ;
+		const LocationConfig * loc = findLocation(_req->uri());
+		serveError(loc, *_res);
 	}
 
 }
@@ -66,6 +71,7 @@ bool	RequestHandler::isError() const
 void	RequestHandler::handle(Http::Request & req, Http::Response & res)
 {
 
+	_req = &req; _res = &res;
 	const std::string & method = req.method();
 	const std::string & uri = req.uri();
 
@@ -89,6 +95,18 @@ void	RequestHandler::handle(Http::Request & req, Http::Response & res)
 		return (_error_handler.handle(loc, res));
 	MethodHandler method_handler(this, path, loc);
 	method_handler.handle(req, res);
+}
+
+bool	RequestHandler::isCgiRequest(Http::Request & req)
+{
+
+	const LocationConfig * loc = findLocation(req.uri());
+
+	UriHandler	uri_handler(req.uri(), loc, this);
+	if (isError())
+		return (false);
+	return (status() == HS_CGI);
+
 }
 
 const LocationConfig *	RequestHandler::findLocation(const std::string & uri) const
@@ -132,13 +150,18 @@ void	RequestHandler::mergeHeaders(Http::Request & req, Http::Response & res)
 
 }
 
-void	RequestHandler::reset() { _status = HS_PROGRESS; }
+void	RequestHandler::reset()
+{
+	_status = HS_PROGRESS;
+	_req = NULL;
+	_res = NULL;
+}
 
 Net::Client *	RequestHandler::client() const { return (_client); }
 
 void	RequestHandler::serveError(Status status, const LocationConfig * loc, Http::Response & res)
 {
-	setStatus(status);
+	_status = status;
 	serveError(loc, res);
 }
 

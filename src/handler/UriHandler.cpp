@@ -9,6 +9,7 @@ UriHandler::UriHandler(const std::string & uri, const LocationConfig * loc, Requ
 	size_t pos = _uri.find('?');
 	if (pos != std::string::npos)
 		_uri = _uri.substr(0, pos);
+	_uri = String::urlDecode(_uri);
 
 }
 

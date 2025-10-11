@@ -5,7 +5,7 @@ using namespace Net;
 #include "webserv.hpp"
 
 Client::Client(int fd, Server * server)
-	: EventHandler(fd), _server(server), _handler(this),
+	: EventHandler(fd), _server(server), _handler(this), _parser(&_handler),
 	_keep_alive(false), _last_active(time(NULL))
 {
 
@@ -24,13 +24,13 @@ void	Client::handle(short e)
 	if (e & POLLIN)
 		onRead();
 
-	if (e & POLLOUT)
+	else if (e & POLLOUT)
 		onWrite();
 
-	if (e & POLLHUP)
+	else if (e & POLLHUP)
 		EventLoop::instance().delHandler(this);
 
-	if (e & (POLLERR | POLLHUP | POLLNVAL))
+	else if (e & (POLLERR | POLLHUP | POLLNVAL))
 		onError();
 
 }
@@ -40,7 +40,7 @@ void	Client::onRead()
 
 	if (!readSocket())
 		return ;
-	
+
 	if (_parser.parseNext(_in, _req))
 		return ;
 	if (_parser.state() == _parser.PS_ERROR)
