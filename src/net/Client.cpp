@@ -44,7 +44,7 @@ void	Client::onRead()
 	if (!readSocket())
 		return ;
 
-	if (_parser.parseNext(_in, _req))
+	if (_parser.parseNext(_in, _req, _res))
 		return ;
 	if (_parser.state() == _parser.PS_ERROR)
 		_handler.setStatus(Handler::HS_BAD_REQUEST);
