@@ -44,6 +44,26 @@ void	StaticHandler::handle(short e)
 
 }
 
+void	StaticHandler::onTimeout()
+{
+
+	if (_handler->status() == HS_REQUEST_TIMEOUT)
+	{
+		if (_file)
+			delete _file;
+		_file = NULL;
+		_handler->delProcess(this);
+		return;
+	}
+	if (Time::diff(_last_active, Time::now()) < _timeout)
+		return ;
+	if (_file)
+		delete _file;
+	_file = NULL;
+	_handler->delProcess(this);
+
+}
+
 bool StaticHandler::handle(const std::string & path, Http::Response * res)
 {
 

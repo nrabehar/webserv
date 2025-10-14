@@ -25,6 +25,9 @@ namespace Handler
 		HS_FORBIDDEN = 403,
 		HS_NOT_FOUND = 404,
 		HS_METHOD_NOT_ALLOWED = 405,
+		HS_NOT_ACCEPTABLE = 406,
+		HS_PROXY_AUTHENTICATION_REQUIRED = 407,
+		HS_REQUEST_TIMEOUT = 408,
 		HS_CONFLICT = 409,
 		HS_REQUEST_ENTITY_TOO_LARGE = 413,
 		HS_URI_TOO_LONG = 414,
@@ -83,7 +86,8 @@ namespace Handler
 			virtual	void	addProcess(IEventHandler * h, short e);
 			virtual	void	delProcess(IEventHandler * h);
 			Status	status() const;
-			
+			void	notifyTimeout();
+
 			void	setStatus(Status state);
 			void  reset();
 			Net::Client * client() const;

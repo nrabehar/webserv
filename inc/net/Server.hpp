@@ -27,6 +27,7 @@ class Server: public EventHandler
 		virtual ~Server();
 
 		void handle(short e);
+		void onTimeout();
 		const ServerConfig & getConfig() const;
 
 	private:

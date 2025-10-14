@@ -25,6 +25,7 @@ namespace Handler
 			~UploadHandler();
 
 			void handle(short e);
+			void onTimeout();
 			bool upload(const std::string &file, const std::string &data, Http::Response & res);
 
 		private:

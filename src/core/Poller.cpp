@@ -91,3 +91,13 @@ std::vector<std::pair<IEventHandler *, short> > Poller::pollOnce(int timeout)
 	return (ready);
 
 }
+
+void Poller::tick()
+{
+	std::map<int, IEventHandler *>::const_iterator it;
+	for (it = _handlers.begin(); it != _handlers.end(); ++it)
+	{
+		IEventHandler * h = it->second;
+		h->onTimeout();
+	}
+}

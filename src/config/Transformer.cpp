@@ -68,7 +68,7 @@ void Config::Transformer::parseServer(Node<Token> * svr_node, ServerConfig & svr
 		}
 		else if (node->getName() == "keepalive_timeout")
 		{
-			svr.keepalive_timeout = static_cast<size_t>(std::atoi(node->getData()[0].value.c_str()));		
+			svr.timeout = static_cast<size_t>(std::atoi(node->getData()[0].value.c_str()));		
 		}
 
 	}

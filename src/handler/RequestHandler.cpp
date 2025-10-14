@@ -23,11 +23,22 @@ RequestHandler::~RequestHandler()
 }
 
 Status	RequestHandler::status() const { return (_status); }
+
+void	RequestHandler::notifyTimeout()
+{
+
+	setStatus(Handler::HS_REQUEST_TIMEOUT);
+	for (size_t i = 0; i < _process.size(); ++i)
+		_process[i]->onTimeout();
+
+}
+
 void	RequestHandler::addProcess(IEventHandler * h, short e)
 {
 	_process.push_back(h);
 	EventLoop::instance().addHandler(h, e);
 }
+
 void	RequestHandler::delProcess(IEventHandler * h)
 {
 

@@ -24,11 +24,16 @@ void	Server::handle(short e)
 		if (!acceptConnection())
 			throw std::runtime_error("Could not accept client");
 	}
-	else if (e & POLLHUP)
+	if (e & POLLHUP)
 		EventLoop::instance().delHandler(this);
-	else
-			throw std::runtime_error("Socket " + String::str(_fd) + " errpr");
+	if (e & (POLLERR | POLLNVAL))
+		throw std::runtime_error("Socket " + String::str(_fd) + " error");
 
+}
+
+void	Server::onTimeout()
+{
+	// Server does not have a timeout
 }
 
 void	Server::setup()

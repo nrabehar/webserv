@@ -29,11 +29,12 @@ class CgiHandler
 
 		CgiStdinHandler * _stdin_h;
 		CgiStdoutHandler * _stdout_h;
+		int _timeout;
 
 	public:
 
 
-		CgiHandler(RequestHandler * handler, Http::Request * req, Http::Response * res);
+		CgiHandler(RequestHandler * handler, Http::Request * req, Http::Response * res, int timeout = 30);
 		~CgiHandler();
 
 		void closeIn(Status st = HS_OK);
@@ -69,6 +70,7 @@ class CgiHandler
 				CgiStdinHandler(CgiHandler * cgi, Buffer * in, int fd);
 				~CgiStdinHandler();
 				virtual void handle(short e);
+				virtual void onTimeout();
 
 			private:
 
@@ -92,6 +94,7 @@ class CgiHandler
 				CgiStdoutHandler(CgiHandler * cgi, Buffer * out, int fd);
 				~CgiStdoutHandler();
 				virtual void handle(short e);
+				virtual void onTimeout();
 
 			private:
 

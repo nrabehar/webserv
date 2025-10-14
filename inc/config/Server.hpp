@@ -17,7 +17,7 @@ struct ServerConfig
 
 	};
 
-	size_t								keepalive_timeout;
+	size_t								timeout;
 	std::vector<Listen> 	listen;
 	std::vector<LocationConfig> location;
 

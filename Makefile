@@ -31,6 +31,7 @@ DIRVALIDATOR = validator/
 TOOLSSRC += Logger.cpp
 TOOLSSRC += Signal.cpp
 TOOLSSRC += String.cpp
+TOOLSSRC += Time.cpp
 TOOLSSRC += Token.cpp
 TOOLSSRC += TokenExtractor.cpp
 TOOLSSRC += Lexer.cpp

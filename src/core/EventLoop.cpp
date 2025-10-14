@@ -86,6 +86,7 @@ void EventLoop::run(int poll_timeout)
 			h->handle(revents);
 
 		}
+		_poller.tick();
 
 	}
 

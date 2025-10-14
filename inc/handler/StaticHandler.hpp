@@ -23,6 +23,7 @@ namespace Handler
 			StaticHandler(RequestHandler * handler);
 			virtual ~StaticHandler();
 			virtual void	handle(short e);
+			virtual void	onTimeout();
 			bool handle(const std::string & path, Http::Response * res);
 	
 		private:

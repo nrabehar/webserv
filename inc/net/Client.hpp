@@ -29,7 +29,6 @@ namespace Net
 			Http::Response	_res;
 
 			bool 		_keep_alive;
-			time_t	_last_active;
 
 		public:
 
@@ -37,9 +36,9 @@ namespace Net
 			~Client();
 
 			void	handle(short e); 
+			void	onTimeout();
 			bool	keepAlive() const;
 			void	setKeepAlive(bool keep_alive);
-			time_t	lastActive() const;
 			Server *getServer() const;
 
 		private:

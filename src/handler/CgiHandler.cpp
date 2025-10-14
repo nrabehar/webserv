@@ -3,8 +3,8 @@
 using namespace Handler;
 
 
-CgiHandler::CgiHandler(RequestHandler * handler, Http::Request * req, Http::Response *res)
-	: _pid(-1), _handler(handler), _req(req), _res(res), _stdin_h(NULL), _stdout_h(NULL)
+CgiHandler::CgiHandler(RequestHandler * handler, Http::Request * req, Http::Response *res, int timeout)
+	: _pid(-1), _handler(handler), _req(req), _res(res), _stdin_h(NULL), _stdout_h(NULL), _timeout(timeout)
 {}
 
 
@@ -277,6 +277,17 @@ void CgiHandler::CgiStdinHandler::handle(short e)
 	}
 }
 
+void CgiHandler::CgiStdinHandler::onTimeout()
+{
+
+	if (Time::diff(_last_active, Time::now()) < _timeout)
+		return ;
+	ERR("CgiStdinHandler: CGI script timed out");
+	_in->hasRead(_in->readable());
+	_cgi->closeIn(Handler::HS_GATEWAY_TIMEOUT);
+
+}
+
 // --- CgiStdoutHandler Implementation ---
 CgiHandler::CgiStdoutHandler::CgiStdoutHandler(CgiHandler * cgi, Buffer * out, int fd)
 	: EventHandler(fd), _cgi(cgi), _out(out), _offset(0)
@@ -315,3 +326,12 @@ void CgiHandler::CgiStdoutHandler::handle(short e)
 	}
 }
 
+void CgiHandler::CgiStdoutHandler::onTimeout()
+{
+
+	if (Time::diff(_last_active, Time::now()) < _timeout)
+		return ;
+	ERR("CgiStdoutHandler: CGI script timed out");
+	_cgi->closeOut(Handler::HS_GATEWAY_TIMEOUT);
+
+}

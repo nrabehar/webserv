@@ -25,6 +25,7 @@ class Poller
 		void del(IEventHandler * h);
 
 		std::vector<std::pair<IEventHandler *, short> > pollOnce(int timeout);
+		void tick();
 
 	private:
 

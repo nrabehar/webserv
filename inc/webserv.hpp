@@ -80,6 +80,7 @@ enum e_LogLevel
 #include "tools/Signal.ipp"
 #include "tools/Signal.hpp"
 #include "tools/String.hpp"
+#include "tools/Time.hpp"
 #include "tools/Token.hpp"
 #include "tools/TokenExtractor.hpp"
 #include "tools/NetUtil.hpp"

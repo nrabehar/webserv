@@ -1,12 +1,12 @@
 #include "webserv.hpp"
 
 ServerConfig::ServerConfig()
-	: keepalive_timeout(0) {}
+	: timeout(0) {}
 
 void	ServerConfig::print() const
 {
 	std::cout << "Server:" << std::endl;
-	std::cout << "  Keepalive timeout: " << keepalive_timeout << std::endl;
+	std::cout << "  Keepalive timeout: " << timeout << std::endl;
 
 	std::cout << "  Listens:" << std::endl;
 	for (size_t i = 0; i < listen.size(); ++i)

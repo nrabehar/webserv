@@ -6,7 +6,7 @@ using namespace Net;
 
 Client::Client(int fd, Server * server)
 	: EventHandler(fd), _server(server), _handler(this), _parser(&_handler),
-	_keep_alive(false), _last_active(time(NULL))
+	_keep_alive(false)
 {
 
 	LOG("Client connected: " + String::str(fd));
@@ -35,6 +35,19 @@ void	Client::handle(short e)
 
 	if (e & (POLLERR | POLLHUP | POLLNVAL))
 		onError();
+
+}
+
+void	Client::onTimeout()
+{
+
+	const ServerConfig & conf = _server->getConfig();
+
+	long timeout = static_cast<long>(conf.timeout);
+
+	if (Time::diff(_last_active, Time::now()) < timeout)
+		return ;
+	_handler.notifyTimeout();
 
 }
 
@@ -78,6 +91,7 @@ void	Client::onWrite()
 	}
 	else
 		_out.hasRead(ret);
+	reloadTimeout();
 	if (!_out.readable())
 		_out.clear();
 	if (_handler.status() == Handler::HS_OK)
@@ -132,5 +146,4 @@ bool	Client::readSocket()
 
 bool	Client::keepAlive() const { return (_keep_alive); }
 void	Client::setKeepAlive(bool keep_alive) { _keep_alive = keep_alive; }
-time_t	Client::lastActive() const { return (_last_active); }
 Server *Client::getServer() const { return (_server); }

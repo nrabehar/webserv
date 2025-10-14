@@ -88,3 +88,23 @@ void UploadHandler::handle(short e)
 	}
 
 }
+
+void UploadHandler::onTimeout()
+{
+
+	if (_handler->status() == HS_REQUEST_TIMEOUT)
+	{
+		if (_file)
+			delete _file;
+		_file = NULL;
+		_handler->delProcess(this);
+		return ;
+	}
+
+	if (Time::diff(_last_active, Time::now()) < _timeout)
+		return ;
+	delete _file;
+	_file = NULL;
+	_handler->delProcess(this);
+
+}
