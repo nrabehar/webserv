@@ -101,10 +101,4 @@ void UploadHandler::onTimeout()
 		return ;
 	}
 
-	if (Time::diff(_last_active, Time::now()) < _timeout)
-		return ;
-	delete _file;
-	_file = NULL;
-	_handler->delProcess(this);
-
 }

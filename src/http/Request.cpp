@@ -7,7 +7,10 @@ Request::Request()
 	 _uri("/"),
 	 _version("HTTP/1.1"),
 	 _headers(),
-	 _body()
+	 _body(),
+	 _raw_body(),
+	 _ct_len(0),
+	 _ct_type("text/html")
 {}
 
 Request & Request::operator=(const Request & other)
@@ -19,6 +22,9 @@ Request & Request::operator=(const Request & other)
 		this->_version = other._version;
 		this->_headers = other._headers;
 		this->_body = other._body;
+		this->_raw_body = other._raw_body;
+		this->_ct_len = other._ct_len;
+		this->_ct_type = other._ct_type;
 	}
 	return (*this);
 }
@@ -106,3 +112,14 @@ void	Request::setContentLength(size_t cl) { _ct_len = cl; }
 
 const std::string &	Request::contentType() const { return (_ct_type); }
 void	Request::setContentType(const std::string & ct) { _ct_type = ct; }
+
+void	Request::cleanup()
+{
+
+	for (size_t i = 0; i < _body.size(); ++i)
+	{
+		if (!_body[i].filename.empty())
+			std::remove(_body[i].value.c_str());
+	}
+
+}

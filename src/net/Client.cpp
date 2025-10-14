@@ -43,11 +43,18 @@ void	Client::onTimeout()
 
 	const ServerConfig & conf = _server->getConfig();
 
-	long timeout = static_cast<long>(conf.timeout);
+	_timeout = static_cast<long>(conf.timeout);
 
-	if (Time::diff(_last_active, Time::now()) < timeout)
+	if (Time::diff(_last_active, Time::now()) < _timeout)
 		return ;
-	_handler.notifyTimeout();
+	LOG("Client timed out");
+	if (_handler.status() == Handler::HS_WAITING)
+		EventLoop::instance().delHandler(this);
+	else
+	{
+		_handler.notifyTimeout();
+		reloadTimeout();
+	}
 
 }
 
@@ -57,12 +64,19 @@ void	Client::onRead()
 	if (!readSocket())
 		return ;
 
+	if (_handler.status() == Handler::HS_WAITING)
+		_handler.setStatus(Handler::HS_PROGRESS);
 	if (_parser.parseNext(_in, _req, _res))
 		return ;
-	if (_parser.state() == _parser.PS_ERROR)
+	if (_parser.state() == _parser.PS_ERROR && !_handler.isError())
 		_handler.setStatus(Handler::HS_BAD_REQUEST);
+	if (!_handler.isError())
+	{
+		_last_active = time(NULL);
+		if (_handler.isCgiRequest(_req))
+			setTimeout(500000);
+	}
 
-	_last_active = time(NULL);
 	_handler.handle(_req, _res);
 	_parser.reset();
 
@@ -89,20 +103,16 @@ void	Client::onWrite()
 		return ;
 
 	}
-	else
-		_out.hasRead(ret);
+	_out.hasRead(ret);	
 	reloadTimeout();
 	if (!_out.readable())
 		_out.clear();
 	if (_handler.status() == Handler::HS_OK)
 	{
-		_keep_alive = _res.header("Connection") == "keep-alive";
-		_handler.reset();
-		if (_keep_alive)
-			EventLoop::instance().modHandler(this, POLLIN | POLLOUT);
-		else
+		_keep_alive = _res.header("Connection").find("keep-alive") != std::string::npos;
+		if (!_keep_alive)
 			EventLoop::instance().delHandler(this);
-		_req = Http::Request();
+		_handler.reset();
 		_res = Http::Response();
 	}
 

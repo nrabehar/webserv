@@ -3,7 +3,7 @@
 using namespace Handler;
 
 RequestHandler::RequestHandler(Net::Client * client)
-	: _client(client), _status(HS_PROGRESS), _error_handler(this),
+	: _client(client), _status(HS_WAITING), _error_handler(this),
 		_cgi_handler(NULL), _req(NULL), _res(NULL)
 {
 }
@@ -85,7 +85,6 @@ void	RequestHandler::handle(Http::Request & req, Http::Response & res)
 {
 
 	_req = &req; _res = &res;
-	const std::string & method = req.method();
 	const std::string & uri = req.uri();
 
 	mergeHeaders(req, res);
@@ -94,11 +93,6 @@ void	RequestHandler::handle(Http::Request & req, Http::Response & res)
 	if (isError())
 		return (serveError(loc, res));
 	
-	if (!loc->allowsMethod(method))
-	{
-		setStatus(HS_METHOD_NOT_ALLOWED);
-		return (_error_handler.handle(loc, res));
-	}
 	if (loc->redirect.first != 0)
 	  return (redirect(loc->redirect, res));
 
@@ -122,11 +116,13 @@ bool	RequestHandler::isCgiRequest(Http::Request & req)
 
 	const LocationConfig * loc = findLocation(req.uri());
 
+	Status st = status();
 	UriHandler	uri_handler(req.uri(), loc, this);
 	uri_handler.buildPath();
-	if (isError())
-		return (false);
-	return (status() == HS_CGI);
+	if (status() == HS_CGI)
+		return (true);
+	setStatus(st);
+	return (false);
 
 }
 
@@ -139,15 +135,12 @@ bool	RequestHandler::initCgiHandler(Http::Request & req, Http::Response & res)
 		_cgi_handler = NULL;
 	}
 
-	LOG("Launching CGI handler for script: " + req.uri());
 	const LocationConfig * loc = findLocation(req.uri());
 	if (!loc)
 	{
 		setStatus(HS_INTERNAL_SERVER_ERROR);
 		return (false);
 	}
-
-	LOG("Found location for CGI: " + loc->path);
 
 	UriHandler	uri_handler(req.uri(), loc, this);
 	std::string path = uri_handler.buildPath();
@@ -165,9 +158,6 @@ bool	RequestHandler::initCgiHandler(Http::Request & req, Http::Response & res)
 			break ;
 		}
 	}
-
-	LOG("CGI script path: " + path);
-	LOG("CGI binary for extension " + ext + ": " + bin);
 
 	if (bin.empty() || path.empty()
 		|| access(path.c_str(), F_OK) != 0
@@ -237,7 +227,7 @@ void	RequestHandler::mergeHeaders(Http::Request & req, Http::Response & res)
 
 void	RequestHandler::reset()
 {
-	_status = HS_PROGRESS;
+	_status = HS_WAITING;
 	_req = NULL;
 	_res = NULL;
 }
@@ -252,6 +242,14 @@ void	RequestHandler::serveError(Status status, const LocationConfig * loc, Http:
 
 void	RequestHandler::serveError(const LocationConfig * loc, Http::Response & res)
 {
+
+	if (!isError())
+		return ;
+	int st = static_cast<int>(_status);
+	if (st == 400 || st == 408 || st >= 500)
+		res.setHeader("Connection", "close");
+	res.setStatus(st);
+	_req->cleanup();
 	_error_handler.handle(loc, res);
 }
 

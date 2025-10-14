@@ -55,6 +55,11 @@ void Poller::del(IEventHandler * h)
 
 		if (_pfds[i].fd != fd)
 			pfds.push_back(_pfds[i]);
+		else
+		{
+			delete _handlers[_pfds[i].fd];
+			_handlers.erase(_pfds[i].fd);
+		}
 
 	}
 

@@ -31,7 +31,8 @@ Parser::ParseState Parser::state() const
 void Parser::reset()
 {
 
-	_state = REQUEST_LINE;
+	if (_state == DONE)
+		_state = REQUEST_LINE;
 	_mp_state = BS_BOUNDARY;
 	_body_type = RAW;
 	_field.clear();
@@ -49,11 +50,14 @@ void Parser::reset()
 
 bool Parser::parseNext(Buffer & buf, Request & req, Response & res)
 {
-	if (state() == PS_DONE || state() == PS_ERROR)
+	if (state() == PS_DONE)
 		return (false);
-
+	if (state() == PS_ERROR || _req_handler->isError())
+		return (waitForRecycle(buf, req));
+	if (_state == REQUEST_LINE)
+		req = Request();
 	bool ret = true;
-	while (ret)
+	while (ret && !_req_handler->isError())
 	{
 		switch (_state)
 		{
@@ -96,22 +100,22 @@ bool Parser::parseReqLine(Buffer & buf, Request & req)
 	size_t line_len = end - ptr + 1;
 	if (line_len < 2 || *(end - 1) != '\r')
 	{
-		setState(ERROR);
+		_req_handler->setStatus(Handler::HS_BAD_REQUEST);
 		return (false);
 	}
 
 	std::string line(ptr, line_len - 2);
 	std::vector<std::string> parts = String::split(line);
-	if (parts.size() != 3 || parts[2].substr(0, 5) != "HTTP/")
+	if (parts.size() != 3 || parts[2].substr(0, 5) != "HTTP/"
+	|| parts[1][0] != '/')
 	{
-		setState(ERROR);
+		_req_handler->setStatus(Handler::HS_BAD_REQUEST);
 		return (false);
 	}
 
 	req.setMethod(parts[0]);
 	req.setUri(parts[1]);
 	req.setVersion(parts[2]);
-
 	buf.hasRead(line_len);
 	setState(HEADERS);
 	_is_cgi = _req_handler->isCgiRequest(req);
@@ -122,79 +126,86 @@ bool Parser::parseReqLine(Buffer & buf, Request & req)
 bool Parser::parseHeaders(Buffer & buf, Request & req, Response & res)
 {
 
-	const char *ptr = buf.readPtr();
-	size_t len = buf.readable();
-
-	const char *end = static_cast<const char *>(std::memchr(ptr, '\n', len));
-	if (!end)
+	size_t	end = buf.find("\r\n\r\n");
+	if (end == std::string::npos)
 		return (true);
 
-	size_t line_len = end - ptr + 1;
-	if (line_len < 2 || *(end - 1) != '\r')
+	std::string hdr = buf.substr(0, end);
+	buf.hasRead(end + 4);
+	std::string	line;
+	std::istringstream iss(hdr);
+	while (std::getline(iss, line))
 	{
-		setState(ERROR);
-		return (false);
-	}
-
-	if (line_len == 2)
-	{
-		if (_is_cgi)
+		line = String::trim(line);
+		size_t	colon = line.find(':');
+		if (colon == std::string::npos)
 		{
-			if (!_req_handler->initCgiHandler(req, res))
+			_req_handler->setStatus(Handler::HS_BAD_REQUEST);
+			return (false);
+		}
+		std::string key = String::toCamelCase(String::trim(line.substr(0, colon)), '-');
+		std::string value = String::trim(line.substr(colon + 1));
+		req.setHeader(key, value);
+		if (key == "Content-Type")
+		{
+			req.setContentType(value);
+			if (value.find("multipart/form-data") == 0)
 			{
-				setState(ERROR);
-				return (false);
+				_boundary = getBoundary(value);
+				_body_type = MULTIPART;
 			}
+			else if (value.find("application/x-www-form-urlencoded") == 0)
+				_body_type = URLENCODED;
 		}
-		buf.hasRead(line_len);
+		else if (key == "Content-Length")
+			req.setContentLength(static_cast<size_t>(std::atoi(value.c_str())));
+		else if (key == "Transfer-Encoding" && value.find("chunked") != std::string::npos)
+			_body_type = CHUNKED;
+	}
+	const LocationConfig * loc = _req_handler->findLocation(req.uri());
+	if (!loc->allowsMethod(req.method()))
+	{
+		_req_handler->setStatus(Handler::HS_METHOD_NOT_ALLOWED);
 		if (req.method() == "POST")
-		{
-			setState(BODY);
-			return (true);
-		}
-		if (_is_cgi)
-			_req_handler->cgiHandler()->closeIn(Handler::HS_OK);
-		setState(DONE);
+			setState(ERROR);
 		return (false);
 	}
-
-	std::string line(ptr, line_len - 2);
-	size_t colon = line.find(':');
-	if (colon == std::string::npos)
+	if (req.uri().size() >= 2048)
+	{
+		_req_handler->setStatus(Handler::HS_URI_TOO_LONG);
+		if (req.method() == "POST")
+			setState(ERROR);
+		return (false);
+	}
+	if (req.contentLength() > loc->client_max_body_size)
 	{
 		setState(ERROR);
+		_req_handler->setStatus(Handler::HS_REQUEST_ENTITY_TOO_LARGE);
 		return (false);
 	}
-
-	std::string key = String::toCamelCase(String::trim(line.substr(0, colon)), '-');
-	std::string value = String::trim(line.substr(colon + 1));
-	req.setHeader(key, value);
-	buf.hasRead(line_len);
-
-	if (key == "Content-Type")
+	if (_is_cgi)
 	{
-		req.setContentType(value);
-		if (value.find("multipart/form-data") == 0)
+		if (!_req_handler->initCgiHandler(req, res))
 		{
-			_boundary = getBoundary(value);
-			_body_type = MULTIPART;
+			_req_handler->setStatus(Handler::HS_BAD_REQUEST);
+			return (false);
 		}
-		else if (value.find("application/x-www-form-urlencoded") == 0)
-			_body_type = URLENCODED;
 	}
-	else if (key == "Content-Length")
-		req.setContentLength(static_cast<size_t>(std::atoi(value.c_str())));
-	else if (key == "Transfer-Encoding" && value.find("chunked") != std::string::npos)
-		_body_type = CHUNKED;
-
-	return (true);
+	if (req.method() == "POST")
+	{
+		setState(BODY);
+		return (true);
+	}
+	if (_is_cgi)
+		_req_handler->cgiHandler()->closeIn(Handler::HS_OK);
+	setState(DONE);
+	return (false);
 
 }
 
 bool Parser::parseBody(Buffer & buf, Request & req)
 {
 
-	LOG("Parsing body: " + String::str(_body_type));
 	switch (_body_type)
 	{
 		case MULTIPART:
@@ -262,7 +273,7 @@ bool Parser::parseMultiPartBody(Buffer & buf, Request & req)
 		return (true);
 	}
 
-	while (buf.readable())
+	while (buf.readable() && !_req_handler->isError())
 	{
 		switch (_mp_state)
 		{
@@ -346,19 +357,19 @@ void Parser::parseField(const std::string & part, Request & req)
 
 	size_t pos = part.find("\r\n\r\n");
 	if (pos == std::string::npos)
-		return (setState(ERROR));
+		_req_handler->setStatus(Handler::HS_BAD_REQUEST);
 
 	std::string hdr = part.substr(0, pos);
 	std::string value = part.substr(pos + 4);
 	
 	std::string content_disp = hdr.substr(hdr.find("Content-Disposition:"));
 	if (content_disp.empty())
-		return (setState(ERROR));
+		_req_handler->setStatus(Handler::HS_BAD_REQUEST);
 
 	std::string name = parseDisposition(content_disp, "name");
 	std::string filename = parseDisposition(content_disp, "filename");
 	if (name.empty())
-		return (setState(ERROR));
+		_req_handler->setStatus(Handler::HS_BAD_REQUEST);
 
 	req.addBodyField(name, filename, value);
 	
@@ -441,7 +452,6 @@ bool Parser::bodyMultipartBoundary(Buffer & buf, Request & req)
 bool Parser::bodyMultipartHeader(Buffer & buf, Request & req)
 {
 
-	LOG("Pass at header");
 	size_t	header_end = buf.find("\r\n\r\n");
 	if (header_end == std::string::npos)
 	{
@@ -453,7 +463,6 @@ bool Parser::bodyMultipartHeader(Buffer & buf, Request & req)
 	size_t ct_disp = hdr.find("Content-Disposition");
 	if (ct_disp == std::string::npos)
 	{
-		setState(ERROR);
 		_mp_state = BS_ERROR;
 		ERR("Could not find Content-Disposition in multipart header");
 		_req_handler->setStatus(Handler::HS_BAD_REQUEST);
@@ -464,11 +473,18 @@ bool Parser::bodyMultipartHeader(Buffer & buf, Request & req)
 	_filename = parseDisposition(hdr, "filename");
 	if (!_filename.empty())
 	{
-		_tmp_filename = "." + _filename + ".tmp";
+		const LocationConfig * loc = _req_handler->findLocation(req.uri());
+		if (loc->upload_store.empty())
+		{
+			_req_handler->setStatus(Handler::HS_FORBIDDEN);
+			setState(ERROR);
+			_mp_state = BS_ERROR;
+			return (false);
+		}
+		_tmp_filename = loc->upload_store + _filename;
 		_tmp_file = FileFactory::create(_tmp_filename, O_CREAT | O_RDWR);
 		if (!_tmp_file)
 		{
-			setState(ERROR);
 			_mp_state = BS_ERROR;
 			ERR("Could not upload: " + _filename);
 			_req_handler->setStatus(Handler::HS_INTERNAL_SERVER_ERROR);
@@ -498,25 +514,20 @@ bool Parser::bodyMultipartPart(Buffer & buf, Request & req)
 	}
 	if (_tmp_file)
 	{
-		LOG("We have: " + String::str(buf.readable()) + " bytes to write");
 		std::string	data = buf.substr(0, b_pos);
 		size_t	cap = std::min(b_pos, buf.readable());
 		ssize_t n = _tmp_file->write(buf.readPtr(), cap);
 		if (n <= 0)
 		{
 			_mp_state = BS_ERROR;
-			setState(ERROR);
-			ERR("Could not write to temporary file: " + std::string(strerror(errno)));
+			_req_handler->setStatus(Handler::HS_INTERNAL_SERVER_ERROR);
 			delete _tmp_file;
 			_tmp_file = NULL;
 			if (!_tmp_filename.empty() && access(_tmp_filename.c_str(), R_OK))
 				std::remove(_tmp_filename.c_str());
 			return (false);
 		}
-		LOG("We just written " + String::str(n) + " bytes into " +  _tmp_filename);
-		LOG("Buffer read end size: " + String::str(buf.readable()));
 		buf.hasRead(n);
-		LOG("Buffer read end size after: " + String::str(buf.readable()));
 	}
 	else
 	{
@@ -528,5 +539,41 @@ bool Parser::bodyMultipartPart(Buffer & buf, Request & req)
 		buf.hasRead(buf.readable());
 	}
 	return (false);
+
+}
+
+bool	Parser::waitForRecycle(Buffer & buf, Request & req)
+{
+
+	std::string c_type = req.contentType();
+	std::string te = req.header("Transfer-Encoding");
+
+	if (c_type == "application/x-www-form-urlencoded" || c_type.find("multipart/form-data") == 0)
+	{
+
+		static ssize_t remain = 0;
+		if (remain <= 0)
+			remain = req.contentLength();
+		remain -= buf.readable();
+		buf.hasRead(buf.readable());
+		if (remain <= 0)
+		{
+			setState(REQUEST_LINE);
+			req = Request();
+			return (false);
+		}
+	}
+	if (te == "chunked")
+	{
+		if (buf.find("0\r\n\r\n") != std::string::npos)
+		{
+			buf.hasRead(buf.readable());
+			setState(REQUEST_LINE);
+			req = Request();
+			return (false);
+		}
+		buf.hasRead(buf.readable());
+	}
+	return (true);
 
 }

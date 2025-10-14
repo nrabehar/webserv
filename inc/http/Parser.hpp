@@ -100,6 +100,8 @@ namespace Http
 			bool bodyMultipartHeader(Buffer & buf, Request & req);
 			bool bodyMultipartPart(Buffer & buf, Request & req);
 
+			bool waitForRecycle(Buffer & buf, Request & req);
+
 	};
 	
 

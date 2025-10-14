@@ -59,6 +59,8 @@ namespace Http
 
 			const std::string & contentType() const;
 			void	setContentType(const std::string & ct);
+
+			void	cleanup();
 	
 		private:
 	

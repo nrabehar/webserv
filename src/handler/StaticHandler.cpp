@@ -55,12 +55,6 @@ void	StaticHandler::onTimeout()
 		_handler->delProcess(this);
 		return;
 	}
-	if (Time::diff(_last_active, Time::now()) < _timeout)
-		return ;
-	if (_file)
-		delete _file;
-	_file = NULL;
-	_handler->delProcess(this);
 
 }
 
