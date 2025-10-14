@@ -138,7 +138,11 @@ void Config::Transformer::parseLocation(Node<Token> * loc_node, LocationConfig &
 		else if (name == "client_max_body_size")
 			loc.client_max_body_size = static_cast<size_t>(std::atoi(arg[0].value.c_str())) * 1024 * 1024;
 		else if (name == "upload_store")
+		{
 			loc.upload_store = arg[0].value;
+			if (loc.upload_store[loc.upload_store.size() - 1] != '/')
+				loc.upload_store += '/';
+		}
 		else if (name == "return" && arg.size() == 2)
 			loc.redirect = std::make_pair(std::atoi(arg[0].value.c_str()), arg[1].value);
 

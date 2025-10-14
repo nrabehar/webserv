@@ -27,13 +27,13 @@ void	Client::handle(short e)
 	if (e & POLLIN)
 		onRead();
 
-	else if (e & POLLOUT)
+	if (e & POLLOUT)
 		onWrite();
 
-	else if (e & POLLHUP)
+	if (e & POLLHUP)
 		EventLoop::instance().delHandler(this);
 
-	else if (e & (POLLERR | POLLHUP | POLLNVAL))
+	if (e & (POLLERR | POLLHUP | POLLNVAL))
 		onError();
 
 }
@@ -126,7 +126,6 @@ bool	Client::readSocket()
 
 	}
 	_in.hasWritten(ret);
-	LOG("Client " + String::str(_fd) + " receive: " + String::str(ret) + " bytes | it's buff is now: " + String::str(_in.readable()));
 	return (true);
 
 }

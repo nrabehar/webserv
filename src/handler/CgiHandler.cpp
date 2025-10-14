@@ -36,7 +36,17 @@ void CgiHandler::closeOut(Status st)
 	_handler->delProcess(_stdout_h);
 	_stdin_h = NULL;
 	_handler->setStatus(st);
-	//TODO: parse cgi response here
+	if (_pid > 0)
+	{
+		int status;
+		pid_t r = waitpid(_pid, &status, WNOHANG);
+		if (r == 0)
+		{
+			::kill(_pid, SIGKILL);
+			waitpid(_pid, &status, 0);
+		}
+		_pid = -1;
+	}
 }
 
 void CgiHandler::write(const char *data, size_t len)
@@ -57,8 +67,8 @@ void CgiHandler::launch(const std::string & bin, const std::string & script)
 	}
 	if (::pipe(from_child) == -1)
 	{
-		::close(to_child[0]);
 		::close(to_child[1]);
+		::close(to_child[0]);
 		_handler->setStatus(HS_INTERNAL_SERVER_ERROR);
 		return;
 	}
@@ -79,13 +89,19 @@ void CgiHandler::launch(const std::string & bin, const std::string & script)
 		::close(from_child[0]);
 		if (dup2(to_child[0], STDIN_FILENO) == -1)
 		{
-			::close(to_child[1]);
+			::close(to_child[0]);
 			::close(from_child[1]);
 			ERR("dup2 error");
 			exit(EXIT_FAILURE);
 		}
 		::close(to_child[0]);
 		if (dup2(from_child[1], STDOUT_FILENO) == -1)
+		{
+			::close(from_child[1]);
+			ERR("dup2 error");
+			exit(EXIT_FAILURE);
+		}
+		if (dup2(from_child[1], STDERR_FILENO) == -1)
 		{
 			::close(from_child[1]);
 			ERR("dup2 error");
@@ -100,6 +116,7 @@ void CgiHandler::launch(const std::string & bin, const std::string & script)
 		const char ** arg = getArg(bin, script);
 		ERR("Executing CGI: " + bin + " " + script);
 		execve(bin.c_str(), const_cast<char **>(arg), env);
+		ERR("execve error");
 		freeCArray(env);
 		freeCArray(const_cast<char **>(arg));
 		exit(EXIT_FAILURE);
@@ -108,13 +125,10 @@ void CgiHandler::launch(const std::string & bin, const std::string & script)
 	{
 		::close(to_child[0]);
 		::close(from_child[1]);
-		fcntl(to_child[1], F_SETFL, O_NONBLOCK);
-		fcntl(from_child[0], F_SETFL, O_NONBLOCK);
 		_stdin_h = new CgiStdinHandler(this, &_in, to_child[1]);
 		_stdout_h = new CgiStdoutHandler(this, &_out, from_child[0]);
 		_handler->addProcess(_stdin_h, POLLOUT);
 		_handler->addProcess(_stdout_h, POLLIN);
-		LOG("Started CGI process " + String::str(_pid) + " for script: " + script);
 	}
 }
 
@@ -162,9 +176,9 @@ void	CgiHandler::freeCArray(char ** arr) const
 {
 	if (!arr)
 		return ;
-	for (size_t i = 0; arr[i]; ++i)
-		delete[] arr[i];
-	delete[] arr;
+	// for (size_t i = 0; arr[i]; ++i)
+	// 	delete[] arr[i];
+	// delete[] arr;
 }
 
 std::string	CgiHandler::headerKeyToEnv(const std::string & key) const
@@ -180,8 +194,63 @@ std::string	CgiHandler::headerKeyToEnv(const std::string & key) const
 	return (env_key);
 }
 
+void CgiHandler::processOutput()
+{
+
+	closeOut();
+	if (_handler->isError())
+		return ;
+	if (!parseHeaders())
+		return ;
+	parseBody();
+
+
+}
+
+bool	CgiHandler::parseHeaders()
+{
+
+	size_t pos = _out.find("\r\n\r\n");
+	if (pos == std::string::npos)
+	{
+		_handler->setStatus(HS_BAD_GATEWAY);
+		return (false);
+	}
+	std::string headers = _out.substr(0, pos + 2);
+	_out.hasRead(pos + 4);
+	std::istringstream stream(headers);
+	std::string line;
+	while (std::getline(stream, line))
+	{
+		size_t colon = line.find(':');
+		if (colon == std::string::npos)
+			continue ;
+		std::string key = String::toCamelCase(String::trim(line.substr(0, colon)), '-');
+		std::string value = String::trim(line.substr(colon + 1));
+		if (key == "Status")
+			_res->setStatus(std::atoi(value.c_str()));
+		else
+			_res->setHeader(key, value);
+	}
+	return (true);
+}
+
+bool	CgiHandler::parseBody()
+{
+
+	_res->appendBody(_out.substr());
+	_res->setHeader("Content-Length", String::str(_out.readable()));
+	_out.hasRead(_out.readable());
+	_handler->setStatus(HS_OK);
+	return (true);
+
+}
+
 CgiHandler::CgiStdinHandler::CgiStdinHandler(CgiHandler * cgi, Buffer * in, int fd)
-	: EventHandler(fd), _cgi(cgi), _in(in), _offset(0) {}
+	: EventHandler(fd), _cgi(cgi), _in(in), _offset(0)
+{
+	fcntl(_fd, F_SETFL, O_NONBLOCK);
+}
 
 CgiHandler::CgiStdinHandler::~CgiStdinHandler() {}
 
@@ -210,7 +279,10 @@ void CgiHandler::CgiStdinHandler::handle(short e)
 
 // --- CgiStdoutHandler Implementation ---
 CgiHandler::CgiStdoutHandler::CgiStdoutHandler(CgiHandler * cgi, Buffer * out, int fd)
-	: EventHandler(fd), _cgi(cgi), _out(out), _offset(0) {}
+	: EventHandler(fd), _cgi(cgi), _out(out), _offset(0)
+{
+	fcntl(_fd, F_SETFL, O_NONBLOCK);
+}
 
 CgiHandler::CgiStdoutHandler::~CgiStdoutHandler() {}
 
@@ -219,27 +291,27 @@ void CgiHandler::CgiStdoutHandler::handle(short e)
 	if (e & (POLLERR | POLLNVAL))
 		return (_cgi->closeOut());
 	if (e & POLLIN) {
-		ssize_t n = ::read(_fd, _out->writePtr(), _out->writable());
+		char buf[4096];
+		ssize_t n = ::read(_fd, buf, sizeof(buf));
 		if (n > 0)
-		{
-			_out->hasWritten(n);
-			// !: We can parse the CGI response here
-		} else
-			return (_cgi->closeOut());
+			_out->append(std::string(buf, n));
+		else
+			return (_cgi->closeOut(Handler::HS_BAD_GATEWAY));
 	}
 	else if (e & POLLHUP)
 	{
 		while (true)
 		{
-			ssize_t n = ::read(_fd, _out->writePtr(), _out->writable());
+			char buf[4096];
+			ssize_t n = ::read(_fd, buf, sizeof(buf));
 			if (n > 0)
 			{
-				_out->hasWritten(n);
+				_out->append(std::string(buf, n));
 				continue ;
 			}
 			break ;
 		}
-		_cgi->closeOut();
+		_cgi->processOutput();
 	}
 }
 

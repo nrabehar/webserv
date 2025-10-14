@@ -51,6 +51,10 @@ class CgiHandler
 		void	freeCArray(char ** arr) const;
 		std::string headerKeyToEnv(const std::string & key) const;
 
+		void processOutput();
+		bool parseHeaders();
+		bool parseBody();
+
 		class CgiStdinHandler : public EventHandler
 		{
 
@@ -59,7 +63,6 @@ class CgiHandler
 				CgiHandler * _cgi;
 				Buffer * _in;
 				size_t _offset;
-				int _fd;
 
 			public:
 
@@ -83,7 +86,6 @@ class CgiHandler
 				CgiHandler * _cgi;
 				Buffer * _out;
 				size_t _offset;
-				int _fd;
 
 			public:
 		

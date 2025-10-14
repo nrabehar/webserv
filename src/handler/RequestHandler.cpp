@@ -82,7 +82,7 @@ void	RequestHandler::handle(Http::Request & req, Http::Response & res)
 
 	if (isError())
 		return (serveError(loc, res));
-
+	
 	if (!loc->allowsMethod(method))
 	{
 		setStatus(HS_METHOD_NOT_ALLOWED);
@@ -90,6 +90,13 @@ void	RequestHandler::handle(Http::Request & req, Http::Response & res)
 	}
 	if (loc->redirect.first != 0)
 	  return (redirect(loc->redirect, res));
+
+	if (isCgiRequest(req))
+	{
+		if (isError())
+			return (serveError(loc, res));
+		return ;
+	}
 
 	UriHandler uri_handler(uri, loc, this);
 	std::string path = uri_handler.buildPath();
@@ -105,13 +112,14 @@ bool	RequestHandler::isCgiRequest(Http::Request & req)
 	const LocationConfig * loc = findLocation(req.uri());
 
 	UriHandler	uri_handler(req.uri(), loc, this);
+	uri_handler.buildPath();
 	if (isError())
 		return (false);
 	return (status() == HS_CGI);
 
 }
 
-void	RequestHandler::initCgiHandler(Http::Request & req, Http::Response & res)
+bool	RequestHandler::initCgiHandler(Http::Request & req, Http::Response & res)
 {
 
 	if (_cgi_handler)
@@ -120,9 +128,15 @@ void	RequestHandler::initCgiHandler(Http::Request & req, Http::Response & res)
 		_cgi_handler = NULL;
 	}
 
+	LOG("Launching CGI handler for script: " + req.uri());
 	const LocationConfig * loc = findLocation(req.uri());
 	if (!loc)
-		return (setStatus(HS_INTERNAL_SERVER_ERROR));
+	{
+		setStatus(HS_INTERNAL_SERVER_ERROR);
+		return (false);
+	}
+
+	LOG("Found location for CGI: " + loc->path);
 
 	UriHandler	uri_handler(req.uri(), loc, this);
 	std::string path = uri_handler.buildPath();
@@ -134,11 +148,22 @@ void	RequestHandler::initCgiHandler(Http::Request & req, Http::Response & res)
 	std::string bin;
 	for (size_t i = 0; i < loc->cgi.size(); ++i)
 	{
-		if (loc->cgi[i].second == ext)
+		if (loc->cgi[i].first == ext)
 		{
-			bin = loc->cgi[i].first;
+			bin = loc->cgi[i].second;
 			break ;
 		}
+	}
+
+	LOG("CGI script path: " + path);
+	LOG("CGI binary for extension " + ext + ": " + bin);
+
+	if (bin.empty() || path.empty()
+		|| access(path.c_str(), F_OK) != 0
+		|| access(bin.c_str(), F_OK) != 0)
+	{
+		setStatus(HS_INTERNAL_SERVER_ERROR);
+		return (false);
 	}
 
 	_cgi_handler = new CgiHandler(this, &req, &res);
@@ -147,8 +172,9 @@ void	RequestHandler::initCgiHandler(Http::Request & req, Http::Response & res)
 	{
 		delete _cgi_handler;
 		_cgi_handler = NULL;
-		return ;
+		return (false);
 	}
+	return (true);
 
 }
 
@@ -157,6 +183,9 @@ CgiHandler * RequestHandler::cgiHandler() { return (_cgi_handler); }
 const LocationConfig *	RequestHandler::findLocation(const std::string & uri) const
 {
 
+	std::string	c_uri = uri;
+	if (c_uri.find('?') != std::string::npos)
+		c_uri = c_uri.substr(0, c_uri.find('?'));
 	Net::Server * server = _client->getServer();
 	const ServerConfig & conf = server->getConfig();
 	const std::vector<LocationConfig> & loc = conf.location;
@@ -168,7 +197,7 @@ const LocationConfig *	RequestHandler::findLocation(const std::string & uri) con
 	{
 		const LocationConfig & l = *it;
 		size_t len = l.path.length();
-		if (len > best_len && uri.compare(0, len, l.path) == 0)
+		if (len > best_len && c_uri.compare(0, len, l.path) == 0)
 		{
 			best_match = &l;
 			best_len = len;

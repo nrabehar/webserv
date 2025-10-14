@@ -54,10 +54,19 @@ void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
 		{
 			if (!body_fields[i].filename.empty())
 			{
-				LOG("Upload request for file: " + body_fields[i].filename);
-				std::string filename = "www/uploads/" + body_fields[i].filename;
+				if (_loc->upload_store.empty())
+				{
+					ERR("Upload store not configured for location");
+					return (_handler->setStatus(HS_FORBIDDEN));
+				}
+				std::string filename = _loc->upload_store + body_fields[i].filename;
+				LOG("Uploading file to: " + filename);
 				if (std::rename(body_fields[i].value.c_str(), filename.c_str()) < 0)
+				{
+					std::remove(body_fields[i].value.c_str());
+					ERR("Could not move uploaded file to destination: " + std::string(strerror(errno)));
 					return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
+				}
 				res.appendBody(
 					"<p> File uploaded: " + filename + "</p>"
 				);

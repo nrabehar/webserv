@@ -96,6 +96,10 @@ namespace Http
 
 			std::string parsePercentEncoding(const std::string & str);
 
+			bool bodyMultipartBoundary(Buffer & buf, Request & req);
+			bool bodyMultipartHeader(Buffer & buf, Request & req);
+			bool bodyMultipartPart(Buffer & buf, Request & req);
+
 	};
 	
 

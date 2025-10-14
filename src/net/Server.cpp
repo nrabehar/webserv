@@ -19,21 +19,15 @@ Server::~Server()
 void	Server::handle(short e)
 {
 
-	switch (e)
+	if (e & POLLIN)
 	{
-		case POLLIN:
-			if (!acceptConnection())
-				throw std::runtime_error("Could not accept client");
-			break;
-		case POLLOUT:
-			break;
-		case POLLHUP:
-			EventLoop::instance().delHandler(this);
-			break;
-		default:
-			throw std::runtime_error("Socket " + String::str(_fd) + " errpr");
-			break;
+		if (!acceptConnection())
+			throw std::runtime_error("Could not accept client");
 	}
+	else if (e & POLLHUP)
+		EventLoop::instance().delHandler(this);
+	else
+			throw std::runtime_error("Socket " + String::str(_fd) + " errpr");
 
 }
 

@@ -38,6 +38,7 @@ void Parser::reset()
 	_filename.clear();
 	_value.clear();
 	_tmp_filename.clear();
+	_is_cgi = false;
 	if (_tmp_file)
 	{
 		delete _tmp_file;
@@ -138,13 +139,21 @@ bool Parser::parseHeaders(Buffer & buf, Request & req, Response & res)
 	if (line_len == 2)
 	{
 		if (_is_cgi)
-			_req_handler->initCgiHandler(req, res);
+		{
+			if (!_req_handler->initCgiHandler(req, res))
+			{
+				setState(ERROR);
+				return (false);
+			}
+		}
 		buf.hasRead(line_len);
-		if (req.method() == "POST" )
+		if (req.method() == "POST")
 		{
 			setState(BODY);
 			return (true);
 		}
+		if (_is_cgi)
+			_req_handler->cgiHandler()->closeIn(Handler::HS_OK);
 		setState(DONE);
 		return (false);
 	}
@@ -210,8 +219,16 @@ bool Parser::parseUrlEncoded(Buffer & buf, Request & req)
 	if (req.body().size() < req.contentLength())
 	{
 		req.appendBody(std::string(buf.readPtr(), buf.readable()));
+		if (_is_cgi)
+			_req_handler->cgiHandler()->write(buf.readPtr(), buf.readable());
 		buf.hasRead(buf.readable());
 		return (true);
+	}
+	if (_is_cgi)
+	{
+		setState(DONE);
+		_req_handler->cgiHandler()->closeIn(Handler::HS_OK);
+		return (false);
 	}
 	std::string body = req.body();
 	std::vector<std::string> pairs = String::split(body, "&");
@@ -232,115 +249,39 @@ bool Parser::parseUrlEncoded(Buffer & buf, Request & req)
 bool Parser::parseMultiPartBody(Buffer & buf, Request & req)
 {
 
+	if (_is_cgi)
+	{
+		_req_handler->cgiHandler()->write(buf.readPtr(), buf.readable());
+		if (buf.find(_boundary + "--") != std::string::npos)
+		{
+			buf.hasRead(buf.readable());
+			setState(DONE);
+			return (false);
+		}
+		buf.hasRead(buf.readable());
+		return (true);
+	}
+
 	while (buf.readable())
 	{
 		switch (_mp_state)
 		{
 			case BS_BOUNDARY:
 			{
-				size_t	pos = buf.find(_boundary);
-				if (pos == std::string::npos)
+				if (bodyMultipartBoundary(buf, req))
 					return (true);
-				if (pos >= 2)
-				{
-					LOG("Boundary found");
-					_mp_state = BS_PART;
-					break ;
-				}
-				if (_tmp_file)
-				{
-					delete _tmp_file;
-					_tmp_file = NULL;
-				}
-				buf.hasRead(pos + _boundary.size());
-				if (buf.readable() >= 2 && buf.readPtr()[0] == '-' && buf.readPtr()[1] == '-')
-				{
-					buf.hasRead(2); // End of boundary
-					setState(DONE);
-					_mp_state = BS_DONE;
-					return (false);
-				}
-				_mp_state = BS_HEADER;
 				break;
 			}
 			case BS_HEADER:
 			{
-				LOG("Pass at header");
-				size_t	header_end = buf.find("\r\n\r\n");
-				if (header_end == std::string::npos)
+				if (bodyMultipartHeader(buf, req))
 					return (true);
-				std::string hdr = buf.substr(0, header_end);
-				buf.hasRead(header_end + 4);
-				size_t ct_disp = hdr.find("Content-Disposition");
-				if (ct_disp == std::string::npos)
-				{
-					setState(ERROR);
-					return (false);
-				}
-				hdr = hdr.substr(ct_disp);
-				_field = parseDisposition(hdr, "name");
-				_filename = parseDisposition(hdr, "filename");
-				if (!_filename.empty())
-				{
-					_tmp_filename = "tmp/" + _filename + ".tmp";
-					_tmp_file = FileFactory::create(_tmp_filename, O_CREAT | O_RDWR);
-					if (!_tmp_file)
-					{
-						setState(ERROR);
-						ERR("Could not upload: " + _filename);
-						// set request status to 500;
-						return (false);
-					}
-					req.addBodyField(_field, _filename, _tmp_filename);
-					_field = "";
-					_filename = "";
-				}
-				_mp_state = BS_PART;
 				break ;
 			}
 			case BS_PART:
 			{
-				size_t	b_pos = buf.find("\r\n" + _boundary);
-				if (b_pos != std::string::npos)
-				{
-					_mp_state = BS_BOUNDARY;
-					if (b_pos == 0)
-					{
-						buf.hasRead(2);
-						break ;
-					}
-				}
-				if (_tmp_file)
-				{
-					LOG("We have: " + String::str(buf.readable()) + " bytes to write");
-					std::string	data = buf.substr(0, b_pos);
-					size_t	cap = std::min(b_pos, buf.readable());
-					ssize_t n = _tmp_file->write(buf.readPtr(), cap);
-					if (n <= 0)
-					{
-						// TODO: remove all created tmp files
-						setState(ERROR);
-						ERR("Could not write to temporary file: " + std::string(strerror(errno)));
-						delete _tmp_file;
-						_tmp_file = NULL;
-						if (!_tmp_filename.empty() && access(_tmp_filename.c_str(), R_OK))
-							std::remove(_tmp_filename.c_str());
-						return (false);
-					}
-					LOG("We just written " + String::str(n) + " bytes into " +  _tmp_filename);
-					LOG("Buffer read end size: " + String::str(buf.readable()));
-					buf.hasRead(n);
-					LOG("Buffer read end size after: " + String::str(buf.readable()));
-				}
-				else
-				{
-					if (b_pos == std::string::npos)
-						return (true);
-
-					std::string val = String::trim(std::string(buf.readPtr(), b_pos));
-					req.addBodyField(_field, _filename, parsePercentEncoding(val));
-					buf.hasRead(buf.readable());
-				}
+				if (bodyMultipartPart(buf, req))
+					return (true);
 				break ;
 			}
 			default:
@@ -354,9 +295,35 @@ bool Parser::parseMultiPartBody(Buffer & buf, Request & req)
 bool Parser::parseChunkedBody(Buffer & buf, Request & req)
 {
 
-	(void)buf;
-	(void)req;
-	setState(DONE);
+	while (buf.readable())
+	{
+
+		size_t pos = buf.find("\r\n");
+		if (pos == std::string::npos)
+			return (true);
+		std::string line = buf.substr(0, pos);
+		buf.hasRead(pos + 2);
+		size_t chunk_size = 0;
+		std::istringstream iss(line);
+		iss >> std::hex >> chunk_size;
+		if (chunk_size == 0)
+		{
+			setState(DONE);
+			buf.hasRead(buf.readable());
+			if (_is_cgi)
+				_req_handler->cgiHandler()->closeIn(Handler::HS_OK);
+			return (false);
+		}
+		if (buf.readable() < chunk_size + 2)
+			return (true);
+		if (_is_cgi)
+			_req_handler->cgiHandler()->write(buf.readPtr(), chunk_size);
+		else
+			req.appendBody(std::string(buf.readPtr(), chunk_size));
+		buf.hasRead(chunk_size + 2);
+	
+	}
+
 	return (false);
 
 }
@@ -431,14 +398,135 @@ std::string Parser::parsePercentEncoding(const std::string & str)
 			i += 2;
 		}
 		else if (str[i] == '+')
-		{
 			result += ' ';
-		}
 		else
-		{
 			result += str[i];
-		}
 	}
 	return (result);
+
+}
+
+bool Parser::bodyMultipartBoundary(Buffer & buf, Request & req)
+{
+
+	(void)req;
+	size_t	pos = buf.find(_boundary);
+	if (pos == std::string::npos)
+		return (true);
+	if (pos >= 2)
+	{
+		_mp_state = BS_PART;
+		return (false);
+	}
+	if (_tmp_file)
+	{
+		delete _tmp_file;
+		_tmp_file = NULL;
+	}
+	buf.hasRead(pos + _boundary.size());
+	if (buf.readable() >= 2 && buf.readPtr()[0] == '-' && buf.readPtr()[1] == '-')
+	{
+		buf.hasRead(buf.readable());
+		setState(DONE);
+		_mp_state = BS_DONE;
+		if (_is_cgi)
+			_req_handler->cgiHandler()->closeIn(Handler::HS_OK);
+		return (false);
+	}
+	_mp_state = BS_HEADER;
+	return (false);
+
+}
+
+bool Parser::bodyMultipartHeader(Buffer & buf, Request & req)
+{
+
+	LOG("Pass at header");
+	size_t	header_end = buf.find("\r\n\r\n");
+	if (header_end == std::string::npos)
+	{
+		WRN("Could not find end of multipart header yet");
+		return (true);
+	}
+	std::string hdr = buf.substr(0, header_end);
+	buf.hasRead(header_end + 4);
+	size_t ct_disp = hdr.find("Content-Disposition");
+	if (ct_disp == std::string::npos)
+	{
+		setState(ERROR);
+		_mp_state = BS_ERROR;
+		ERR("Could not find Content-Disposition in multipart header");
+		_req_handler->setStatus(Handler::HS_BAD_REQUEST);
+		return (false);
+	}
+	hdr = hdr.substr(ct_disp);
+	_field = parseDisposition(hdr, "name");
+	_filename = parseDisposition(hdr, "filename");
+	if (!_filename.empty())
+	{
+		_tmp_filename = "." + _filename + ".tmp";
+		_tmp_file = FileFactory::create(_tmp_filename, O_CREAT | O_RDWR);
+		if (!_tmp_file)
+		{
+			setState(ERROR);
+			_mp_state = BS_ERROR;
+			ERR("Could not upload: " + _filename);
+			_req_handler->setStatus(Handler::HS_INTERNAL_SERVER_ERROR);
+			return (false);
+		}
+		req.addBodyField(_field, _filename, _tmp_filename);
+		_field = "";
+		_filename = "";
+	}
+	_mp_state = BS_PART;
+	return (false);
+
+}
+
+bool Parser::bodyMultipartPart(Buffer & buf, Request & req)
+{
+
+	size_t	b_pos = buf.find("\r\n" + _boundary);
+	if (b_pos != std::string::npos)
+	{
+		_mp_state = BS_BOUNDARY;
+		if (b_pos == 0)
+		{
+			buf.hasRead(2);
+			return (false);
+		}
+	}
+	if (_tmp_file)
+	{
+		LOG("We have: " + String::str(buf.readable()) + " bytes to write");
+		std::string	data = buf.substr(0, b_pos);
+		size_t	cap = std::min(b_pos, buf.readable());
+		ssize_t n = _tmp_file->write(buf.readPtr(), cap);
+		if (n <= 0)
+		{
+			_mp_state = BS_ERROR;
+			setState(ERROR);
+			ERR("Could not write to temporary file: " + std::string(strerror(errno)));
+			delete _tmp_file;
+			_tmp_file = NULL;
+			if (!_tmp_filename.empty() && access(_tmp_filename.c_str(), R_OK))
+				std::remove(_tmp_filename.c_str());
+			return (false);
+		}
+		LOG("We just written " + String::str(n) + " bytes into " +  _tmp_filename);
+		LOG("Buffer read end size: " + String::str(buf.readable()));
+		buf.hasRead(n);
+		LOG("Buffer read end size after: " + String::str(buf.readable()));
+	}
+	else
+	{
+		if (b_pos == std::string::npos)
+			return (true);
+
+		std::string val = String::trim(std::string(buf.readPtr(), b_pos));
+		req.addBodyField(_field, _filename, parsePercentEncoding(val));
+		buf.hasRead(buf.readable());
+	}
+	return (false);
 
 }

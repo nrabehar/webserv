@@ -95,7 +95,7 @@ namespace Handler
 			void serveDirectory(const std::string & path, const std::string & uri, Http::Response & res);
 
 			bool	isCgiRequest(Http::Request & req);
-			void	initCgiHandler(Http::Request & req, Http::Response & res);
+			bool	initCgiHandler(Http::Request & req, Http::Response & res);
 			CgiHandler *	cgiHandler();
 			const LocationConfig * findLocation(const std::string & uri) const;
 	
