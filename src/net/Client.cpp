@@ -67,6 +67,7 @@ void	Client::onRead()
 		_handler.setStatus(Handler::HS_PROGRESS);
 	if (_parser.parseNext(_in, _req, _res))
 		return ;
+	reloadTimeout();
 	if (_parser.state() == _parser.PS_ERROR && !_handler.isError())
 		_handler.setStatus(Handler::HS_BAD_REQUEST);
 	if (!_handler.isError())

@@ -4,6 +4,12 @@ EventLoop *	EventLoop::_inst = NULL;
 
 EventLoop::~EventLoop()
 {
+	std::vector<PendingOp>::iterator it;
+	for (it = _pending.begin(); it != _pending.end(); ++it)
+	{
+		if (it->type == OP_ADD)
+			delete it->handler;
+	}
 	_pending.clear();
 }
 

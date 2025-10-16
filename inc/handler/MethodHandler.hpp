@@ -32,6 +32,9 @@ namespace Handler
 			void handleGet(Http::Request & req, Http::Response & res);
 			void handlePost(Http::Request & req, Http::Response & res);
 			void handleDelete(Http::Request & req, Http::Response & res);
+
+			void createJsonResponse(const std::vector<std::pair<std::string, std::string> > & files,
+				const std::vector<std::pair<std::string, std::string> > & fields, Http::Response & res);
 	
 	};
 	

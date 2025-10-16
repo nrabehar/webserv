@@ -49,6 +49,8 @@ void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
 	if (ct.find("application/x-www-form-urlencoded") != std::string::npos
 		|| ct.find("multipart/form-data") != std::string::npos)
 	{
+		std::vector<std::pair<std::string, std::string> > files;
+		std::vector<std::pair<std::string, std::string> > fields;
 		const std::vector<Http::RequestBody> & body_fields = req.bodyFields();
 		for (size_t i = 0; i < body_fields.size(); ++i)
 		{
@@ -67,18 +69,13 @@ void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
 					ERR("Could not move uploaded file to destination: " + std::string(strerror(errno)));
 					return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
 				}
-				res.appendBody(
-					"<p> File uploaded: " + filename + "</p>"
-				);
+				files.push_back(std::make_pair(body_fields[i].field, filename));
 				res.setStatus(201);
 			}
 			else
-			{
-				res.appendBody(
-					"<p>" + body_fields[i].field + ": " + body_fields[i].value + "</p>"
-				);
-			}
+				fields.push_back(std::make_pair(body_fields[i].field, body_fields[i].value));
 		}
+		createJsonResponse(files, fields, res);
 		res.setHeader("Content-Length", String::str(res.body().size()));
 		_handler->setStatus(HS_OK);
 	}
@@ -103,4 +100,37 @@ void MethodHandler::handleDelete(Http::Request & req, Http::Response & res)
 	res.appendBody("<html><body><h1>File deleted successfully</h1></body></html>");
 	return (_handler->setStatus(HS_OK));
 
+}
+
+void MethodHandler::createJsonResponse(const std::vector<std::pair<std::string, std::string> > & files,
+	const std::vector<std::pair<std::string, std::string> > & fields, Http::Response & res)
+{
+	res.setHeader("Content-Type", "application/json");
+	res.appendBody("{\n");
+
+	res.appendBody("  \"files\": [\n");
+	for (size_t i = 0; i < files.size(); ++i)
+	{
+		res.appendBody("    {\n");
+		res.appendBody("      \"field\": \"" + files[i].first + "\",\n");
+		res.appendBody("      \"filename\": \"" + files[i].second + "\"\n");
+		if (i + 1 < files.size())
+			res.appendBody("    },\n");
+		else
+			res.appendBody("    }\n");
+	}
+	res.appendBody("  ],\n");
+
+	res.appendBody("  \"fields\": [\n");
+	for (size_t i = 0; i < fields.size(); ++i)
+	{
+		res.appendBody("    {\n");
+		res.appendBody("      \"field\": \"" + fields[i].first + "\",\n");
+		res.appendBody("      \"value\": \"" + fields[i].second + "\"\n");
+		if (i + 1 < fields.size())
+			res.appendBody("    },\n");
+		else
+			res.appendBody("    }\n");
+	}
+	res.appendBody("  ]\n}\n");
 }

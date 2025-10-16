@@ -59,6 +59,8 @@ void	Server::setup()
 	if (listen(_fd, LISTEN_BACKLOG) == -1)
 		throw std::runtime_error("Could not listen " + _listen.host + ":" + _listen.port);
 
+	LOG("Listening on http://" + _listen.host + ":" + _listen.port);
+
 }
 
 
