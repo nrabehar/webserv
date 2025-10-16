@@ -290,7 +290,6 @@ void CgiHandler::CgiStdinHandler::onTimeout()
 
 }
 
-// --- CgiStdoutHandler Implementation ---
 CgiHandler::CgiStdoutHandler::CgiStdoutHandler(CgiHandler * cgi, Buffer * out, int fd)
 	: EventHandler(fd), _cgi(cgi), _out(out), _offset(0)
 {

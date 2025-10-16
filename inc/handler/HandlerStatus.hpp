@@ -34,4 +34,4 @@ namespace Handler
 	};
 }
 
-#endif // HANDLERSTATUS_HPP
+#endif
