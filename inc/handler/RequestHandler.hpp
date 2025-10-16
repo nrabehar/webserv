@@ -5,6 +5,8 @@
 #include "../http/Request.hpp"
 #include "../http/Response.hpp"
 #include "ErrorHandler.hpp"
+#include "HandlerStatus.hpp"
+#include "CgiHandler.hpp"
 
 namespace Net
 {
@@ -13,40 +15,6 @@ namespace Net
 
 namespace Handler
 {
-
-	class CgiHandler;
-
-	enum Status
-	{
-
-		HS_OK = 200,
-
-		HS_BAD_REQUEST = 400,
-		HS_FORBIDDEN = 403,
-		HS_NOT_FOUND = 404,
-		HS_METHOD_NOT_ALLOWED = 405,
-		HS_NOT_ACCEPTABLE = 406,
-		HS_PROXY_AUTHENTICATION_REQUIRED = 407,
-		HS_REQUEST_TIMEOUT = 408,
-		HS_CONFLICT = 409,
-		HS_REQUEST_ENTITY_TOO_LARGE = 413,
-		HS_URI_TOO_LONG = 414,
-		HS_UNSUPPORTED_MEDIA_TYPE = 415,
-		HS_UPROCESSABLE_ENTITY = 422,
-		HS_INTERNAL_SERVER_ERROR = 500,
-		HS_NOT_IMPLEMENTED = 501,
-		HS_BAD_GATEWAY = 502,
-		HS_SERVICE_UNAVAILABLE = 503,
-		HS_GATEWAY_TIMEOUT = 504,
-
-		HS_FOLDER_LISTING = 1000,
-		HS_PROGRESS = 1001,
-		HS_WAITING = 1002,
-		HS_CGI = 1003,
-	
-	};
-
-	class ErrorHandler;
 
 	class IRequestHandler
 	{
@@ -61,7 +29,6 @@ namespace Handler
 	
 	};
 
-
 	class RequestHandler : public IRequestHandler
 	{
 	
@@ -70,13 +37,13 @@ namespace Handler
 			Net::Client *	_client;
 			Status	_status;
 			ErrorHandler _error_handler;
-			CgiHandler	 * _cgi_handler;
+			CgiHandler 	 _cgi_handler;
 
 			std::vector<IEventHandler *> _process;
 
 			Http::Request * _req;
 			Http::Response * _res;
-	
+
 		public:
 	
 			RequestHandler(Net::Client * client, Http::Request * req, Http::Response * res);

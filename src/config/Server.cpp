@@ -1,8 +1,8 @@
 #include "webserv.hpp"
 
 ServerConfig::ServerConfig()
-	: keepalive_timeout(1),
-		gateway_timeout(1) {}
+	: keepalive_timeout(30),
+		gateway_timeout(30) {}
 
 void	ServerConfig::print() const
 {

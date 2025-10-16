@@ -3,6 +3,20 @@
 Buffer::Buffer(): _rpos(0), _wpos(0) {}
 Buffer::~Buffer() {}
 
+Buffer::Buffer(const Buffer & other)
+	: _data(other._data), _rpos(other._rpos), _wpos(other._wpos) {}
+
+Buffer & Buffer::operator=(const Buffer & other)
+{
+	if (this != &other)
+	{
+		_data = other._data;
+		_rpos = other._rpos;
+		_wpos = other._wpos;
+	}
+	return (*this);
+}
+
 const char * Buffer::readPtr() const
 {
 

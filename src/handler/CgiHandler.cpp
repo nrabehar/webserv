@@ -87,26 +87,10 @@ void CgiHandler::launch(const std::string & bin, const std::string & script)
 	{
 		::close(to_child[1]);
 		::close(from_child[0]);
-		if (dup2(to_child[0], STDIN_FILENO) == -1)
-		{
-			::close(to_child[0]);
-			::close(from_child[1]);
-			ERR("dup2 error");
-			exit(EXIT_FAILURE);
-		}
+		dup2(to_child[0], STDIN_FILENO);
+		dup2(from_child[1], STDOUT_FILENO);
+		dup2(from_child[1], STDERR_FILENO);
 		::close(to_child[0]);
-		if (dup2(from_child[1], STDOUT_FILENO) == -1)
-		{
-			::close(from_child[1]);
-			ERR("dup2 error");
-			exit(EXIT_FAILURE);
-		}
-		if (dup2(from_child[1], STDERR_FILENO) == -1)
-		{
-			::close(from_child[1]);
-			ERR("dup2 error");
-			exit(EXIT_FAILURE);
-		}
 		::close(from_child[1]);
 		_env["SCRIPT_FILENAME"] = script;
 		_env["SCRIPT_NAME"] = script;
@@ -114,11 +98,9 @@ void CgiHandler::launch(const std::string & bin, const std::string & script)
 		_env["PATH_TRANSLATED"] = script;
 		char ** env = mapToCArray(_env);
 		const char ** arg = getArg(bin, script);
-		ERR("Executing CGI: " + bin + " " + script);
 		execve(bin.c_str(), const_cast<char **>(arg), env);
-		ERR("execve error");
 		freeCArray(env);
-		freeCArray(const_cast<char **>(arg));
+		EventLoop::destroy();
 		exit(EXIT_FAILURE);
 	}
 	else
@@ -178,9 +160,7 @@ void	CgiHandler::freeCArray(char ** arr) const
 {
 	if (!arr)
 		return ;
-	// for (size_t i = 0; arr[i]; ++i)
-	// 	delete[] arr[i];
-	// delete[] arr;
+	delete[] arr;
 }
 
 std::string	CgiHandler::headerKeyToEnv(const std::string & key) const
@@ -246,6 +226,36 @@ bool	CgiHandler::parseBody()
 	_handler->setStatus(HS_OK);
 	return (true);
 
+}
+
+CgiHandler::CgiHandler() :
+	_pid(-1), _handler(NULL), _req(NULL), _res(NULL), _stdin_h(NULL), _stdout_h(NULL), _timeout(30)
+{
+}
+
+CgiHandler::CgiHandler(const CgiHandler & src) :
+	_pid(-1), _handler(NULL), _req(NULL), _res(NULL), _stdin_h(NULL), _stdout_h(NULL), _timeout(30)
+{
+	*this = src;
+}
+
+CgiHandler & CgiHandler::operator=(const CgiHandler & rhs)
+{
+	if (this != &rhs)
+	{
+		_pid = rhs._pid;
+		_handler = rhs._handler;
+		_req = rhs._req;
+		_res = rhs._res;
+		_env = rhs._env;
+		_arg = rhs._arg;
+		_in = rhs._in;
+		_out = rhs._out;
+		_stdin_h = rhs._stdin_h;
+		_stdout_h = rhs._stdout_h;
+		_timeout = rhs._timeout;
+	}
+	return (*this);
 }
 
 CgiHandler::CgiStdinHandler::CgiStdinHandler(CgiHandler * cgi, Buffer * in, int fd)

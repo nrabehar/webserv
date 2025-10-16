@@ -5,6 +5,7 @@
 #include "../http/Request.hpp"
 #include "../http/Response.hpp"
 #include "../core/EventHandler.hpp"
+#include "HandlerStatus.hpp"
 
 namespace Handler
 {
@@ -33,7 +34,9 @@ class CgiHandler
 
 	public:
 
-
+		CgiHandler();
+		CgiHandler(const CgiHandler &);
+		CgiHandler & operator=(const CgiHandler &);
 		CgiHandler(RequestHandler * handler, Http::Request * req, Http::Response * res, int timeout = 30);
 		~CgiHandler();
 
@@ -44,8 +47,6 @@ class CgiHandler
 
 	private:
 
-		CgiHandler(const CgiHandler &);
-		CgiHandler & operator=(const CgiHandler &);
 		void	initEnv();
 		const char **	getArg(const std::string & bin, const std::string & script);
 		char **	mapToCArray(const std::map<std::string, std::string> & m) const;

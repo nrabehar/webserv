@@ -11,9 +11,11 @@ EventLoop::~EventLoop()
 			delete it->handler;
 	}
 	_pending.clear();
+	if (_conf)
+		delete _conf;
 }
 
-EventLoop::EventLoop(): _running(false) {}
+EventLoop::EventLoop(): _running(false), _conf(NULL) {}
 
 
 EventLoop &	EventLoop::instance()
@@ -122,4 +124,11 @@ void	EventLoop::applyPending()
 
 	_pending.clear();
 
+}
+
+void EventLoop::setConfig(Config * conf)
+{
+	if (_conf)
+		delete _conf;
+	_conf = conf;
 }

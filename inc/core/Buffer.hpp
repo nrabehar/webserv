@@ -26,6 +26,8 @@ class Buffer
 
 		Buffer();
 		~Buffer();
+		Buffer(const Buffer &);
+		Buffer & operator=(const Buffer &);
 
 		/**
 		 * ? with readPtr() we can do write(buffer.readPtr(), buffer.size());
@@ -59,8 +61,6 @@ class Buffer
 
 	private:
 
-		Buffer(const Buffer &);
-		Buffer & operator=(const Buffer &);
 		/**
 		 * ? if there is no more space to write, but there is space at the beginning
 		 * ? (because we have read some data), we move the unread data to the beginning

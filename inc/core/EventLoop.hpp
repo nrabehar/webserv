@@ -3,6 +3,8 @@
 
 #include "Poller.hpp"
 
+class Config;
+
 class EventLoop
 {
 
@@ -23,6 +25,7 @@ class EventLoop
 		};
 
 		std::vector<PendingOp>	_pending;
+		Config *_conf;
 
 	public:
 
@@ -37,6 +40,8 @@ class EventLoop
 
 		void run(int poll_timeout = -1);
 		void stop();
+
+		void setConfig(Config * conf);
 
 	private:
 

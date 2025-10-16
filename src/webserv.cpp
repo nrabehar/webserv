@@ -4,16 +4,17 @@
 static void _run(const char * configfile)
 {
 	Signal().setup();
-	Config cm(configfile);
-	cm.load();
-	const std::vector<ServerConfig>	& servers = cm.servers();
+	Config * conf = new Config(configfile); 
+	EventLoop::instance().setConfig(conf);
+	conf->load();
+	const std::vector<ServerConfig>	& servers = conf->servers();
 
 	for (size_t i = 0; i < servers.size(); ++i)
 	{
 		const std::vector<ServerConfig::Listen> & listens = servers[i].listen;
-		for (size_t i = 0; i < listens.size(); ++i)
+		for (size_t j = 0; j < listens.size(); ++j)
 		{
-			Net::Server * server = new Net::Server(listens[i], servers[i]);
+			Net::Server * server = new Net::Server(listens[j], servers[i]);
 			EventLoop::instance().addHandler(server, POLLIN);
 		}
 	}

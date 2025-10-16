@@ -4,15 +4,13 @@ using namespace Handler;
 
 RequestHandler::RequestHandler(Net::Client * client, Http::Request * req, Http::Response * res)
 	: _client(client), _status(HS_WAITING), _error_handler(this),
-		_cgi_handler(NULL), _req(req), _res(res)
+		_cgi_handler(), _req(req), _res(res)
 {
 }
 
 RequestHandler::~RequestHandler()
 {
 
-	if (_cgi_handler)
-		delete _cgi_handler;
 	if (!Signal::terminate)
 	{
 		for (size_t i = 0; i < _process.size(); ++i)
@@ -118,12 +116,6 @@ bool	RequestHandler::isCgiRequest(Http::Request & req)
 bool	RequestHandler::initCgiHandler(Http::Request & req, Http::Response & res)
 {
 
-	if (_cgi_handler)
-	{
-		delete _cgi_handler;
-		_cgi_handler = NULL;
-	}
-
 	const LocationConfig * loc = findLocation(req.uri());
 	if (!loc)
 	{
@@ -157,19 +149,18 @@ bool	RequestHandler::initCgiHandler(Http::Request & req, Http::Response & res)
 	}
 
 	size_t	timeout = _client->getServer()->getConfig().gateway_timeout;
-	_cgi_handler = new CgiHandler(this, &req, &res, timeout);
-	_cgi_handler->launch(bin, path);
+	_cgi_handler = CgiHandler(this, &req, &res, timeout);
+	_cgi_handler.launch(bin, path);
 	if (isError())
 	{
-		delete _cgi_handler;
-		_cgi_handler = NULL;
+		_cgi_handler = CgiHandler();
 		return (false);
 	}
 	return (true);
 
 }
 
-CgiHandler * RequestHandler::cgiHandler() { return (_cgi_handler); }
+CgiHandler * RequestHandler::cgiHandler() { return (&_cgi_handler); }
 
 const LocationConfig *	RequestHandler::findLocation(const std::string & uri) const
 {
