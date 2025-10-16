@@ -4,7 +4,6 @@
 #include "../webserv.hpp"
 #include "Server.hpp"
 
-//? Use this like namespace
 class Config
 {
 
@@ -41,4 +40,4 @@ class Config
 
 };
 
-#endif // CONFIG_HPP
+#endif

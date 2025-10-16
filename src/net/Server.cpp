@@ -31,10 +31,7 @@ void	Server::handle(short e)
 
 }
 
-void	Server::onTimeout()
-{
-	// Server does not have a timeout
-}
+void	Server::onTimeout() {}
 
 void	Server::setup()
 {

@@ -34,7 +34,7 @@ namespace Handler
 	};
 	
 
-} // namespace Handler
+} 
 
 
-#endif // STATICHANDLER_HPP
+#endif

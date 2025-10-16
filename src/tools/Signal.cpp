@@ -25,7 +25,6 @@ Signal & Signal::operator=(const Signal &)
 
 void Signal::handle(int n)
 {
-	// @todo handle configuration reload
 	if (signals.find(n) != signals.end())
 	{
 		WRN("Received signal " + signals[n]);

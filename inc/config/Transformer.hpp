@@ -25,4 +25,4 @@ class Config::Transformer
 
 };
 
-#endif // TRANSFORMER_HPP
+#endif

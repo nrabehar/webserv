@@ -5,7 +5,7 @@ using namespace Net;
 #include "webserv.hpp"
 
 Client::Client(int fd, Server * server)
-	: EventHandler(fd), _server(server), _handler(this), _parser(&_handler),
+	: EventHandler(fd), _server(server), _handler(this, &_req, &_res), _parser(&_handler),
 	_keep_alive(false)
 {
 
@@ -47,13 +47,13 @@ void	Client::onTimeout()
 
 	if (Time::diff(_last_active, Time::now()) < _timeout)
 		return ;
-	LOG("Client timed out");
+	
 	if (_handler.status() == Handler::HS_WAITING)
 		EventLoop::instance().delHandler(this);
 	else
 	{
+		_handler.setStatus(Handler::HS_REQUEST_TIMEOUT);
 		_handler.notifyTimeout();
-		reloadTimeout();
 	}
 
 }
@@ -63,7 +63,6 @@ void	Client::onRead()
 
 	if (!readSocket())
 		return ;
-
 	if (_handler.status() == Handler::HS_WAITING)
 		_handler.setStatus(Handler::HS_PROGRESS);
 	if (_parser.parseNext(_in, _req, _res))
@@ -76,7 +75,6 @@ void	Client::onRead()
 		if (_handler.isCgiRequest(_req))
 			setTimeout(500000);
 	}
-
 	_handler.handle(_req, _res);
 	_parser.reset();
 
@@ -85,8 +83,14 @@ void	Client::onRead()
 void	Client::onWrite()
 {
 
-	if (_handler.status() == Handler::HS_OK)
+	if ((int)_handler.status() >= 200 && (int)_handler.status() < 600)
+	{
+		if (_handler.isError())
+		{
+			_handler.serveError(_handler.findLocation(_req.uri()), _res);
+		}
 		_out.append(_res.str());
+	}
 	if (_out.readable() == 0)
 		return ;
 	LOG("Client " + String::str(_fd) + ": " + _req.method() + " " +
@@ -106,9 +110,8 @@ void	Client::onWrite()
 	_out.hasRead(ret);	
 	reloadTimeout();
 	if (!_out.readable())
-		_out.clear();
-	if (_handler.status() == Handler::HS_OK)
 	{
+		_out.clear();
 		_keep_alive = _res.header("Connection").find("keep-alive") != std::string::npos;
 		if (!_keep_alive)
 			EventLoop::instance().delHandler(this);

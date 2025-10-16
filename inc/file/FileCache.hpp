@@ -35,4 +35,4 @@ class FileCache: public ICacheStrategy
 };
 
 
-#endif // FILECACHE_HPP
+#endif

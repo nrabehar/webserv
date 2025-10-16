@@ -35,4 +35,4 @@ class Poller
 };
 
 
-#endif // POLLER_HPP
+#endif

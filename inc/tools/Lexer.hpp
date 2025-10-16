@@ -23,4 +23,4 @@ class Lexer
 
 };
 
-#endif // LEXER_HPP
+#endif

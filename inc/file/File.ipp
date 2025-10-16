@@ -126,4 +126,4 @@ class FileFactory
 
 };
 
-#endif // FILE_IPP
+#endif

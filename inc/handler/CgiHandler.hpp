@@ -107,6 +107,6 @@ class CgiHandler
 };
 
 
-}	// namespace Handler
+}	
 
-#endif // CGIHANDLER_HPP
+#endif

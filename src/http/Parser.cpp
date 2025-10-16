@@ -299,7 +299,7 @@ bool Parser::parseMultiPartBody(Buffer & buf, Request & req)
 				break;
 		}
 	}
-	return (true);
+	return (_mp_state != BS_DONE);
 
 }
 
@@ -346,7 +346,7 @@ std::string Parser::getBoundary(const std::string & ct)
 	if (pos == std::string::npos)
 		return ("");
 
-	std::string boundary = String::trim(ct.substr(pos + 9), " \t\"");
+	std::string boundary = String::trim(ct.substr(pos + 9));
 
 	return ("--" + boundary);
 
@@ -389,7 +389,7 @@ std::string Parser::parseDisposition(const std::string & disp, const std::string
 	if (end == std::string::npos)
 		end = disp.length();
 
-	std::string value = String::trim(disp.substr(pos, end - pos), " \t\"");
+	std::string value = String::trim(disp.substr(pos, end - pos), " \t\r\n\v\f\"");
 	value = parsePercentEncoding(value);
 	return (value);
 
@@ -560,7 +560,7 @@ bool	Parser::waitForRecycle(Buffer & buf, Request & req)
 		{
 			setState(REQUEST_LINE);
 			req = Request();
-			return (false);
+			return (true);
 		}
 	}
 	if (te == "chunked")
@@ -570,7 +570,7 @@ bool	Parser::waitForRecycle(Buffer & buf, Request & req)
 			buf.hasRead(buf.readable());
 			setState(REQUEST_LINE);
 			req = Request();
-			return (false);
+			return (true);
 		}
 		buf.hasRead(buf.readable());
 	}

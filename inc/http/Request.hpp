@@ -69,7 +69,7 @@ namespace Http
 	};
 	
 
-} // namespace Http
+} 
 
 
-#endif // REQUEST_HPP
+#endif

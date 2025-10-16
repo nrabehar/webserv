@@ -71,4 +71,4 @@ class Buffer
 };
 
 
-#endif // BUFFER_HPP
+#endif

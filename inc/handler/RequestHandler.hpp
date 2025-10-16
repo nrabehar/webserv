@@ -79,7 +79,7 @@ namespace Handler
 	
 		public:
 	
-			RequestHandler(Net::Client * client);
+			RequestHandler(Net::Client * client, Http::Request * req, Http::Response * res);
 			~RequestHandler();
 
 			virtual void	handle(Http::Request & req, Http::Response & res);
@@ -115,13 +115,12 @@ namespace Handler
 	};
 	
 
-} // namespace Handler
+} 
 
 #include "UriHandler.hpp"
 #include "StaticHandler.hpp"
-#include "UploadHandler.hpp"
 #include "CgiHandler.hpp"
 
 #include "MethodHandler.hpp"
 
-#endif // REQUESTHANDLER_HPP
+#endif

@@ -147,4 +147,4 @@ class TokenOnOffExtractor
 };
 
 
-#endif // TOKENEXTRACTOR_HPP
+#endif

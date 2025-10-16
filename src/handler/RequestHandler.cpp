@@ -2,9 +2,9 @@
 
 using namespace Handler;
 
-RequestHandler::RequestHandler(Net::Client * client)
+RequestHandler::RequestHandler(Net::Client * client, Http::Request * req, Http::Response * res)
 	: _client(client), _status(HS_WAITING), _error_handler(this),
-		_cgi_handler(NULL), _req(NULL), _res(NULL)
+		_cgi_handler(NULL), _req(req), _res(res)
 {
 }
 
@@ -27,7 +27,6 @@ Status	RequestHandler::status() const { return (_status); }
 void	RequestHandler::notifyTimeout()
 {
 
-	setStatus(Handler::HS_REQUEST_TIMEOUT);
 	for (size_t i = 0; i < _process.size(); ++i)
 		_process[i]->onTimeout();
 
@@ -59,17 +58,7 @@ void	RequestHandler::setStatus(Status state)
 	_status = state;
 	if (state == HS_OK && _process.size())
 		_status = HS_PROGRESS;
-	else if (isError())
-	{
-		for (size_t i = 0; i < _process.size(); ++i)
-			EventLoop::instance().delHandler(_process[i]);
-		_process.clear();
-		if (!_req || !_res)
-			return ;
-		const LocationConfig * loc = findLocation(_req->uri());
-		serveError(loc, *_res);
-	}
-
+		
 }
 
 
@@ -213,7 +202,7 @@ void	RequestHandler::mergeHeaders(Http::Request & req, Http::Response & res)
 {
 
 	res.setVersion(req.version());
-	// res.setHeader("Date", String::httpDate(time(NULL)));
+	res.setHeader("Date", Time::timeToHttpStr());
 	res.setHeader("Server", "webserv");
 	if (req.header().find("Connection") != req.header().end())
 		res.setHeader("Connection", req.header("Connection"));
@@ -228,8 +217,6 @@ void	RequestHandler::mergeHeaders(Http::Request & req, Http::Response & res)
 void	RequestHandler::reset()
 {
 	_status = HS_WAITING;
-	_req = NULL;
-	_res = NULL;
 }
 
 Net::Client *	RequestHandler::client() const { return (_client); }
@@ -243,7 +230,7 @@ void	RequestHandler::serveError(Status status, const LocationConfig * loc, Http:
 void	RequestHandler::serveError(const LocationConfig * loc, Http::Response & res)
 {
 
-	if (!isError())
+	if (!isError() || !loc)
 		return ;
 	int st = static_cast<int>(_status);
 	if (st == 400 || st == 408 || st >= 500)

@@ -38,7 +38,7 @@ namespace Handler
 	};
 	
 
-} // namespace Handler
+} 
 
 
-#endif // URIHANDLER_HPP
+#endif

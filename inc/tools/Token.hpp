@@ -108,4 +108,4 @@ class TokenStream
 
 
 
-#endif // TOKEN_HPP
+#endif

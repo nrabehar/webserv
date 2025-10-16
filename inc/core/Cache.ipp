@@ -43,4 +43,4 @@ class CacheManager
 
 };
 
-#endif // CACHE_HPP
+#endif

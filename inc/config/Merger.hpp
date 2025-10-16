@@ -22,4 +22,4 @@ class Config::Merger
 
 };
 
-#endif // CONFIGMERGER_HPP
+#endif

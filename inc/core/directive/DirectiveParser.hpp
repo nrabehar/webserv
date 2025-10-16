@@ -45,4 +45,4 @@ class DirectiveParser
 
 
 
-#endif // DIRECTIVEPARSER_HPP
+#endif

@@ -8,13 +8,10 @@ std::string	Config::Sanitizer::sanitize(const std::string & s)
 
 	std::string	res;
 
-	//? remove all comments (line)
 	res = removeComments(s);
 
-	//? remove consecutive newline
 	res = normalizeNewlines(res);
 
-	// 
 	res = normalizeBrackets(res);
 
 	return (res);

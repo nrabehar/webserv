@@ -375,7 +375,6 @@
 		const filesBtn = document.getElementById('filesBtn');
 		const foldersBtn = document.getElementById('foldersBtn');
 
-		// Mode switching
 		filesBtn.addEventListener('click', () => {
 			isFolderMode = false;
 			filesBtn.classList.add('active');
@@ -395,7 +394,6 @@
 			dropZone.querySelector('p:first-child').textContent = text;
 		}
 
-		// Drag and drop functionality
 		dropZone.addEventListener('click', () => {
 			if (isFolderMode) {
 				folderInput.click();
@@ -439,13 +437,10 @@
 					if (entry.kind === 'file') {
 						files.push(entry.getAsFile ? entry.getAsFile() : entry);
 					} else if (entry.kind === 'directory' && isFolderMode) {
-						// Handle directory - we'll get files from webkitRelativePath
-						// This will be handled when we process the files
 					}
 				}
 			});
 
-			// For webkitdirectory style uploads, we need to handle differently
 			if (isFolderMode && items[0] && items[0].webkitGetAsEntry) {
 				processDirectoryEntries(entries);
 			} else {
@@ -533,7 +528,6 @@
 		function getFileIcon(filename, mimeType) {
 			const ext = filename.split('.').pop().toLowerCase();
 
-			// Check MIME type first for better accuracy
 			if (mimeType) {
 				if (mimeType.startsWith('image/')) return 'fa-solid fa-file-image';
 				if (mimeType.startsWith('video/')) return 'fa-solid fa-file-video';
@@ -575,7 +569,6 @@
 			return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 		}
 
-		// Upload functionality
 		uploadBtn.addEventListener('click', async () => {
 			if (selectedFiles.length === 0) return;
 
@@ -652,7 +645,6 @@
 			statusMessage.style.display = 'block';
 		}
 
-		// Initialize
 		updateFileList();
 	</script>
 

@@ -51,4 +51,4 @@ class Directive
 };
 
 
-#endif // DIRECTIVE_HPP
+#endif

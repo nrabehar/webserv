@@ -23,4 +23,4 @@ class NetUtil
 };
 
 
-#endif // NETUTIL_HPP
+#endif

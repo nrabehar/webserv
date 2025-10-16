@@ -105,7 +105,7 @@ namespace Http
 	};
 	
 
-} // namespace Http
+} 
 
 
-#endif // PARSER_HPP
+#endif

@@ -48,6 +48,6 @@ namespace Http
 	};
 	
 
-} // namespace Http
+} 
 
-#endif // RESPONSE_HPP
+#endif

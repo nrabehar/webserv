@@ -23,7 +23,7 @@ std::string String::trim(const std::string & s, const std::string & delim)
 std::string String::trim(const std::string & s)
 {
 
-	const std::string delim = " \n\t";
+	const std::string delim = " \n\t\r\v\f";
 
 	return (trim(s, delim));
 

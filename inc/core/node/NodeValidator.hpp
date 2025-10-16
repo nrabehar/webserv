@@ -103,4 +103,4 @@ class NodeValidator
 };
 
 
-#endif // NODEVALIDATOR_HPP
+#endif

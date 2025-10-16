@@ -36,7 +36,7 @@ namespace Handler
 	};
 	
 
-} // namespace Handler
+} 
 
 
-#endif // METHODHANDLER_HPP
+#endif

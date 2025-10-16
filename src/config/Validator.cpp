@@ -144,60 +144,7 @@ void Config::Validator::checkListen(Node<Token> * node)
 	}
 	else if (String::isNumeric(a0) && !NetUtil::isValidPortStr(a0))
 			throw std::runtime_error("Invalid listen directive at line " + String::str(arg[0].line));
-	// // ! ip:port ( with ':' separator )
-	// if (arg.size() == 1 && arg[0].value.find(':') != std::string::npos)
-	// {
-	// 	size_t pos = arg[0].value.find(':');
-	// 	std::string ip = arg[0].value.substr(0, pos);
-	// 	std::string port = arg[0].value.substr(pos + 1);
-	// 	DBG("ip: " + ip + " port: " + port);
-	// 	if (ip.empty() || port.empty())
-	// 	{
-	// 		_valid = false;
-	// 		return ;
-	// 	}
-	// 	if (!String::isNumeric(port) || port <= "0" || port > "65535")
-	// 	{
-	// 		_valid = false;
-	// 		return ;
-	// 	}
-	// }
-	// // ! port ( default ip 0.0.0.0 )
-	// else if (arg.size() == 1 && String::isNumeric(arg[0].value))
-	// {
-	// 	DBG("port: " + arg[0].value);
-	// 	std::string port = arg[0].value;
-	// 	if (port <= "0" || port > "65535")
-	// 	{
-	// 		_valid = false;
-	// 		return ;
-	// 	}
-	// }
-	// // ! ip ( default port 80 )
-	// else if (arg.size() == 1 && !String::isNumeric(arg[0].value))
-	// {
-	// 	DBG("ip: " + arg[0].value);
-	// 	// ? No check for ip, let bind fail
-	// 	// ? default port 80
-	// }
-	// // ! ip port (with space separator)
-	// else if (arg.size() == 2)
-	// {
-	// 	DBG("ip: " + arg[0].value + " port: " + arg[1].value);
-	// 	std::string ip = arg[0].value;
-	// 	std::string port = arg[1].value;
-	// 	if (!String::isNumeric(port) || port <= "0" || port > "65535")
-	// 	{
-	// 		_valid = false;
-	// 		return ;
-	// 	}
-	// }
-	// // ! invalid
-	// else
-	// {
-	// 	_valid = false;
-	// 	return ;
-	// }
+
 }
 
 void Config::Validator::checkRoot(Node<Token> * node)

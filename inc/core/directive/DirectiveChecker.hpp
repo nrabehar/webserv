@@ -30,4 +30,4 @@ class DirectiveChecker
 
 };
 
-#endif // DIRECTIVECHECKER_HPP
+#endif

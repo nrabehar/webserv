@@ -295,7 +295,6 @@ const std::string & UI::getActionScript()
 		<< "    }\n"
 		<< "}\n"
 		<< "document.addEventListener('DOMContentLoaded', function() {\n"
-		<< "    // Handle delete buttons\n"
 		<< "    const deleteButtons = document.querySelectorAll('.delete-btn');\n"
 		<< "    deleteButtons.forEach(button => {\n"
 		<< "        button.addEventListener('click', function(e) {\n"

@@ -11,7 +11,10 @@ Request::Request()
 	 _raw_body(),
 	 _ct_len(0),
 	 _ct_type("text/html")
-{}
+{
+	_body.clear();
+	_raw_body.clear();
+}
 
 Request & Request::operator=(const Request & other)
 {
@@ -21,15 +24,20 @@ Request & Request::operator=(const Request & other)
 		this->_uri = other._uri;
 		this->_version = other._version;
 		this->_headers = other._headers;
-		this->_body = other._body;
 		this->_raw_body = other._raw_body;
 		this->_ct_len = other._ct_len;
 		this->_ct_type = other._ct_type;
+		this->_body.clear();
+		for (size_t i = 0; i < other._body.size(); ++i)
+			this->_body.push_back(other._body[i]);
 	}
 	return (*this);
 }
 
-Request::~Request() {}
+Request::~Request() {
+	_body.clear();
+	_raw_body.clear();
+}
 
 const std::string & Request::method() const
 {
@@ -116,10 +124,12 @@ void	Request::setContentType(const std::string & ct) { _ct_type = ct; }
 void	Request::cleanup()
 {
 
-	for (size_t i = 0; i < _body.size(); ++i)
+	std::vector<RequestBody>::const_iterator it;
+	for (it = _body.begin(); it != _body.end(); ++it)
 	{
-		if (!_body[i].filename.empty())
-			std::remove(_body[i].value.c_str());
+		if (!it->filename.empty())
+			std::remove(it->value.c_str());
 	}
+	_body.clear();
 
 }

@@ -33,7 +33,6 @@ void Buffer::hasRead(size_t n)
 	{
 
 		_rpos += n;
-		// ? if we have read a lot of data, we compact the buffer to avoid it growing too much
 		compact();
 	
 	}
@@ -44,7 +43,7 @@ char * Buffer::writePtr()
 {
 
 	if (writable() == 0)
-		reserve(_wpos + 4096); // ? reserve at least 4KB more if needed
+		reserve(_wpos + 4096);
 	return (&_data[_wpos]);
 
 }
@@ -123,17 +122,11 @@ size_t Buffer::find(const std::string & s) const
 
 	for (size_t i = 0; i <= readable_size - s.size(); ++i)
 	{
-		bool found = true;
-		for (size_t j = 0; j < s.size(); ++j)
-		{
-			if (data[i + j] != s[j])
-			{
-				found = false;
-				break;
-			}
-		}
-		if (found)
-			return (i);
+		if (i + s.size() > readable_size)
+			break ;
+		if (std::strncmp(&data[i], s.c_str(), s.size()) != 0)
+			continue ;
+		return (i);
 	}
 
 	return (std::string::npos);

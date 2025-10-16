@@ -30,4 +30,4 @@ class Time
 };
 
 
-#endif // TIME_HPP
+#endif

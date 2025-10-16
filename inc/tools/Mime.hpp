@@ -27,4 +27,4 @@ class Mime
 
 
 
-#endif // MIME_HPP
+#endif

@@ -24,4 +24,4 @@ class Config::Sanitizer
 		
 };
 
-#endif // SANITIZER_HPP
+#endif

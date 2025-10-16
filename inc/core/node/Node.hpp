@@ -109,4 +109,4 @@ class Node
 
 };
 
-#endif // NODE_HPP
+#endif

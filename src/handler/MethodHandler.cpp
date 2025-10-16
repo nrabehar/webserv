@@ -60,7 +60,6 @@ void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
 					return (_handler->setStatus(HS_FORBIDDEN));
 				}
 				std::string filename = _loc->upload_store + body_fields[i].filename;
-				LOG("Uploading file to: " + filename);
 				if (std::rename(body_fields[i].value.c_str(), filename.c_str()) < 0)
 				{
 					std::remove(body_fields[i].value.c_str());

@@ -49,4 +49,4 @@ class String
 
 
 
-#endif // STRING_HPP
+#endif

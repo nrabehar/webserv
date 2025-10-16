@@ -49,4 +49,4 @@ class EventLoop
 };
 
 
-#endif // EVENT_LOOP_HPP
+#endif

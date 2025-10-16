@@ -56,4 +56,4 @@ namespace Net
 	
 }
 
-#endif // CLIENT_HPP
+#endif

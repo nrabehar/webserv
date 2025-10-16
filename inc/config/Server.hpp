@@ -46,4 +46,4 @@ struct LocationConfig
 
 };
 
-#endif // CONFIG_SERVER_HPP
+#endif

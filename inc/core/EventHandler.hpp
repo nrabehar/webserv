@@ -47,4 +47,4 @@ class EventHandler: public IEventHandler
 
 
 
-#endif // EVENT_HANDLER_HPP
+#endif

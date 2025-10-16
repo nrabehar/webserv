@@ -44,4 +44,4 @@ class Server: public EventHandler
 	
 }
 
-#endif // SERVER_HPP
+#endif

@@ -33,6 +33,6 @@ namespace Handler
 	};
 	
 
-} // namespace Handler
+} 
 
-#endif // ERRORHANDLER_HPP
+#endif

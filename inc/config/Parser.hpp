@@ -32,4 +32,4 @@ class Config::Parser
 
 };
 
-#endif // CONFIGPARSER_HPP
+#endif

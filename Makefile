@@ -10,23 +10,13 @@ CPPFLAGS += $(STD98)
 SRCMAIN = $(DIRSRC)webserv.cpp
 LOGFILE = webserv.log
 
-DIRAGENT = agent/
-DIRBASE = base/
-DIRFILE = file/
-DIRCACHE = cache/
-DIRBUILDER = builder/
-DIRCLIENT = client/
 DIRCONFIG = config/
 DIRCORE = core/
+DIRFILE = file/
 DIRHANDLER = handler/
 DIRHTTP = http/
-DIRINTERFACE = interface/
-DIRLOCATION = location/
 DIRNET = net/
-DIRPARSER = parser/
-DIRSERVER = server/
 DIRTOOLS = tools/
-DIRVALIDATOR = validator/
 
 TOOLSSRC += Logger.cpp
 TOOLSSRC += Signal.cpp
@@ -46,15 +36,12 @@ CORESRC += EventLoop.cpp
 CORESRC += EventHandler.cpp
 CORESRC += Poller.cpp
 CORESRC += Buffer.cpp
-
+CORESRC += Cache.cpp
 CORESRC += node/NodeChecker.cpp
 
-BASE_FILESRC += File.cpp \
-
-BASE_CACHESRC += Cache.cpp \
-
-FILESRC += FileCache.cpp \
-				FileHandler.cpp \
+FILESRC += File.cpp
+FILESRC += FileCache.cpp
+FILESRC += FileHandler.cpp
 
 CONFIGSRC += Config.cpp
 CONFIGSRC += Sanitizer.cpp
@@ -76,45 +63,21 @@ HANDLERSRC += UriHandler.cpp
 HANDLERSRC += ErrorHandler.cpp
 HANDLERSRC += StaticHandler.cpp
 HANDLERSRC += MethodHandler.cpp
-HANDLERSRC += UploadHandler.cpp
 HANDLERSRC += CgiHandler.cpp
-
-SRC += $(addprefix $(DIRAGENT), $(AGENTSRC))
-
-SRC += $(addprefix $(DIRBASE), $(BASESRC))
-SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRINTERFACE), $(BASE_INTERFACESRC)))
-
-SRC += $(addprefix $(DIRFILE), $(FILESRC))
-
-SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRFILE), $(BASE_FILESRC)))
-
-SRC += $(addprefix $(DIRBASE), $(addprefix $(DIRCACHE), $(BASE_CACHESRC)))
-
-SRC += $(addprefix $(DIRBUILDER), $(BUILDERSRC))
-
-SRC += $(addprefix $(DIRCLIENT), $(CLIENTSRC))
 
 SRC += $(addprefix $(DIRCONFIG), $(CONFIGSRC))
 
 SRC += $(addprefix $(DIRCORE), $(CORESRC))
 
+SRC += $(addprefix $(DIRFILE), $(FILESRC))
+
 SRC += $(addprefix $(DIRHANDLER), $(HANDLERSRC))
 
 SRC += $(addprefix $(DIRHTTP), $(HTTPSRC))
 
-SRC += $(addprefix $(DIRINTERFACE), $(INTERFACESRC))
-
-SRC += $(addprefix $(DIRLOCATION), $(LOCATIONSRC))
-
 SRC += $(addprefix $(DIRNET), $(NETSRC))
 
-SRC += $(addprefix $(DIRPARSER), $(PARSERSRC))
-
-SRC += $(addprefix $(DIRSERVER), $(SERVERSRC))
-
 SRC += $(addprefix $(DIRTOOLS), $(TOOLSSRC))
-
-SRC += $(addprefix $(DIRVALIDATOR), $(VALIDATORSRC))
 
 INCFILE = webserv.hpp
 INC = -I./$(DIRINC) --include $(DIRINC)$(INCFILE)

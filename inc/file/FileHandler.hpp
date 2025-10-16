@@ -139,4 +139,4 @@ class FileOpener : public FileHandler
 
 	
 
-#endif // FILEHANDLER_HPP
+#endif

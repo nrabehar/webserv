@@ -40,4 +40,4 @@ class UI
 };
 
 
-#endif // UI_HPP
+#endif

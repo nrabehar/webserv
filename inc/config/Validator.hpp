@@ -41,4 +41,4 @@ class Config::Validator
 };
 
 
-#endif // CONFIGVALIDATOR_HPP
+#endif
