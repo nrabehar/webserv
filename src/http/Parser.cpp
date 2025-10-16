@@ -3,9 +3,9 @@
 using namespace Http;
 
 Parser::Parser(Handler::RequestHandler * req_handler)
-	: _state(REQUEST_LINE), _mp_state(BS_BOUNDARY), _body_type(RAW),
+	: _stage(REQUEST_LINE), _mp_state(BS_BOUNDARY), _body_type(RAW),
 		_field(), _filename(), _value(), _tmp_filename(), _tmp_file(NULL),
-		_req_handler(req_handler), _is_cgi(false)
+		_req_handler(req_handler), _is_cgi(false), _ps_state(PS_WAIT)
 {
 }
 
@@ -13,26 +13,26 @@ Parser::~Parser()
 {
 }
 
-void Parser::setState(State state)
+void Parser::setStage(Stage stage)
 {
-	_state = state;
+	_stage = stage;
 }
 
 Parser::ParseState Parser::state() const
 {
 
-	if (_state == DONE)
+	if (_stage == DONE)
 		return (PS_DONE);
-	if (_state == ERROR || _mp_state == BS_ERROR)
+	if (_stage == ERROR || _mp_state == BS_ERROR)
 		return (PS_ERROR);
-	return (PS_INCOMPLETE);
+	return (PS_WAIT);
 }
 
 void Parser::reset()
 {
 
-	if (_state == DONE)
-		_state = REQUEST_LINE;
+	if (_stage == DONE)
+		_stage = REQUEST_LINE;
 	_mp_state = BS_BOUNDARY;
 	_body_type = RAW;
 	_field.clear();
@@ -54,12 +54,13 @@ bool Parser::parseNext(Buffer & buf, Request & req, Response & res)
 		return (false);
 	if (state() == PS_ERROR || _req_handler->isError())
 		return (waitForRecycle(buf, req));
-	if (_state == REQUEST_LINE)
+	if (_stage == REQUEST_LINE)
 		req = Request();
 	bool ret = true;
-	while (ret && !_req_handler->isError())
+	while (ret && !_req_handler->isError() && _ps_state != PS_DONE
+		&& _ps_state != PS_ERROR && _ps_state != PS_INCOMPLETE)
 	{
-		switch (_state)
+		switch (_stage)
 		{
 			case REQUEST_LINE:
 				ret = parseReqLine(buf, req);
@@ -75,14 +76,16 @@ bool Parser::parseNext(Buffer & buf, Request & req, Response & res)
 				ret = false;
 				break;
 		}
-		if (_state == BODY)
+		if (_stage == BODY)
 			ret = false;
 	}
 	if (!ret)
 	{
-		if (_state == BODY)
+		if (_stage == BODY)
 			ret = true;
 	}
+	if (_ps_state == PS_INCOMPLETE && ret)
+		_ps_state = PS_WAIT;
 	return (ret);
 
 }
@@ -95,7 +98,10 @@ bool Parser::parseReqLine(Buffer & buf, Request & req)
 
 	const char *end = static_cast<const char *>(std::memchr(ptr, '\n', len));
 	if (!end)
+	{
+		_ps_state = PS_INCOMPLETE;
 		return (true);
+	}
 
 	size_t line_len = end - ptr + 1;
 	if (line_len < 2 || *(end - 1) != '\r')
@@ -117,7 +123,7 @@ bool Parser::parseReqLine(Buffer & buf, Request & req)
 	req.setUri(parts[1]);
 	req.setVersion(parts[2]);
 	buf.hasRead(line_len);
-	setState(HEADERS);
+	setStage(HEADERS);
 	_is_cgi = _req_handler->isCgiRequest(req);
 	return (true);
 
@@ -128,7 +134,10 @@ bool Parser::parseHeaders(Buffer & buf, Request & req, Response & res)
 
 	size_t	end = buf.find("\r\n\r\n");
 	if (end == std::string::npos)
+	{
+		_ps_state = PS_INCOMPLETE;
 		return (true);
+	}
 
 	std::string hdr = buf.substr(0, end);
 	buf.hasRead(end + 4);
@@ -167,19 +176,19 @@ bool Parser::parseHeaders(Buffer & buf, Request & req, Response & res)
 	{
 		_req_handler->setStatus(Handler::HS_METHOD_NOT_ALLOWED);
 		if (req.method() == "POST")
-			setState(ERROR);
+			setStage(ERROR);
 		return (false);
 	}
 	if (req.uri().size() >= 2048)
 	{
 		_req_handler->setStatus(Handler::HS_URI_TOO_LONG);
 		if (req.method() == "POST")
-			setState(ERROR);
+			setStage(ERROR);
 		return (false);
 	}
 	if (req.contentLength() > loc->client_max_body_size)
 	{
-		setState(ERROR);
+		setStage(ERROR);
 		_req_handler->setStatus(Handler::HS_REQUEST_ENTITY_TOO_LARGE);
 		return (false);
 	}
@@ -187,18 +196,17 @@ bool Parser::parseHeaders(Buffer & buf, Request & req, Response & res)
 	{
 		if (!_req_handler->initCgiHandler(req, res))
 		{
-			_req_handler->setStatus(Handler::HS_BAD_REQUEST);
 			return (false);
 		}
 	}
 	if (req.method() == "POST")
 	{
-		setState(BODY);
+		setStage(BODY);
 		return (true);
 	}
 	if (_is_cgi)
 		_req_handler->cgiHandler()->closeIn(Handler::HS_OK);
-	setState(DONE);
+	setStage(DONE);
 	return (false);
 
 }
@@ -237,7 +245,7 @@ bool Parser::parseUrlEncoded(Buffer & buf, Request & req)
 	}
 	if (_is_cgi)
 	{
-		setState(DONE);
+		setStage(DONE);
 		_req_handler->cgiHandler()->closeIn(Handler::HS_OK);
 		return (false);
 	}
@@ -252,7 +260,7 @@ bool Parser::parseUrlEncoded(Buffer & buf, Request & req)
 		std::string value = parsePercentEncoding(pairs[i].substr(eq + 1));
 		req.addBodyField(key, "", value);
 	}
-	setState(DONE);
+	setStage(DONE);
 	return (false);
 
 }
@@ -266,7 +274,7 @@ bool Parser::parseMultiPartBody(Buffer & buf, Request & req)
 		if (buf.find(_boundary + "--") != std::string::npos)
 		{
 			buf.hasRead(buf.readable());
-			setState(DONE);
+			setStage(DONE);
 			return (false);
 		}
 		buf.hasRead(buf.readable());
@@ -319,7 +327,7 @@ bool Parser::parseChunkedBody(Buffer & buf, Request & req)
 		iss >> std::hex >> chunk_size;
 		if (chunk_size == 0)
 		{
-			setState(DONE);
+			setStage(DONE);
 			buf.hasRead(buf.readable());
 			if (_is_cgi)
 				_req_handler->cgiHandler()->closeIn(Handler::HS_OK);
@@ -438,7 +446,7 @@ bool Parser::bodyMultipartBoundary(Buffer & buf, Request & req)
 	if (buf.readable() >= 2 && buf.readPtr()[0] == '-' && buf.readPtr()[1] == '-')
 	{
 		buf.hasRead(buf.readable());
-		setState(DONE);
+		setStage(DONE);
 		_mp_state = BS_DONE;
 		if (_is_cgi)
 			_req_handler->cgiHandler()->closeIn(Handler::HS_OK);
@@ -477,7 +485,7 @@ bool Parser::bodyMultipartHeader(Buffer & buf, Request & req)
 		if (loc->upload_store.empty())
 		{
 			_req_handler->setStatus(Handler::HS_FORBIDDEN);
-			setState(ERROR);
+			setStage(ERROR);
 			_mp_state = BS_ERROR;
 			return (false);
 		}
@@ -545,6 +553,7 @@ bool Parser::bodyMultipartPart(Buffer & buf, Request & req)
 bool	Parser::waitForRecycle(Buffer & buf, Request & req)
 {
 
+	LOG("Waiting for recycle...");
 	std::string c_type = req.contentType();
 	std::string te = req.header("Transfer-Encoding");
 
@@ -558,7 +567,7 @@ bool	Parser::waitForRecycle(Buffer & buf, Request & req)
 		buf.hasRead(buf.readable());
 		if (remain <= 0)
 		{
-			setState(REQUEST_LINE);
+			setStage(REQUEST_LINE);
 			req = Request();
 			return (true);
 		}
@@ -568,7 +577,7 @@ bool	Parser::waitForRecycle(Buffer & buf, Request & req)
 		if (buf.find("0\r\n\r\n") != std::string::npos)
 		{
 			buf.hasRead(buf.readable());
-			setState(REQUEST_LINE);
+			setStage(REQUEST_LINE);
 			req = Request();
 			return (true);
 		}

@@ -18,7 +18,7 @@ namespace Http
 	
 		private:
 	
-			enum State
+			enum Stage
 			{
 				REQUEST_LINE,
 				HEADERS,
@@ -44,7 +44,7 @@ namespace Http
 				RAW,
 			};
 
-			State	_state;
+			Stage	_stage;
 			MultipartState	_mp_state;
 			BodyType	_body_type;
 
@@ -66,9 +66,10 @@ namespace Http
 			enum ParseState
 			{
 				PS_DONE,
+				PS_WAIT,
 				PS_INCOMPLETE,
 				PS_ERROR
-			};
+			} _ps_state;
 
 			bool parseNext(Buffer & buf, Request & req, Response & res);
 
@@ -80,7 +81,7 @@ namespace Http
 			Parser(const Parser &);
 			Parser & operator=(const Parser &);
 
-			void setState(State state);
+			void setStage(Stage stage);
 
 			bool parseReqLine(Buffer & buf, Request & req);
 			bool parseHeaders(Buffer & buf, Request & req, Response & res);

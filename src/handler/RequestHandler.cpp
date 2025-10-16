@@ -142,7 +142,8 @@ bool	RequestHandler::initCgiHandler(Http::Request & req, Http::Response & res)
 
 	if (bin.empty() || path.empty()
 		|| access(path.c_str(), F_OK) != 0
-		|| access(bin.c_str(), F_OK) != 0)
+		|| access(bin.c_str(), F_OK) != 0
+		|| access(bin.c_str(), X_OK) != 0)
 	{
 		setStatus(HS_INTERNAL_SERVER_ERROR);
 		return (false);

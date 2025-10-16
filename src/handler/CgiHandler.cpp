@@ -60,18 +60,8 @@ void CgiHandler::launch(const std::string & bin, const std::string & script)
 	initEnv();
 	int to_child[2];
 	int from_child[2];
-	if (::pipe(to_child) == -1)
-	{
-		_handler->setStatus(HS_INTERNAL_SERVER_ERROR);
-		return;
-	}
-	if (::pipe(from_child) == -1)
-	{
-		::close(to_child[1]);
-		::close(to_child[0]);
-		_handler->setStatus(HS_INTERNAL_SERVER_ERROR);
-		return;
-	}
+	::pipe(to_child);
+	::pipe(from_child);
 	_pid = ::fork();
 	if (_pid < 0)
 	{
