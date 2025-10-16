@@ -18,6 +18,7 @@ void	ErrorHandler::handle(const  LocationConfig * loc, Http::Response & res)
 		custom_page = it->second;
 
 	UriHandler uri_handler(custom_page, loc, _handler);
+	custom_page = uri_handler.buildPath();
 	if (!uri_handler.fileExists(custom_page) || !uri_handler.isReadable(custom_page))
 		custom_page.clear();
 
@@ -39,7 +40,10 @@ void	ErrorHandler::serveCustomPage(const std::string & path, Http::Response & re
 		delete static_handler;
 		return (loadHtmlErrorPage(_handler->status(), res));
 	}
-	EventLoop::instance().addHandler(static_handler, POLLIN);
+	if (static_handler->fd() != IN_MEMORY_FD)
+		EventLoop::instance().addHandler(static_handler, POLLIN);
+	else
+	  _handler->setStatus(HS_OK);
 }
 
 void	ErrorHandler::loadHtmlErrorPage(int status, Http::Response & res)
