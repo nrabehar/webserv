@@ -136,7 +136,8 @@ void Config::Transformer::parseLocation(Node<Token> * loc_node, LocationConfig &
 			for (size_t j = 0; j <  arg.size(); ++j)
 				loc.methods.push_back(arg[j].value);
 		else if (name == "client_max_body_size")
-			loc.client_max_body_size = static_cast<size_t>(std::atoi(arg[0].value.c_str())) * 1024 * 1024;
+			// loc.client_max_body_size = static_cast<size_t>(std::atoi(arg[0].value.c_str())) * 1024 * 1024;
+			loc.client_max_body_size = String::toByte(arg[0].value);
 		else if (name == "upload_store")
 		{
 			loc.upload_store = arg[0].value;

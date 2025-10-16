@@ -29,6 +29,8 @@ class String
 
 		static bool	isNumeric(const std::string & s);
 
+		static size_t	toByte(const std::string & s);
+
 		template<typename T>
 		static std::string str(const T & v)
 		{

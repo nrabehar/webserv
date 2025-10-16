@@ -238,7 +238,7 @@ void Config::Validator::checkClientMaxBodySize(Node<Token> * node)
 
 	Directive max_body(node);
 	max_body.acceptParent("server location")
-	.argCount(1, 1).argType("number");
+	.argCount(1, 1).argType("size number");
 
 	_valid = DirectiveChecker::check(max_body);
 

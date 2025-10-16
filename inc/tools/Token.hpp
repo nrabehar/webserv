@@ -15,12 +15,13 @@ enum TokenType
 	TK_STRING	 		= 1 << 6,
 	TK_NUMBER	 		= 1 << 7,
 	TK_BOOLEAN 		= 1 << 8,
+	TK_SIZE	 		= 1 << 9,
 
-	TK_ON 			= 1 << 9,
-	TK_OFF 			= 1 << 10,
-	
-	TK_EOL 			= 1 << 11,
-	TK_EOF     		= 1 << 12
+	TK_ON 			= 1 << 10,
+	TK_OFF 			= 1 << 11,
+
+	TK_EOL 			= 1 << 12,
+	TK_EOF     		= 1 << 13
 };
 
 struct Token

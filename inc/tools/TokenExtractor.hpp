@@ -147,4 +147,25 @@ class TokenOnOffExtractor
 };
 
 
+class TokenSizeExtractor
+	: public ATokenExtractor
+{
+
+	private:
+
+		
+
+	public:
+
+		TokenSizeExtractor();
+		~TokenSizeExtractor();
+		TokenType getType(const std::string &value);
+
+	private:
+
+		TokenSizeExtractor(const TokenSizeExtractor &);
+		TokenSizeExtractor & operator=(const TokenSizeExtractor &);
+
+};
+
 #endif

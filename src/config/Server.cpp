@@ -39,7 +39,11 @@ ServerConfig::Listen::Listen()
 	: port("80"), host("0.0.0.0") {}
 
 LocationConfig::LocationConfig()
-	: path(""), root(""), autoindex(false), redirect(std::make_pair(0, "")) {}
+	: path(""),
+		root(""),
+		autoindex(false),
+		client_max_body_size(DEFAULT_MAX_BODY_SIZE),
+		redirect(std::make_pair(0, "")) {}
 
 bool	LocationConfig::allowsMethod(const std::string & method) const
 {

@@ -74,3 +74,23 @@ TokenType	TokenOnOffExtractor::getType(const std::string &v)
 	return (ATokenExtractor::getType(v));
 }
 
+TokenSizeExtractor::TokenSizeExtractor(): ATokenExtractor() {}
+TokenSizeExtractor::~TokenSizeExtractor(){}
+TokenType	TokenSizeExtractor::getType(const std::string &v)
+{
+	if (v.empty())
+		return (ATokenExtractor::getType(v));
+	size_t pos = v.find_first_not_of("0123456789");
+	if (pos == std::string::npos)
+		return (TK_NUMBER);
+	std::string num = v.substr(0, pos);
+	std::string unit = v.substr(pos);
+	if (num.empty() || !String::isNumeric(num))
+		return (ATokenExtractor::getType(v));
+	if (unit == "K" || unit == "M" || unit == "G" ||
+	    unit == "k" || unit == "m" || unit == "g" ||
+	    unit.empty())
+		return (TK_SIZE);
+	return (ATokenExtractor::getType(v));
+}
+

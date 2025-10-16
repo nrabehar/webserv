@@ -161,3 +161,25 @@ std::string String::urlDecode(const std::string & s)
 	return (result);
 
 }
+
+size_t String::toByte(const std::string & s)
+{
+
+	size_t multiplier = 1;
+	size_t pos = s.find_first_not_of("0123456789");
+	size_t size = static_cast<size_t>(std::atoi(s.c_str()));
+	if (pos == std::string::npos)
+		return (size);
+
+	std::string p = s.substr(pos);
+	if (p == "K" || p == "k")
+		multiplier = 1024;
+	else if (p == "M" || p == "m")
+		multiplier = 1024 * 1024;
+	else if (p == "G" || p == "g")
+		multiplier = 1024 * 1024 * 1024;
+	else
+		throw std::logic_error("Invalid size suffix");
+	return (size * multiplier);
+
+}

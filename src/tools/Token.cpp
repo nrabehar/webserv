@@ -38,7 +38,8 @@ TokenType	TokenU::inferType(const std::string & t)
 	extractor->next(new TokenSymboleExtractor())
 					->next(new TokenNumberExtractor())
 					->next(new TokenBoolExtractor())
-					->next(new TokenOnOffExtractor());
+					->next(new TokenOnOffExtractor())
+					->next(new TokenSizeExtractor());
 
 	TokenType type = extractor->getType(t);
 	delete extractor;
@@ -58,6 +59,7 @@ std::string TokenU::typeToString(TokenType t)
 		case TK_STRING: return "string";
 		case TK_NUMBER: return "number";
 		case TK_BOOLEAN: return "boolean";
+		case TK_SIZE: return "size";
 		case TK_ON: return "on";
 		case TK_OFF: return "off";
 		case TK_EOF:    return "eof";
@@ -76,6 +78,7 @@ TokenType TokenU::strToType(const std::string & t)
 	if (t == "string")  return TK_STRING;
 	if (t == "number")  return TK_NUMBER;
 	if (t == "boolean") return TK_BOOLEAN;
+	if (t == "size")    return TK_SIZE;
 	if (t == "on") return TK_ON;
 	if (t == "off") return TK_OFF;
 	if (t == "eof")     return TK_EOF;
