@@ -2,7 +2,7 @@ NAME = webserv
 DIRSRC = src/
 DIROBJ = obj/
 DIRINC = inc/
-CONFIGFILE = webserv.conf
+CONFIGFILE = conf/webserv.conf
 CPP = c++
 CPPFLAGS = -Wall -Wextra -Werror
 STD98 = -std=c++98

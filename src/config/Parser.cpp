@@ -26,15 +26,12 @@ Node<std::string>* Config::Parser::parseStatement()
 	std::vector<std::string> args;
 	while ((_token[_pos].type & TK_STRING) && line == _token[_pos].line)
 	{
-		std::cout << "Processing token arg: " << _token[_pos].value << std::endl;
 		args.push_back(_token[_pos].value);
 		++_pos;
 	}
 	if (_token[_pos].type & TK_SYMBOL)
 	{
 		std::string value = _token[_pos].value;
-		std::cout << "Processing token: " << value << " type: "
-							<< TokenU::typeToString(_token[_pos].type) << std::endl;
 		if (value == "#")
 			return (skipComment(name, args));
 		if (value == ";")
@@ -42,10 +39,7 @@ Node<std::string>* Config::Parser::parseStatement()
 		else if (value == "{")
 			return (parseBlock(name, args));
 		else
-		{
-			std::cout << "Token name: " << name << " curremt: " << _token[_pos].value << std::endl;
 			throw std::runtime_error("Syntax error at line "+toStr(_token[_pos].line));
-		}
 	}
 	else
 		throw std::runtime_error("Syntax error at line "+toStr(_token[_pos].line));

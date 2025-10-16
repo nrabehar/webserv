@@ -43,7 +43,7 @@ void	Client::onTimeout()
 
 	const ServerConfig & conf = _server->getConfig();
 
-	_timeout = static_cast<long>(conf.timeout);
+	_timeout = static_cast<long>(conf.keepalive_timeout);
 
 	if (Time::diff(_last_active, Time::now()) < _timeout)
 		return ;
@@ -73,7 +73,7 @@ void	Client::onRead()
 	{
 		_last_active = time(NULL);
 		if (_handler.isCgiRequest(_req))
-			setTimeout(500000);
+			setLastActive(_last_active + _server->getConfig().gateway_timeout);
 	}
 	_handler.handle(_req, _res);
 	_parser.reset();

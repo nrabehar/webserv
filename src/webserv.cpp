@@ -23,9 +23,15 @@ static void _run(const char * configfile)
 
 int main(int ac, char **av)
 {
-	if (ac != 2) { ERR("Usage: ./webserv <configfile>"); return (1); }
+
+	std::string config_file;
+	if (ac == 1)
+		config_file = "conf/default.conf";
+	else
+		config_file = av[1];
+	
 	LOG("Starting web server...");
-	try { _run(av[1]); }
+	try { _run(config_file.c_str()); }
 	catch (std::exception & e)
 	{
 
@@ -38,4 +44,5 @@ int main(int ac, char **av)
 	EventLoop::destroy();
 	LOG("Shutting down web server...");
 	return (Signal::existcode);
+
 }

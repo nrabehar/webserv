@@ -25,6 +25,7 @@ bool	Config::Validator::validate(Node<Token> *node)
 	checkErrorPage(node);
 	checkClientMaxBodySize(node);
 	checkKeepaliveTimeout(node);
+	checkGatewayTimeout(node);
 	checkServerName(node);
 	checkCgi(node);
 	checkAllowedMethod(node);
@@ -222,7 +223,7 @@ void Config::Validator::checkErrorPage(Node<Token> * node)
 
 	TokenType type = TokenU::inferType(arg[arg.size() - 1].value);
 	if (type != TK_STRING)
-		throw std::runtime_error("invalid error_page location");
+		throw std::runtime_error("Invalid error_page location");
 
 }
 void Config::Validator::checkClientMaxBodySize(Node<Token> * node)
@@ -260,7 +261,37 @@ void Config::Validator::checkKeepaliveTimeout(Node<Token> * node)
 
 	_valid = DirectiveChecker::check(keepalive);
 
+	int val = std::atoi(node->getData()[0].value.c_str());
+	if (val <= 0)
+		throw std::runtime_error("Invalid keepalive_timeout value at line: " +
+			String::str(node->getData()[0].line));
+
 }
+	
+void Config::Validator::checkGatewayTimeout(Node<Token> * node)
+{
+
+	if (!node || !_valid || _checked)
+		return ;
+
+	if (node->getName() != "gateway_timeout")
+		return ;
+
+	_checked = true;
+
+	Directive gateway(node);
+	gateway.acceptParent("http server")
+	.argCount(1, 1).argType("number");
+
+	_valid = DirectiveChecker::check(gateway);
+
+	int val = std::atoi(node->getData()[0].value.c_str());
+	if (val <= 0)
+		throw std::runtime_error("Invalid gateway_timeout value at line: " +
+			String::str(node->getData()[0].line));
+
+}
+
 void Config::Validator::checkServerName(Node<Token> * node)
 {
 
@@ -355,10 +386,10 @@ void Config::Validator::checkReturn(Node<Token> * node)
 
 	TokenType type = TokenU::inferType(arg[0].value);
 	if (type != TK_NUMBER)
-		throw std::runtime_error("invalid return status code");
+		throw std::runtime_error("Invalid return status code");
 
 	int code = std::atoi(arg[0].value.c_str());
 	if (code < 300 || code >= 400)
-		throw std::runtime_error("invalid return status code");
+		throw std::runtime_error("Invalid return status code");
 
 }

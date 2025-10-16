@@ -33,6 +33,7 @@ class Config::Validator
 		static void checkErrorPage(Node<Token> * node);
 		static void checkClientMaxBodySize(Node<Token> * node);
 		static void checkKeepaliveTimeout(Node<Token> * node);
+		static void checkGatewayTimeout(Node<Token> * node);
 		static void checkServerName(Node<Token> * node);
 		static void checkCgi(Node<Token> * node);
 		static void checkAllowedMethod(Node<Token> * node);

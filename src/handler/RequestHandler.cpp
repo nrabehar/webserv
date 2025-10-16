@@ -156,7 +156,8 @@ bool	RequestHandler::initCgiHandler(Http::Request & req, Http::Response & res)
 		return (false);
 	}
 
-	_cgi_handler = new CgiHandler(this, &req, &res);
+	size_t	timeout = _client->getServer()->getConfig().gateway_timeout;
+	_cgi_handler = new CgiHandler(this, &req, &res, timeout);
 	_cgi_handler->launch(bin, path);
 	if (isError())
 	{

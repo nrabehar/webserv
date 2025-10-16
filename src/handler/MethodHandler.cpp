@@ -59,7 +59,8 @@ void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
 					ERR("Upload store not configured for location");
 					return (_handler->setStatus(HS_FORBIDDEN));
 				}
-				std::string filename = _loc->upload_store + body_fields[i].filename;
+				std::string filename = _loc->upload_store + Time::timeToStr(Time::now(), "%Y%m%d%H%M%S-");
+				filename += body_fields[i].filename;
 				if (std::rename(body_fields[i].value.c_str(), filename.c_str()) < 0)
 				{
 					std::remove(body_fields[i].value.c_str());
@@ -69,6 +70,7 @@ void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
 				res.appendBody(
 					"<p> File uploaded: " + filename + "</p>"
 				);
+				res.setStatus(201);
 			}
 			else
 			{

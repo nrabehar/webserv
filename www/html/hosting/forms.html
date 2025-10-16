@@ -302,22 +302,12 @@
 			<p>Upload files and folders with drag & drop support</p>
 		</div>
 
-		<div class="upload-container">
-			<div class="upload-options">
-				<button class="option-btn active" id="filesBtn">
-					<i class="fa-solid fa-file"></i> Files
-				</button>
-				<button class="option-btn" id="foldersBtn">
-					<i class="fa-solid fa-folder"></i> Folders
-				</button>
-			</div>
-
+		<form class="upload-container" id="uploadForm" enctype="multipart/form-data" method="POST" action="/uploads">
 			<div class="drop-zone" id="dropZone">
 				<i class="fa-solid fa-cloud-upload-alt"></i>
 				<p>Drag & drop files here</p>
 				<p>or <span>click to browse</span></p>
-				<input type="file" id="fileInput" class="file-input" multiple>
-				<input type="file" id="folderInput" class="file-input" webkitdirectory multiple>
+				<input type="file" name="file" id="fileInput" class="file-input">
 			</div>
 
 			<div id="fileList" class="file-list"></div>
@@ -330,16 +320,16 @@
 			</div>
 
 			<div class="upload-controls">
-				<button class="upload-btn" id="uploadBtn" disabled>
+				<button class="upload-btn" id="uploadBtn" type="submit" disabled>
 					<i class="fa-solid fa-upload"></i> Upload Files
 				</button>
-				<button class="clear-btn" id="clearBtn" disabled>
+				<button class="clear-btn" id="clearBtn" type="reset" disabled>
 					<i class="fa-solid fa-trash"></i> Clear All
 				</button>
 			</div>
 
 			<div class="status-message" id="statusMessage"></div>
-		</div>
+		</form>
 	</main>
 
 	<footer class="footer">
@@ -369,37 +359,14 @@
 		const uploadBtn = document.getElementById('uploadBtn');
 		const clearBtn = document.getElementById('clearBtn');
 		const progressContainer = document.getElementById('progressContainer');
-		const progressFill = document.getElementById('progressFill');
-		const progressText = document.getElementById('progressText');
-		const statusMessage = document.getElementById('statusMessage');
-		const filesBtn = document.getElementById('filesBtn');
-		const foldersBtn = document.getElementById('foldersBtn');
 
-		filesBtn.addEventListener('click', () => {
-			isFolderMode = false;
-			filesBtn.classList.add('active');
-			foldersBtn.classList.remove('active');
-			updateDropZoneText();
+		clearBtn.addEventListener('click', () => {
+			selectedFiles = [];
+			updateFileList();
 		});
-
-		foldersBtn.addEventListener('click', () => {
-			isFolderMode = true;
-			foldersBtn.classList.add('active');
-			filesBtn.classList.remove('active');
-			updateDropZoneText();
-		});
-
-		function updateDropZoneText() {
-			const text = isFolderMode ? 'Drag & drop folders here' : 'Drag & drop files here';
-			dropZone.querySelector('p:first-child').textContent = text;
-		}
 
 		dropZone.addEventListener('click', () => {
-			if (isFolderMode) {
-				folderInput.click();
-			} else {
-				fileInput.click();
-			}
+			fileInput.click();
 		});
 
 		dropZone.addEventListener('dragover', (e) => {
@@ -446,34 +413,6 @@
 			} else {
 				addFiles(files);
 			}
-		}
-
-		function processDirectoryEntries(entries) {
-			const files = [];
-
-			function processEntry(entry) {
-				return new Promise((resolve) => {
-					if (entry.isFile) {
-						entry.file((file) => {
-							files.push(file);
-							resolve();
-						});
-					} else if (entry.isDirectory) {
-						const dirReader = entry.createReader();
-						dirReader.readEntries((entries) => {
-							const promises = entries.map(processEntry);
-							Promise.all(promises).then(() => resolve());
-						});
-					} else {
-						resolve();
-					}
-				});
-			}
-
-			const promises = entries.map(processEntry);
-			Promise.all(promises).then(() => {
-				addFiles(files);
-			});
 		}
 
 		function addFiles(files) {
@@ -569,83 +508,14 @@
 			return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
 		}
 
-		uploadBtn.addEventListener('click', async () => {
-			if (selectedFiles.length === 0) return;
-
-			const formData = new FormData();
-			selectedFiles.forEach(file => {
-				formData.append('files', file);
-			});
-
-			progressContainer.style.display = 'block';
-			uploadBtn.disabled = true;
-			clearBtn.disabled = true;
-			progressFill.style.width = '0%';
-			progressText.textContent = 'Preparing upload...';
-			statusMessage.style.display = 'none';
-
-			try {
-				const xhr = new XMLHttpRequest();
-
-				xhr.upload.addEventListener('progress', (e) => {
-					if (e.lengthComputable) {
-						const percentComplete = (e.loaded / e.total) * 100;
-						progressFill.style.width = percentComplete + '%';
-						progressText.textContent = `Uploading... ${Math.round(percentComplete)}%`;
-					}
-				});
-
-				xhr.addEventListener('load', () => {
-					if (xhr.status === 200) {
-						const responseText = xhr.responseText;
-						if (responseText.includes('successful')) {
-							showStatusMessage('Upload completed successfully!', 'success');
-							selectedFiles = [];
-							updateFileList();
-							setTimeout(() => {
-								window.location.href = '/hosting/file_manager.html';
-							}, 2000);
-						} else {
-							showStatusMessage('Upload completed with response: ' + responseText, 'success');
-						}
-					} else {
-						showStatusMessage(`Upload failed: ${xhr.statusText}`, 'error');
-					}
-				});
-
-				xhr.addEventListener('error', () => {
-					showStatusMessage('Upload failed: Network error', 'error');
-				});
-
-				xhr.addEventListener('abort', () => {
-					showStatusMessage('Upload cancelled', 'error');
-				});
-
-				xhr.open('POST', '/uploads');
-				xhr.send(formData);
-
-			} catch (error) {
-				showStatusMessage(`Upload failed: ${error.message}`, 'error');
-			} finally {
-				progressContainer.style.display = 'none';
-				uploadBtn.disabled = false;
-				clearBtn.disabled = false;
-			}
-		});
-
 		clearBtn.addEventListener('click', () => {
 			selectedFiles = [];
 			updateFileList();
 			statusMessage.style.display = 'none';
 		});
 
-		function showStatusMessage(message, type) {
-			statusMessage.textContent = message;
-			statusMessage.className = `status-message ${type}`;
-			statusMessage.style.display = 'block';
-		}
-
 		updateFileList();
+
 	</script>
 
 </body>
