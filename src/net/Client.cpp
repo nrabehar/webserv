@@ -19,6 +19,7 @@ Client::~Client()
 	if (_fd > -1)
 		::close(_fd);
 	_fd = -1;
+	_req.cleanup();
 }
 
 void	Client::handle(short e)
@@ -49,7 +50,9 @@ void	Client::onTimeout()
 		return ;
 
 	if (_handler.status() == Handler::HS_WAITING)
+	{
 		EventLoop::instance().delHandler(this);
+	}
 	else
 	{
 		_handler.setStatus(Handler::HS_REQUEST_TIMEOUT);
