@@ -17,12 +17,7 @@
 			</a>
 			<nav class="nav">
 				<a href="/" class="nav-link">Home</a>
-				<a href="/directory.html" class="nav-link">Directory</a>
-				<a href="/hosting/forms.html" class="nav-link">Upload</a>
-				<a href="/hosting/file_manager.html" class="nav-link">File Manager</a>
-				<a href="/about.html" class="nav-link">About</a>
-				<a href="/contact.html" class="nav-link">Contact</a>
-				<a href="/monitor.html" class="nav-link">Monitor</a>
+				<a href="/uploads" class="nav-link">Uploads</a>
 			</nav>
 			<button class="icon-btn source-code">
 				<i class="fa-brands fa-github"></i>
@@ -31,43 +26,23 @@
 	</header>
 
 	<main class="container">
-		<div class="hero">
-			<h1>Welcome to Webserv</h1>
-			<p>Your reliable web server solution.</p>
-			<a href="#features" class="cta-button">Explore Features</a>
-		</div>
 		<div class="features-container">
-		<div id="features" class="features">
-			<div class="feature">
-				<i class="fa-solid fa-cogs"></i>
-				<h3>Highly Configurable</h3>
-				<p>Simple NGINX-like configuration file syntax for easy setup and migration. Customize server settings, routes, and behaviors with intuitive directives.</p>
-			</div>
-			<div class="feature">
-				<i class="fa-solid fa-check-circle"></i>
-				<h3>User-Friendly Interface</h3>
-				<p>Intuitive design that makes it easy for anyone to use. Clean web interface for monitoring and managing your server.</p>
-			</div>
-			<div class="feature">
-				<i class="fa-solid fa-code"></i>
-				<h3>CGI Support</h3>
-				<p>Full CGI support for dynamic content. Execute Python, PHP, and other scripts seamlessly for interactive web applications.</p>
-			</div>
-			<div class="feature">
-				<i class="fa-solid fa-exchange-alt"></i>
-				<h3>HTTP Methods</h3>
-				<p>Supports GET, POST, DELETE, and more for versatile web interactions. Handle forms, uploads, and RESTful APIs effortlessly.</p>
-			</div>
-			<div class="feature">
-				<i class="fa-solid fa-folder-open"></i>
-				<h3>Directory Listing (Autoindex)</h3>
-				<p>Automatic directory browsing with customizable listings. Easily navigate and access files with built-in autoindex feature.</p>
-			</div>
-			<div class="feature">
-				<i class="fa-solid fa-shield-alt"></i>
-				<h3>Secure & Fast</h3>
-				<p>Built with security in mind. Fast performance with optimized handling of concurrent connections and requests.</p>
-			</div>
+			<div id="features" class="features">
+				<a href="/cgi-bin" class="feature">
+					<i class="fa-solid fa-code"></i>
+					<h3>CGI Support</h3>
+					<p>Full CGI support for dynamic content. Execute Python, PHP for interactive web applications.</p>
+				</a>
+				<a href="/methods" class="feature">
+					<i class="fa-solid fa-exchange-alt"></i>
+					<h3>HTTP Methods</h3>
+					<p>Supports GET, POST, DELETE, Handle forms, uploads.</p>
+				</a>
+				<a href="/uploads" class="feature">
+					<i class="fa-solid fa-folder-open"></i>
+					<h3>Directory Listing (Autoindex)</h3>
+					<p>Automatic directory browsing. Easily navigate and access files with built-in autoindex feature.</p>
+				</a>
 		</div>
 		</div>
 	</main>
@@ -79,11 +54,7 @@
 		</div>
 		<div class="footer-links">
 			<a href="/">Home</a>
-			<a href="/directory.html">Directory</a>
-			<a href="/forms.html">Upload</a>
-			<a href="/about.html">About</a>
-			<a href="/contact.html">Contact</a>
-			<a href="/monitor.html">Monitor</a>
+			<a href="/uploads">Uploads</a>
 		</div>
 		<div class="footer-copy">&copy; 2025 Webserv</div>
 	</footer>

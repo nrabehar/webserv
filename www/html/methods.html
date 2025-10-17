@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Webserv | Methods</title>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	<link rel="stylesheet" href="/style.css">
+	<link rel="stylesheet" href="/methods.css">
+</head>
+<body>
+
+	<header class="header">
+		<div class="header-container">
+			<a href="/" class="logo">
+				<img src="/icons/logo.svg" alt="Webserv">
+				<span>WEBSERV</span>
+			</a>
+			<nav class="nav">
+				<a href="/" class="nav-link">Home</a>
+				<a href="/uploads" class="nav-link">Uploads</a>
+			</nav>
+			<button class="icon-btn source-code">
+				<i class="fa-brands fa-github"></i>
+			</button>
+		</div>
+	</header>
+
+	<main class="container">
+		<section class="forms-section">
+
+			<form action="/cgi-bin/form.php" method="get" class="test-form">
+				<h3>Get Form | PHP</h3>
+				<label for="name">Name:</label>
+				<input type="text" id="name" name="name" required>
+				<button type="submit">Submit</button>
+			</form>
+
+			<form action="/upload" method="post" enctype="multipart/form-data" class="test-form">
+				<h3>File Upload Form</h3>
+				<label for="file">Choose file:</label>
+				<input type="file" id="file" name="file" required>
+				<button type="submit">Upload</button>
+			</form>
+
+			<form action="/upload-details" method="post" enctype="multipart/form-data" class="test-form">
+				<h3>File Upload with Optional Fields</h3>
+				<label for="username">Username:</label>
+				<input type="text" id="username" name="username">
+				<label for="description">Description:</label>
+				<textarea id="description" name="description" rows="3"></textarea>
+				<label for="file-details">Choose file:</label>
+				<input type="file" id="file-details" name="file-details" multiple>
+				<button type="submit">Upload</button>
+			</form>
+		</section>
+		<div class="features-container">
+			<div id="features" class="features">
+				<a href="/uploads" class="feature">
+					<i class="fa-solid fa-trash"></i>
+					<h3>Delete Files | DELETE Method</h3>
+					<p>You can delete files using the DELETE method. Test it now with your uploaded files.</p>
+				</a>
+				<a href="/cgi-bin" class="feature">
+					<i class="fa-solid fa-terminal"></i>
+					<h3>Test CGI | GET and POST</h3>
+					<p>Interact with our CGI scripts using GET and POST methods. Test dynamic content generation.</p>
+				</a>
+		</div>
+		</div>
+	</main>
+
+	<footer class="footer">
+		<div class="footer-content">
+			<img src="/icons/logo.svg" alt="Webserv Logo" class="footer-logo">
+			<span class="footer-title">Webserv</span>
+		</div>
+		<div class="footer-links">
+			<a href="/">Home</a>
+			<a href="/uploads">Upload</a>
+		</div>
+		<div class="footer-copy">&copy; 2025 Webserv</div>
+	</footer>
+
+</body>
+</html>
