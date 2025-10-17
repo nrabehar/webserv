@@ -23,8 +23,11 @@ void MethodHandler::handle(Http::Request & req, Http::Response & res)
 
 void MethodHandler::handleGet(Http::Request & req, Http::Response & res)
 {
-	(void)req;
-
+	const LocationConfig * loc = _handler->findLocation(req.uri());
+	UriHandler uri_h(req.uri(), loc, _handler);
+	_path = uri_h.buildPath();
+	if (_handler->isError())
+		return (_handler->serveError(loc, res));
 	if (_handler->status() == HS_FOLDER_LISTING)
 		return (_handler->serveDirectory(_path, req.uri(), res));
 
@@ -92,9 +95,13 @@ void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
 void MethodHandler::handleDelete(Http::Request & req, Http::Response & res)
 {
 
-	(void)req;
+	const LocationConfig * loc = _handler->findLocation(req.uri());
+	UriHandler uri_h(req.uri(), loc, _handler);
+	_path = uri_h.buildPath();
+	if (_handler->isError())
+		return (_handler->serveError(loc, res));
 	if (remove(_path.c_str()) != 0)
-		return (_handler->serveError(HS_FORBIDDEN, _loc, res));
+		return (_handler->serveError(HS_INTERNAL_SERVER_ERROR, _loc, res));
 	res.setStatus(200);
 	res.setReason("OK");
 	res.appendBody("<html><body><h1>File deleted successfully</h1></body></html>");

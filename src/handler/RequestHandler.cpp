@@ -91,8 +91,6 @@ void	RequestHandler::handle(Http::Request & req, Http::Response & res)
 
 	UriHandler uri_handler(uri, loc, this);
 	std::string path = uri_handler.buildPath();
-	if (isError())
-		return (_error_handler.handle(loc, res));
 	MethodHandler method_handler(this, path, loc);
 	method_handler.handle(req, res);
 }
