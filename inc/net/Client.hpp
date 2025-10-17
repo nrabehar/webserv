@@ -22,13 +22,14 @@ namespace Net
 			Handler::RequestHandler _handler;
 
 			Buffer   _in;
-			Buffer   _out;
 
 			Http::Parser	_parser;
 			Http::Request	_req;
 			Http::Response	_res;
 
 			bool 		_keep_alive;
+			char  *	_out;
+			size_t	_out_size;
 
 		public:
 
@@ -40,6 +41,9 @@ namespace Net
 			bool	keepAlive() const;
 			void	setKeepAlive(bool keep_alive);
 			Server *getServer() const;
+			char *	out() const;
+			void	setOut(char *out, size_t size);
+			size_t	outSize() const;
 
 		private:
 

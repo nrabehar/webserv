@@ -31,22 +31,18 @@ void MethodHandler::handleGet(Http::Request & req, Http::Response & res)
 	if (_handler->status() == HS_FOLDER_LISTING)
 		return (_handler->serveDirectory(_path, req.uri(), res));
 	res.setHeader("Content-Type", Mime::getType(_path));
-	DBG("Serving file for GET: " + _path);
 	std::ifstream file(_path.c_str(), std::ios::in | std::ios::binary);
 	if (!file.good())
 		return (_handler->serveError(HS_INTERNAL_SERVER_ERROR, _loc, res));
-	DBG("Reading file content for GET");
 	std::list<std::string> contents;
 	char buffer[4096];
 	while (file.read(buffer, sizeof(buffer)))
 		contents.push_back(std::string(buffer, sizeof(buffer)));
 	contents.push_back(std::string(buffer, file.gcount()));
 	file.close();
-	DBG("Finished reading file content for GET");
 	size_t total_size = 0;
 	for (std::list<std::string>::iterator it = contents.begin(); it != contents.end(); ++it)
 		total_size += it->size();
-	DBG("Total file size: " + String::str(total_size));
 	res.setHeader("Content-Length", String::str(total_size));
 	std::string headers = res.str();
 	total_size += headers.size() + 1;
@@ -54,6 +50,7 @@ void MethodHandler::handleGet(Http::Request & req, Http::Response & res)
 	{
 		size_t offset = 0;
 		char * buf = new char[total_size];
+		std::memset(buf, 0, total_size);
 		std::memmove(buf, headers.c_str(), headers.size());
 		offset += headers.size();
 		for (std::list<std::string>::iterator it = contents.begin(); it != contents.end(); ++it)
@@ -61,37 +58,14 @@ void MethodHandler::handleGet(Http::Request & req, Http::Response & res)
 			std::memmove(buf + offset, it->c_str(), it->size());
 			offset += it->size();
 		}
-		delete [] buf;
+		_handler->client()->setOut(buf, total_size);
 	}
 	catch(const std::exception& e)
 	{
-		std::cerr << e.what() << '\n';
+		(void)e;
+		ERR("Error while preparing file content: " + std::string(e.what()));
 		return (_handler->serveError(HS_INTERNAL_SERVER_ERROR, _loc, res));
 	}
-	DBG("File content read successfully, preparing response");
-	
-	// if (ss.fail())
-	// 	return (_handler->serveError(HS_INTERNAL_SERVER_ERROR, _loc, res));
-	// file.close();
-	// DBG("File content read successfully, preparing response");
-	// try
-	// {
-	// 	DBG("Reading file content for GET: " + _path);
-	// 	res.appendBody(file_content);
-	// 	DBG("File content size: " + String::str(res.body().size()));
-	// 	res.setHeader("Content-Length", String::str(res.body().size()));
-	// 	res.setHeader("Last-Modified", Time::timeToHttpStr(Time::now()));
-	// 	DBG("GET request served successfully");
-	// 	_handler->setStatus(HS_OK);
-	// }
-	// catch(const std::exception& e)
-	// {
-	// 	ERR("Error while reading file content: " + std::string(e.what()));
-	// 	return (_handler->serveError(HS_INTERNAL_SERVER_ERROR, _loc, res));
-	// }
-	res.appendBody("<html><body><h1>File content serving not implemented yet</h1></body></html>");
-	res.setHeader("Content-Length", String::str(res.body().size()));
-	_handler->setStatus(HS_OK);
 	
 }
 

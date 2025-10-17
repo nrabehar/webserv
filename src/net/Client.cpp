@@ -6,7 +6,7 @@ using namespace Net;
 
 Client::Client(int fd, Server * server)
 	: EventHandler(fd), _server(server), _handler(this, &_req, &_res), _parser(&_handler),
-	_keep_alive(false)
+	_keep_alive(false), _out(NULL)
 {
 
 	LOG("Client connected: " + String::str(fd));
@@ -89,31 +89,25 @@ void	Client::onRead()
 void	Client::onWrite()
 {
 
-	if ((int)_handler.status() >= 200 && (int)_handler.status() < 600)
+	if (!_out || ((int)_handler.status() < 200 && (int)_handler.status() >= 600))
 	{
-		if (_handler.isError())
-		{
-			_handler.serveError(_handler.findLocation(_req.uri()), _res);
-		}
-		_out.append(_res.str());
-	}
-	if (_out.readable() == 0)
 		return ;
+	}
 	LOG("Client " + String::str(_fd) + ": " + _req.method() + " " +
 			_req.uri() + " " + String::str(_res.status()));
-	const char * buf = _out.readPtr();
-	size_t len = _out.readable();
-	ssize_t ret = ::send(_fd, buf, len, MSG_DONTWAIT);
+	ssize_t ret = ::send(_fd, _out, _out_size, MSG_DONTWAIT);
 	if (ret <= 0)
 	{
 		EventLoop::instance().delHandler(this);
 		return ;
 	}
-	_out.hasRead(ret);
+	std::memmove(_out, _out + ret, _out_size - ret);
+	_out_size -= ret;
 	reloadTimeout();
-	if (!_out.readable())
+	if (_out_size == 0)
 	{
-		_out.clear();
+		delete [] _out;
+		_out = NULL;
 		_keep_alive = _res.header("Connection").find("keep-alive") != std::string::npos;
 		if (!_keep_alive)
 			EventLoop::instance().delHandler(this);
@@ -158,3 +152,6 @@ bool	Client::readSocket()
 bool	Client::keepAlive() const { return (_keep_alive); }
 void	Client::setKeepAlive(bool keep_alive) { _keep_alive = keep_alive; }
 Server *Client::getServer() const { return (_server); }
+char *	Client::out() const { return (_out); }
+void	Client::setOut(char *out, size_t size) { _out = out; _out_size = size; }
+size_t	Client::outSize() const { return (_out_size); }
