@@ -102,15 +102,34 @@ void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
 			else
 				fields.push_back(std::make_pair(body_fields[i].field, body_fields[i].value));
 		}
-		createJsonResponse(files, fields, res);
-		res.setHeader("Content-Length", String::str(res.body().size()));
+		std::string body;
+		createJsonResponse(files, fields, body);
+		res.setHeader("Content-Length", String::str(body.size()));
+		res.setHeader("Content-Type", "application/json");
+		std::string headers = res.str();
+		size_t total_size = headers.size() + 1 + body.size();
+		char * buf = new char[total_size];
+		std::memset(buf, 0, total_size);
+		size_t offset = 0;
+		std::memmove(buf, headers.c_str(), headers.size());
+		offset += headers.size();
+		std::memmove(buf + offset, body.c_str(), body.size());
+		_handler->client()->setOut(buf, total_size);
 		_handler->setStatus(HS_OK);
 	}
 	else
 	{
 		res.setHeader("Content-type", req.header("Content-Type"));
-		res.appendBody(req.body());
 		res.setHeader("Content-Length", String::str(req.body().size()));
+		size_t total_size = res.str().size() + 1 + req.body().size();
+		char * buf = new char[total_size];
+		std::memset(buf, 0, total_size);
+		size_t offset = 0;
+		std::string headers = res.str();
+		std::memmove(buf, headers.c_str(), headers.size());
+		offset += headers.size();
+		std::memmove(buf + offset, req.body().c_str(), req.body().size());
+		_handler->client()->setOut(buf, total_size);
 		_handler->setStatus(HS_OK);
 	}
 
@@ -127,41 +146,50 @@ void MethodHandler::handleDelete(Http::Request & req, Http::Response & res)
 	if (remove(_path.c_str()) != 0)
 		return (_handler->serveError(HS_INTERNAL_SERVER_ERROR, _loc, res));
 	res.setStatus(200);
-	res.setReason("OK");
-	res.appendBody("<html><body><h1>File deleted successfully</h1></body></html>");
+	res.setHeader("Content-Type", "application/json");
+	std::string body = "{\"message\": \"File deleted successfully\"}\n";
+	res.setHeader("Content-Length", String::str(body.size()));
+	std::string headers = res.str();
+	size_t total_size = headers.size() + 1 + body.size();
+	char * buf = new char[total_size];
+	std::memset(buf, 0, total_size);
+	size_t offset = 0;
+	std::memmove(buf, headers.c_str(), headers.size());
+	offset += headers.size();
+	std::memmove(buf + offset, body.c_str(), body.size());
+	_handler->client()->setOut(buf, total_size);
 	return (_handler->setStatus(HS_OK));
 
 }
 
 void MethodHandler::createJsonResponse(const std::vector<std::pair<std::string, std::string> > & files,
-	const std::vector<std::pair<std::string, std::string> > & fields, Http::Response & res)
+	const std::vector<std::pair<std::string, std::string> > & fields, std::string & res)
 {
-	res.setHeader("Content-Type", "application/json");
-	res.appendBody("{\n");
+	res.append("{\n");
 
-	res.appendBody("  \"files\": [\n");
+	res.append("  \"files\": [\n");
 	for (size_t i = 0; i < files.size(); ++i)
 	{
-		res.appendBody("    {\n");
-		res.appendBody("      \"field\": \"" + files[i].first + "\",\n");
-		res.appendBody("      \"filename\": \"" + files[i].second + "\"\n");
+		res.append("    {\n");
+		res.append("      \"field\": \"" + files[i].first + "\",\n");
+		res.append("      \"filename\": \"" + files[i].second + "\"\n");
 		if (i + 1 < files.size())
-			res.appendBody("    },\n");
+			res.append("    },\n");
 		else
-			res.appendBody("    }\n");
+			res.append("    }\n");
 	}
-	res.appendBody("  ],\n");
+	res.append("  ],\n");
 
-	res.appendBody("  \"fields\": [\n");
+	res.append("  \"fields\": [\n");
 	for (size_t i = 0; i < fields.size(); ++i)
 	{
-		res.appendBody("    {\n");
-		res.appendBody("      \"field\": \"" + fields[i].first + "\",\n");
-		res.appendBody("      \"value\": \"" + fields[i].second + "\"\n");
+		res.append("    {\n");
+		res.append("      \"field\": \"" + fields[i].first + "\",\n");
+		res.append("      \"value\": \"" + fields[i].second + "\"\n");
 		if (i + 1 < fields.size())
-			res.appendBody("    },\n");
+			res.append("    },\n");
 		else
-			res.appendBody("    }\n");
+			res.append("    }\n");
 	}
-	res.appendBody("  ]\n}\n");
+	res.append("  ]\n}\n");
 }

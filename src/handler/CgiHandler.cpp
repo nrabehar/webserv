@@ -211,9 +211,16 @@ bool	CgiHandler::parseHeaders()
 
 bool	CgiHandler::parseBody()
 {
-
-	_res->appendBody(_out.substr());
 	_res->setHeader("Content-Length", String::str(_out.readable()));
+	std::string headers = _res->str();
+	size_t total_size = headers.size() + 1 + _out.readable();
+	char * buf = new char[total_size];
+	std::memset(buf, 0, total_size);
+	size_t offset = 0;
+	std::memmove(buf, headers.c_str(), headers.size());
+	offset += headers.size();
+	std::memmove(buf + offset, _out.readPtr(), _out.readable());
+	_handler->client()->setOut(buf, total_size);
 	_out.hasRead(_out.readable());
 	_handler->setStatus(HS_OK);
 	return (true);

@@ -247,7 +247,15 @@ void RequestHandler::serveDirectory(const std::string & path, const std::string 
 	res.setReason("OK");
 	res.setHeader("Content-Type", "text/html");
 	res.setHeader("Content-Length", String::str(body.length()));
-	res.appendBody(body);
+	std::string headers = res.str();
+	size_t total_size = headers.size() + 1 + body.size();
+	char * buf = new char[total_size];
+	std::memset(buf, 0, total_size);
+	size_t offset = 0;
+	std::memmove(buf, headers.c_str(), headers.size());
+	offset += headers.size();
+	std::memmove(buf + offset, body.c_str(), body.size());
+	_client->setOut(buf, total_size);
 	setStatus(HS_OK);
 }
 

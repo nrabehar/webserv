@@ -34,7 +34,7 @@ namespace Handler
 			void handleDelete(Http::Request & req, Http::Response & res);
 
 			void createJsonResponse(const std::vector<std::pair<std::string, std::string> > & files,
-				const std::vector<std::pair<std::string, std::string> > & fields, Http::Response & res);
+				const std::vector<std::pair<std::string, std::string> > & fields, std::string & res);
 
 	};
 
