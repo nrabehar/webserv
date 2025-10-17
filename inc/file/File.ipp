@@ -14,7 +14,7 @@ class IFile
 		virtual	ssize_t	write(const char * data, size_t n) = 0;
 		virtual const std::string & getPath() const = 0;
 		virtual const std::string & getData() const = 0;
-		
+
 };
 
 class File : public IFile
@@ -26,7 +26,6 @@ class File : public IFile
 		bool								_complete;
 		std::string					_data;
 		std::string					_path;
-		
 
 	public:
 
@@ -80,9 +79,8 @@ class InMemoryFile : public File
 		InMemoryFile();
 		InMemoryFile(const InMemoryFile &);
 		InMemoryFile & operator=(const InMemoryFile &);
-			
-};
 
+};
 
 class FileProxy : public IFile
 {
@@ -90,7 +88,7 @@ class FileProxy : public IFile
 
 		IFile *		_file;
 		std::string	_path;
-	
+
 	public:
 
 		FileProxy(IFile *);
@@ -102,7 +100,7 @@ class FileProxy : public IFile
 		virtual ssize_t	write(const char * data, size_t n);
 		virtual const std::string & getPath() const;
 		virtual const std::string & getData() const;
-	
+
 	private:
 
 		FileProxy();
@@ -114,10 +112,10 @@ class FileFactory
 {
 
 	public:
-		
+
 		~FileFactory();
 		static IFile*	create(const std::string &, int oflag);
-	
+
 	private:
 
 		FileFactory();

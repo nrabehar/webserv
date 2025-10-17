@@ -1,7 +1,6 @@
 #ifndef MIME_HPP
 #define MIME_HPP
 
-
 #include "../webserv.hpp"
 
 class Mime
@@ -24,7 +23,5 @@ class Mime
 		Mime();
 
 };
-
-
 
 #endif

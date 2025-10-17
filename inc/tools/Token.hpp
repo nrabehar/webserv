@@ -35,7 +35,6 @@ struct Token
 	bool				isType(TokenType t) const;
 };
 
-
 class TokenU
 {
 
@@ -54,13 +53,12 @@ class TokenU
 		static std::string typeToString(TokenType t);
 		static TokenType strToType(const std::string & t);
 		static bool isSymbol(const std::string & v);
-	
+
 	private:
-	
+
 		TokenU();
 		TokenU(const TokenU &);
 		TokenU & operator=(const TokenU &);
-
 
 };
 
@@ -101,12 +99,9 @@ class TokenStream
     bool eof() const;
 
 	private:
-		
+
 		TokenStream();
 
 };
-
-
-
 
 #endif

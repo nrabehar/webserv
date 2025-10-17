@@ -61,7 +61,7 @@ class CgiHandler
 		{
 
 			private:
-				
+
 				CgiHandler * _cgi;
 				Buffer * _in;
 				size_t _offset;
@@ -83,7 +83,7 @@ class CgiHandler
 
 		class CgiStdoutHandler : public EventHandler
 		{
-			
+
 			private:
 
 				CgiHandler * _cgi;
@@ -91,7 +91,7 @@ class CgiHandler
 				size_t _offset;
 
 			public:
-		
+
 				CgiStdoutHandler(CgiHandler * cgi, Buffer * out, int fd);
 				~CgiStdoutHandler();
 				virtual void handle(short e);
@@ -107,7 +107,6 @@ class CgiHandler
 
 };
 
-
-}	
+}
 
 #endif

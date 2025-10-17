@@ -63,11 +63,10 @@ Node<std::string>*	Config::Parser::parseBlock(const std::string &name, const std
 		block->push(args[i]);
 	while (!(_token[_pos].type & TK_SYMBOL) && _token[_pos].value != "}")
 		block->addChild(parseStatement());
-	
+
 	++_pos;
 	return (block);
 }
-
 
 Node<std::string>*	Config::Parser::skipComment(const std::string &name, const std::vector<std::string> &args)
 {

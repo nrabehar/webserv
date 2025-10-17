@@ -6,7 +6,6 @@
 #include <map>
 #include <poll.h>
 
-
 class Poller
 {
 
@@ -33,6 +32,5 @@ class Poller
 		Poller & operator=(const Poller &);
 
 };
-
 
 #endif

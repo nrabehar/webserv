@@ -56,9 +56,8 @@ void	RequestHandler::setStatus(Status state)
 	_status = state;
 	if (state == HS_OK && _process.size())
 		_status = HS_PROGRESS;
-		
-}
 
+}
 
 bool	RequestHandler::isError() const
 {
@@ -79,7 +78,7 @@ void	RequestHandler::handle(Http::Request & req, Http::Response & res)
 
 	if (isError())
 		return (serveError(loc, res));
-	
+
 	if (loc->redirect.first != 0)
 	  return (redirect(loc->redirect, res));
 

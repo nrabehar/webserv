@@ -20,7 +20,6 @@ class UI
 
 	private:
 
-
 		UI();
 		UI(const UI &);
 		UI & operator=(const UI &);
@@ -38,6 +37,5 @@ class UI
 		static const std::string & getActionScript();
 
 };
-
 
 #endif

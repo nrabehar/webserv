@@ -14,12 +14,12 @@ namespace Http
 		std::string value;
 
 	};
-	
+
 	class Request
 	{
-	
+
 		private:
-	
+
 			std::string					_method;
 			std::string					_uri;
 			std::string					_version;
@@ -29,9 +29,9 @@ namespace Http
 
 			size_t			_ct_len;
 			std::string	_ct_type;
-				
+
 		public:
-	
+
 			Request();
 			Request & operator=(const Request &);
 			~Request();
@@ -61,15 +61,13 @@ namespace Http
 			void	setContentType(const std::string & ct);
 
 			void	cleanup();
-	
+
 		private:
-	
+
 			Request(const Request &);
-	
+
 	};
-	
 
-} 
-
+}
 
 #endif

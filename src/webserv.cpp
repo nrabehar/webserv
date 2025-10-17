@@ -4,7 +4,7 @@
 static void _run(const char * configfile)
 {
 	Signal().setup();
-	Config * conf = new Config(configfile); 
+	Config * conf = new Config(configfile);
 	EventLoop::instance().setConfig(conf);
 	conf->load();
 	const std::vector<ServerConfig>	& servers = conf->servers();
@@ -30,7 +30,7 @@ int main(int ac, char **av)
 		config_file = "conf/default.conf";
 	else
 		config_file = av[1];
-	
+
 	LOG("Starting web server...");
 	try { _run(config_file.c_str()); }
 	catch (std::exception & e)

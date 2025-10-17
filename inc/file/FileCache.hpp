@@ -15,7 +15,6 @@ class FileCache: public ICacheStrategy
         typedef std::map<std::string, CacheEntry> CacheMap;
 
         CacheMap	_cache;
-        
 
     public:
 
@@ -33,6 +32,5 @@ class FileCache: public ICacheStrategy
         FileCache & operator=(const FileCache &);
 
 };
-
 
 #endif

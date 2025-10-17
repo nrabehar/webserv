@@ -53,7 +53,6 @@ void Config::Merger::merge(Node<Token> *parent)
 
 }
 
-
 void    Config::Merger::defLocation(Node<Token> *root)
 {
 

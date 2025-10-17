@@ -9,8 +9,6 @@ class Time
 
 	private:
 
-		
-
 	public:
 
 		Time();
@@ -28,6 +26,5 @@ class Time
 		Time & operator=(const Time &);
 
 };
-
 
 #endif

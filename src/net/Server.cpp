@@ -63,7 +63,6 @@ void	Server::setup()
 
 }
 
-
 int	Server::getAddrInfo()
 {
 

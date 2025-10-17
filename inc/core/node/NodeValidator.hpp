@@ -3,7 +3,6 @@
 
 #include "../../webserv.hpp"
 
-
 template <typename T>
 class INodeValidator
 {
@@ -14,7 +13,6 @@ class INodeValidator
 		virtual bool	validate(Node<T> * node) = 0;
 
 };
-
 
 template <typename T>
 class ANodeValidator
@@ -44,7 +42,7 @@ class ANodeValidator
 				return (this);
 			typename std::map<std::string, INodeValidator<T> * >::iterator it;
 			it = _validator.find(name);
-			
+
 			if (it != _validator.end())
 			{
 				delete it->second;
@@ -55,7 +53,7 @@ class ANodeValidator
 			return (this);
 
 		};
-		
+
 		virtual bool validate(Node<T> * node)
 		{
 			size_t i = 0;
@@ -65,10 +63,10 @@ class ANodeValidator
 					break ;
 			}
 
-			if (i >= _validator.size() && 
+			if (i >= _validator.size() &&
 					(!node->getParent() && node->getNAme() == "base"))
 				throw std::runtime_error("Unknown directive `" + node->getName() + "`" );
-		
+
 			for (i = 0; i < node->getChild().size() ; ++ i)
 			{
 				if (!validate(node->getChild()[i]))
@@ -76,7 +74,7 @@ class ANodeValidator
 			}
 
 			return (true);
-		
+
 		}
 
 	private:
@@ -94,13 +92,12 @@ class NodeValidator
 
 		NodeValidator() {};
 		virtual ~NodeValidator() {};
-	
+
 	private:
 
 		NodeValidator(const NodeValidator &);
 		NodeValidator & operator=(const NodeValidator &);
 
 };
-
 
 #endif

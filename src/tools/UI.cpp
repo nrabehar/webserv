@@ -37,7 +37,7 @@ std::string UI::getFooter()
 
 	oss << "</body>"
 			<< "</html>";
-	
+
 	return (oss.str());
 
 }
@@ -120,7 +120,7 @@ std::string UI::getErrorPage(int code, const std::string & reason)
 
 	return (oss.str());
 
-} 
+}
 
 std::string UI::getHero(const std::string & t, const std::string & d)
 {
@@ -132,7 +132,7 @@ std::string UI::getHero(const std::string & t, const std::string & d)
 			<< 		"<p>" << d << "</p>"
 			<< 		"<a href=\"/\" class=\"cta-button\">Go to home</a>"
 			<< 	"</div>\n";
-	
+
 	return (oss.str());
 
 }
@@ -148,7 +148,7 @@ std::string UI::getDirListing(const std::string & path, const std::string & uri)
 			<< 		"<h1>Index of " << uri << "</h1>\n"
 			<< 	"</div>\n"
 			<< 	"<div class=\"directory-listing\">\n";
-	
+
 	DIR * dir = opendir(path.c_str());
 	if (dir)
 	{
@@ -210,7 +210,7 @@ std::string UI::getFileSize(const std::string & file)
 	{
 
 		std::ostringstream oss;
-		
+
 		off_t size = file_stat.st_size;
 
 		if (size < 1024)
@@ -221,7 +221,7 @@ std::string UI::getFileSize(const std::string & file)
 			oss << std::fixed << std::setprecision(1) << (size / (1024.0 * 1024.0)) << " MB";
 		else
 			oss << std::fixed << std::setprecision(1) << (size / (1024.0 * 1024.0 * 1024.0)) << " GB";
-		
+
 		return (oss.str());
 
 	}

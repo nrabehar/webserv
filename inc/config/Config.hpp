@@ -21,7 +21,6 @@ class Config
 		class Merger;
 		class Validator;
 
-
 		Config(const std::string &);
 		~Config();
 		void	load();

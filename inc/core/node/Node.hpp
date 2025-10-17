@@ -13,7 +13,6 @@ class Node
 		std::vector<T>						_data;
 		std::vector<Node<T> *> 		_child;
 		Node<T> *									_parent;
-		
 
 	public:
 

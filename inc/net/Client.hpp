@@ -35,7 +35,7 @@ namespace Net
 			Client(int _fd, Server * server);
 			~Client();
 
-			void	handle(short e); 
+			void	handle(short e);
 			void	onTimeout();
 			bool	keepAlive() const;
 			void	setKeepAlive(bool keep_alive);
@@ -53,7 +53,7 @@ namespace Net
 			bool	readSocket();
 
 	};
-	
+
 }
 
 #endif

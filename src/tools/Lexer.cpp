@@ -39,4 +39,3 @@ std::vector<Token> Lexer::tokenize(const std::string &inp)
 	tokens.push_back(Token("", line, TK_EOF));
 	return (tokens);
 }
-

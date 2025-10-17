@@ -113,7 +113,6 @@ IFile* FilePermissionChecker::handle(const std::string &path)
 	return (FileHandler::handle(path));
 }
 
-
 /**
  * FileOpener class implementation
  */
@@ -128,5 +127,3 @@ IFile*	FileOpener::handle(const std::string &path)
 		setReason("Failed to open file");
 	return (FileHandler::handle(path));
 }
-
-

@@ -123,7 +123,7 @@ void Config::Validator::checkListen(Node<Token> * node)
 
 	if (!_valid)
 		return ;
-	
+
 	const std::vector<Token> & arg = node->getData();
 	std::string a0 = arg[0].value;
 	if (arg.size() == 2)
@@ -267,7 +267,7 @@ void Config::Validator::checkKeepaliveTimeout(Node<Token> * node)
 			String::str(node->getData()[0].line));
 
 }
-	
+
 void Config::Validator::checkGatewayTimeout(Node<Token> * node)
 {
 

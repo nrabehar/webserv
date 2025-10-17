@@ -7,18 +7,18 @@ class Config::Parser
 {
 
 	private:
-		
+
 		static std::vector<Token> _token;
 		static size_t	_pos;
 
 	public:
-	
+
 		Parser();
 		~Parser();
 		static Node<std::string>* parse(std::vector<Token> & token);
 
 	private:
-		
+
 		Parser(const Parser &);
 		Parser & operator=(const Parser &);
 

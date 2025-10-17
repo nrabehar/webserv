@@ -86,34 +86,34 @@ bool Directive::accept(const Directive & directive) const
 
 std::vector<std::string> Directive::split(const std::string& s, char delim)
 {
-    
+
 	std::vector<std::string> elems;
-    
+
 	std::string::size_type start = 0, end = 0;
-    
+
 	while ((end = s.find(delim, start)) != std::string::npos)
 	{
-        
+
 		if (end > start) elems.push_back(s.substr(start, end - start));
       start = end + 1;
 
 	}
-    
+
 	if (start < s.size())
 		elems.push_back(s.substr(start));
-    
+
 	return (elems);
 
 }
 
 bool Directive::contains(const std::vector<std::string>& vec, const std::string& val) const
 {
-    
+
 	for (size_t i = 0; i < vec.size(); ++i)
 	{
 
 		if (vec[i] == val) return true;
-	
+
 	}
 
 	return (false);

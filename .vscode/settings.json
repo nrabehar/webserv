@@ -1,4 +1,7 @@
 {
+	"files.trimFinalNewlines": true,
+	"remove-empty-lines.allowedNumberOfEmptyLines": 1,
+	"remove-empty-lines.runOnSave": true,
 	"explorer.fileNesting.enabled": true,
 	"explorer.fileNesting.expand": false,
 	"explorer.fileNesting.patterns": {

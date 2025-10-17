@@ -3,7 +3,6 @@
 
 #include "../webserv.hpp"
 
-
 struct LocationConfig;
 
 struct ServerConfig

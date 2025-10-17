@@ -7,19 +7,19 @@ class Config::Validator
 {
 
 	private:
-		
+
 		static bool	_valid;
 		static bool	_checked;
 		static std::string		_status;
 
 	public:
-	
+
 		Validator();
 		virtual ~Validator();
 		static bool	validate(Node<Token> * node);
 
 	private:
-		
+
 		Validator(const Validator &);
 		Validator & operator=(const Validator &);
 
@@ -40,6 +40,5 @@ class Config::Validator
 		static void checkReturn(Node<Token> * node);
 		static void checkUploadStore(Node<Token> * node);
 };
-
 
 #endif

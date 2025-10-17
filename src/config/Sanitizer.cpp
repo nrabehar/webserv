@@ -85,10 +85,10 @@ std::string Config::Sanitizer::normalizeBrackets(const std::string & s)
 	{
 
 		int c = s[i];
-	
+
 		if (c == '{')
 			res = String::trim(res) + " {";
-		
+
 		else
 			res.push_back(c);
 
@@ -97,5 +97,3 @@ std::string Config::Sanitizer::normalizeBrackets(const std::string & s)
 	return (res);
 
 }
-
-

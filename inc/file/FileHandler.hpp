@@ -3,7 +3,6 @@
 
 #include "../webserv.hpp"
 
-
 class IFileHandler
 {
 
@@ -13,7 +12,6 @@ class IFileHandler
 
 	public:
 
-
 		virtual ~IFileHandler() {};
 
 		virtual IFileHandler* setNext(IFileHandler*) = 0;
@@ -21,7 +19,7 @@ class IFileHandler
 		virtual IFile *handle(const std::string& ) = 0;
 		virtual void setReason(const FileReason &) = 0;
 		virtual void	setFile(IFile *) = 0;
-	
+
 };
 
 class FileHandler : public IFileHandler
@@ -136,7 +134,5 @@ class FileOpener : public FileHandler
 		FileOpener & operator=(const FileOpener &);
 
 };
-
-	
 
 #endif

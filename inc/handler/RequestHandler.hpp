@@ -18,22 +18,22 @@ namespace Handler
 
 	class IRequestHandler
 	{
-	
+
 		public:
-	
+
 			virtual ~IRequestHandler() {}
 			virtual	void	handle(Http::Request & req, Http::Response & res) = 0;
 
 			virtual	void	addProcess(IEventHandler * h, short e) = 0;
 			virtual	void	delProcess(IEventHandler * h) = 0;
-	
+
 	};
 
 	class RequestHandler : public IRequestHandler
 	{
-	
+
 		private:
-	
+
 			Net::Client *	_client;
 			Status	_status;
 			ErrorHandler _error_handler;
@@ -45,7 +45,7 @@ namespace Handler
 			Http::Response * _res;
 
 		public:
-	
+
 			RequestHandler(Net::Client * client, Http::Request * req, Http::Response * res);
 			~RequestHandler();
 
@@ -60,7 +60,7 @@ namespace Handler
 			Net::Client * client() const;
 			Http::Response * response();
 			bool isError() const;
-			
+
 			void serveError(Status status, const LocationConfig * loc, Http::Response & res);
 			void serveError(const LocationConfig * loc, Http::Response & res);
 
@@ -70,20 +70,19 @@ namespace Handler
 			bool	initCgiHandler(Http::Request & req, Http::Response & res);
 			CgiHandler *	cgiHandler();
 			const LocationConfig * findLocation(const std::string & uri) const;
-	
+
 		private:
-	
+
 			RequestHandler();
 			RequestHandler(const RequestHandler &);
 			RequestHandler & operator=(const RequestHandler &);
 
 			void	mergeHeaders(Http::Request & req, Http::Response & res);
 			void  redirect(const std::pair<int, std::string> & redirect, Http::Response & res);
-	
-	};
-	
 
-} 
+	};
+
+}
 
 #include "UriHandler.hpp"
 #include "StaticHandler.hpp"

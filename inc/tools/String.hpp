@@ -3,13 +3,10 @@
 
 #include "../webserv.hpp"
 
-
 class String
 {
 
 	private:
-
-		
 
 	public:
 
@@ -48,7 +45,5 @@ class String
 		String & operator=(const String &);
 
 };
-
-
 
 #endif

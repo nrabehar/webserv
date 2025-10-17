@@ -8,11 +8,11 @@ void DirectiveChecker::argCount(const Directive & d)
 {
 	if (!_valid || !d.node())
 		return;
-	
+
 	size_t n = d.node()->getData().size();
 	int min = d.min_arg();
 	int max = d.max_arg();
-	
+
 	if ((min >= 0 && n < (size_t)min) ||
 			(max >= 0 && n > (size_t)max))
 	{
@@ -35,10 +35,10 @@ void DirectiveChecker::argType(const Directive & d)
 	const Node<Token> * node = d.node();
 	if (!_valid || !node)
 		return;
-	
+
 	const std::vector<std::string> & types = d.arg_type();
 	const std::vector<Token>& args = node->getData();
-	
+
 	for (size_t i = 0; i < args.size(); ++i)
 	{
 		std::string typeStr = TokenU::typeToString(args[i].type);
@@ -65,7 +65,7 @@ void DirectiveChecker::acceptParent(const Directive & d)
 	const Node<Token> * node = d.node();
 	if (!_valid || !node || !node->getParent())
 		return;
-	
+
 	std::string parent_name = node->getParent()->getName();
 	_valid = d.isAllowedIn(parent_name);
 
@@ -108,12 +108,12 @@ bool DirectiveChecker::check(const Directive & d)
 
 bool DirectiveChecker::contains(const std::vector<std::string>& vec, const std::string& val)
 {
-    
+
 	for (size_t i = 0; i < vec.size(); ++i)
 	{
 
 		if (vec[i] == val) return true;
-	
+
 	}
 
 	return (false);

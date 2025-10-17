@@ -34,7 +34,7 @@ class CacheManager
         const std::string & get(const std::string &);
         void put(const std::string &, const std::string &);
         void use(CacheType);
-    
+
     private:
 
         CacheManager();

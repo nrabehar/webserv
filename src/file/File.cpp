@@ -1,8 +1,5 @@
 #include "webserv.hpp"
 
-/**
- * AFile
- */
 File::File(const std::string & path)
 	: _fd(-1), _complete(false), _data(""), _path(path) {}
 
@@ -34,11 +31,6 @@ ssize_t	File::write(const char * data, size_t n)
 
 }
 
-
-/**
- * LocalFile
- */
-
 LocalFile::LocalFile(const std::string & path, int oflag)
 	: File(path)
 {
@@ -50,7 +42,7 @@ ssize_t LocalFile::read()
 {
 	if (_fd == -1 || _complete)
 		return (-1);
-	
+
 	char buf[4096];
 	ssize_t n = ::read(_fd, buf, sizeof(buf));
 	if (n <= 0)
@@ -66,9 +58,6 @@ ssize_t LocalFile::read()
 
 }
 
-/**
- * InMemoryFile
- */
 InMemoryFile::InMemoryFile(const std::string &path, const std::string &data)
 	: File(path) { _data = data; _fd = IN_MEMORY_FD; _complete = true; }
 InMemoryFile::~InMemoryFile(){}
@@ -79,11 +68,6 @@ ssize_t InMemoryFile::read()
 	return (_data.size());
 
 }
-
-
-/**
- * FileProxy
- */
 
 FileProxy::FileProxy(IFile * file)
 	: _file(file), _path(file->getPath()) {}
@@ -133,9 +117,6 @@ const std::string & FileProxy::getData() const
 
 }
 
-/**
- * FileFactory
- */
 FileFactory::~FileFactory() {}
 IFile*	FileFactory::create(const std::string &path, int oflag)
 {
@@ -143,7 +124,7 @@ IFile*	FileFactory::create(const std::string &path, int oflag)
 	IFile	* file = NULL;
 
 	cache->use(CAT_FILE);
-	
+
 	if (cache->exists(path))
 		file = new InMemoryFile(path, cache->get(path));
 	else

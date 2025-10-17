@@ -30,7 +30,7 @@ namespace Handler
 		HS_PROGRESS = 1001,
 		HS_WAITING = 1002,
 		HS_CGI = 1003,
-	
+
 	};
 }
 

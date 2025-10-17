@@ -3,7 +3,6 @@
 
 #include "../webserv.hpp"
 
-
 class ITokenTypeExtractor
 {
 
@@ -22,7 +21,6 @@ class ATokenExtractor
 	protected:
 
 		ITokenTypeExtractor *	_next;
-		
 
 	public:
 
@@ -38,13 +36,11 @@ class ATokenExtractor
 
 };
 
-
 class TokenExtractor
 	: public ATokenExtractor
 {
 
 	private:
-
 
 	public:
 
@@ -65,8 +61,6 @@ class TokenSymboleExtractor
 
 	private:
 
-		
-
 	public:
 
 		TokenSymboleExtractor();
@@ -80,14 +74,11 @@ class TokenSymboleExtractor
 
 };
 
-
 class TokenNumberExtractor
 	: public ATokenExtractor
 {
 
 	private:
-
-		
 
 	public:
 
@@ -102,14 +93,11 @@ class TokenNumberExtractor
 
 };
 
-
 class TokenBoolExtractor
 	: public ATokenExtractor
 {
 
 	private:
-
-		
 
 	public:
 
@@ -124,14 +112,11 @@ class TokenBoolExtractor
 
 };
 
-
 class TokenOnOffExtractor
 	: public ATokenExtractor
 {
 
 	private:
-
-		
 
 	public:
 
@@ -146,14 +131,11 @@ class TokenOnOffExtractor
 
 };
 
-
 class TokenSizeExtractor
 	: public ATokenExtractor
 {
 
 	private:
-
-		
 
 	public:
 

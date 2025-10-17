@@ -5,20 +5,20 @@
 
 namespace Http
 {
-	
+
 	class Response
 	{
-	
+
 		private:
-	
+
 			int									_status;
 			std::string					_version;
 			std::string					_reason;
 			std::map<std::string, std::string>	_headers;
 			std::string					_body;
-				
+
 		public:
-	
+
 			Response();
 			Response(int status, const std::string & reason);
 			Response & operator=(const Response &);
@@ -40,14 +40,13 @@ namespace Http
 			void setReason(const std::string & reason);
 
 			std::string str() const;
-	
-		private:
-	
-			Response(const Response &);
-	
-	};
-	
 
-} 
+		private:
+
+			Response(const Response &);
+
+	};
+
+}
 
 #endif

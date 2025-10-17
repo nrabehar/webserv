@@ -47,7 +47,7 @@ void	Client::onTimeout()
 
 	if (Time::diff(_last_active, Time::now()) < _timeout)
 		return ;
-	
+
 	if (_handler.status() == Handler::HS_WAITING)
 		EventLoop::instance().delHandler(this);
 	else
@@ -108,7 +108,7 @@ void	Client::onWrite()
 		return ;
 
 	}
-	_out.hasRead(ret);	
+	_out.hasRead(ret);
 	reloadTimeout();
 	if (!_out.readable())
 	{

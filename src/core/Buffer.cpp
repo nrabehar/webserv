@@ -48,7 +48,7 @@ void Buffer::hasRead(size_t n)
 
 		_rpos += n;
 		compact();
-	
+
 	}
 
 }
@@ -86,7 +86,7 @@ void Buffer::reserve(size_t size)
 
 	if (_data.capacity() == 0)
 		_data.reserve(4096);
-	
+
 	size_t new_size = _data.size();
 	while (new_size < size)
 		new_size = std::max(new_size * 2, new_size + 4096);

@@ -87,5 +87,3 @@ bool StaticHandler::handle(const std::string & path, Http::Response * res)
 	return (true);
 
 }
-
-

@@ -44,7 +44,7 @@ std::vector<std::string> String::split(const std::string & s, const std::string 
 		end = s.find_first_of(delim, start);
 		if (end == std::string::npos)
 			end = s.size();
-		
+
 		res.push_back(s.substr(start, end - start));
 		start = s.find_first_not_of(delim, end);
 
@@ -115,12 +115,12 @@ std::string String::toCamelCase(const std::string & s, char sep)
 std::string String::urlEncode(const std::string & s)
 {
 	std::string result;
-	
+
 	for (size_t i = 0; i < s.length(); ++i)
 	{
 		char c = s[i];
-		
-		if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') || 
+
+		if ((c >= 'A' && c <= 'Z') || (c >= 'a' && c <= 'z') ||
 		    (c >= '0' && c <= '9') || c == '-' || c == '_' || c == '.' || c == '~')
 			result += c;
 		else if (c == ' ')
@@ -132,7 +132,7 @@ std::string String::urlEncode(const std::string & s)
 			result += "0123456789ABCDEF"[c & 0xF];
 		}
 	}
-	
+
 	return result;
 }
 

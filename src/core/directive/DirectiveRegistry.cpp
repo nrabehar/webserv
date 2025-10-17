@@ -21,6 +21,3 @@ const Directive * DirectiveRegistry::get(const std::string &name)
 	}
 	return (NULL);
 }
-
-
-

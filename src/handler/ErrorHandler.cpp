@@ -8,7 +8,7 @@ ErrorHandler::~ErrorHandler() {}
 
 void	ErrorHandler::handle(const  LocationConfig * loc, Http::Response & res)
 {
-	
+
 	res.setStatus((int)_handler->status());
 	res.setHeader("Content-Type", "text/html; charset=UTF-8");
 
@@ -21,7 +21,7 @@ void	ErrorHandler::handle(const  LocationConfig * loc, Http::Response & res)
 		custom_page = uri_handler.buildPath();
 		if (!uri_handler.fileExists(custom_page) || !uri_handler.isReadable(custom_page))
 			custom_page.clear();
-		
+
 		if (!custom_page.empty())
 			return (serveCustomPage(custom_page, res));
 	}
@@ -33,7 +33,7 @@ void	ErrorHandler::handle(const  LocationConfig * loc, Http::Response & res)
 
 void	ErrorHandler::serveCustomPage(const std::string & path, Http::Response & res)
 {
-	
+
 	_handler->setStatus(HS_WAITING);
 	StaticHandler * static_handler = new StaticHandler(_handler);
 	if (!static_handler->handle(path, &res))

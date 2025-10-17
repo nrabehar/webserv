@@ -21,7 +21,7 @@ class Config::Sanitizer
 		static std::string removeComments(const std::string & s);
 		static std::string normalizeNewlines(const std::string & s);
 		static std::string normalizeBrackets(const std::string & s);
-		
+
 };
 
 #endif

@@ -29,7 +29,7 @@ std::vector<ServerConfig>	Config::Transformer::transform(Node<Token> * root)
 
 		else
 		{
-	
+
 			std::vector<ServerConfig> nested = transform(node);
 			servers.insert(servers.end(), nested.begin(), nested.end());
 
@@ -154,7 +154,7 @@ void Config::Transformer::parseLocation(Node<Token> * loc_node, LocationConfig &
 			loc.redirect = std::make_pair(std::atoi(arg[0].value.c_str()), arg[1].value);
 
 	}
-	
+
 }
 
 void Config::Transformer::validate(std::vector<ServerConfig> & servers)

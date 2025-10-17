@@ -2,11 +2,9 @@
 
 using namespace Handler;
 
-
 CgiHandler::CgiHandler(RequestHandler * handler, Http::Request * req, Http::Response *res, int timeout)
 	: _pid(-1), _handler(handler), _req(req), _res(res), _stdin_h(NULL), _stdout_h(NULL), _timeout(timeout)
 {}
-
 
 CgiHandler::~CgiHandler()
 {
@@ -180,7 +178,6 @@ void CgiHandler::processOutput()
 	if (!parseHeaders())
 		return ;
 	parseBody();
-
 
 }
 

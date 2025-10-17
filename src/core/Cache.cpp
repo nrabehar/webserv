@@ -13,10 +13,9 @@ CacheManager::~CacheManager()
 
 CacheManager* CacheManager::getInstance()
 {
-	static CacheManager instance;   
+	static CacheManager instance;
 	return (&instance);
 }
-
 
 bool CacheManager::exists(const std::string & key)
 {
@@ -63,4 +62,3 @@ void CacheManager::use(CacheType type)
 		_curr_st = st;
 	}
 }
-

@@ -26,6 +26,4 @@ class DirectiveRegistry
 
 };
 
-
-
 #endif

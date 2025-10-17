@@ -7,13 +7,12 @@ class Lexer
 {
 
 	private:
-		
 
 	public:
 
 		Lexer();
 		~Lexer();
-		
+
 		static std::vector<Token> tokenize(const std::string &);
 
 	private:

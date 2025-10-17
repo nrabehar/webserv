@@ -14,7 +14,6 @@ class IParser
 
 };
 
-
 class DirectiveParser
 	: virtual public IParser<Node<Token> >
 {
@@ -28,9 +27,9 @@ class DirectiveParser
 		DirectiveParser(ITokenStream & stream);
 		~DirectiveParser();
 		Node<Token> *	parse();
-	
+
 	private:
-	
+
 		DirectiveParser();
 		DirectiveParser(const DirectiveParser &);
 		DirectiveParser & operator=(const DirectiveParser &);
@@ -42,7 +41,5 @@ class DirectiveParser
 		std::string line();
 
 };
-
-
 
 #endif

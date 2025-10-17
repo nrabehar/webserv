@@ -233,7 +233,7 @@ bool Parser::parseBody(Buffer & buf, Request & req)
 			return (buf.readable());
 		}
 	}
-	
+
 }
 
 bool Parser::parseUrlEncoded(Buffer & buf, Request & req)
@@ -245,7 +245,7 @@ bool Parser::parseUrlEncoded(Buffer & buf, Request & req)
 	buf.hasRead(buf.readable());
 	if (req.body().size() < req.contentLength())
 		return (true);
-	if (_is_cgi)	
+	if (_is_cgi)
 	{
 		setStage(DONE);
 		return (false);
@@ -350,7 +350,7 @@ bool Parser::parseChunkedBody(Buffer & buf, Request & req)
 		}
 		tmp_buf.append(buf.readPtr(), chunk_size);
 		buf.hasRead(chunk_size + 2);
-	
+
 	}
 
 	return (false);
@@ -379,7 +379,7 @@ void Parser::parseField(const std::string & part, Request & req)
 
 	std::string hdr = part.substr(0, pos);
 	std::string value = part.substr(pos + 4);
-	
+
 	std::string content_disp = hdr.substr(hdr.find("Content-Disposition:"));
 	if (content_disp.empty())
 		_req_handler->setStatus(Handler::HS_BAD_REQUEST);
@@ -390,7 +390,7 @@ void Parser::parseField(const std::string & part, Request & req)
 		_req_handler->setStatus(Handler::HS_BAD_REQUEST);
 
 	req.addBodyField(name, filename, value);
-	
+
 }
 
 std::string Parser::parseDisposition(const std::string & disp, const std::string & field)

@@ -10,7 +10,6 @@
 namespace Net
 {
 
-
 class Server: public EventHandler
 {
 
@@ -41,7 +40,7 @@ class Server: public EventHandler
 		bool	acceptConnection();
 
 };
-	
+
 }
 
 #endif

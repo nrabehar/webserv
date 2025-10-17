@@ -82,8 +82,8 @@ TokenType TokenU::strToType(const std::string & t)
 	if (t == "on") return TK_ON;
 	if (t == "off") return TK_OFF;
 	if (t == "eof")     return TK_EOF;
-	
-	return TK_NONE; 		
+
+	return TK_NONE;
 }
 
 TokenStream::TokenStream(const std::vector<Token> & tokens)
@@ -101,4 +101,4 @@ const Token& TokenStream::peek() const { return (_tokens[_cursor]); }
 const Token& TokenStream::next() { return (_tokens[++_cursor]); }
 const Token& TokenStream::prev() const { return (_tokens[_cursor - 1]); }
 void TokenStream::skip() { _tokens[_cursor++]; }
-bool	TokenStream::eof() const { return (_cursor >= _tokens.size() || _tokens[_cursor].isType(TK_EOF)); } 
+bool	TokenStream::eof() const { return (_cursor >= _tokens.size() || _tokens[_cursor].isType(TK_EOF)); }

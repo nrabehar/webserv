@@ -17,7 +17,6 @@ EventLoop::~EventLoop()
 
 EventLoop::EventLoop(): _running(false), _conf(NULL) {}
 
-
 EventLoop &	EventLoop::instance()
 {
 
@@ -37,7 +36,6 @@ void	EventLoop::destroy()
 	_inst = NULL;
 
 }
-
 
 void EventLoop::addHandler(IEventHandler * h, short events)
 {

@@ -12,12 +12,12 @@ namespace Handler
 }
 namespace Http
 {
-	
+
 	class Parser
 	{
-	
+
 		private:
-	
+
 			enum Stage
 			{
 				REQUEST_LINE,
@@ -57,9 +57,9 @@ namespace Http
 			std::string	_boundary;
 			Handler::RequestHandler * _req_handler;
 			bool	_is_cgi;
-			
+
 		public:
-	
+
 			Parser(Handler::RequestHandler * req_handler);
 			~Parser();
 
@@ -75,7 +75,7 @@ namespace Http
 
 			ParseState state() const;
 			void reset();
-	
+
 		private:
 
 			Parser(const Parser &);
@@ -104,9 +104,7 @@ namespace Http
 			bool waitForRecycle(Buffer & buf, Request & req);
 
 	};
-	
 
-} 
-
+}
 
 #endif

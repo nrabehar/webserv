@@ -41,7 +41,6 @@ TokenType	TokenSymboleExtractor::getType(const std::string &v)
 	}
 }
 
-
 TokenNumberExtractor::TokenNumberExtractor(): ATokenExtractor() {}
 TokenNumberExtractor::~TokenNumberExtractor(){}
 TokenType	TokenNumberExtractor::getType(const std::string &v)

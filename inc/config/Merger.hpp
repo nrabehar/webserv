@@ -7,7 +7,7 @@ class Config::Merger
 {
 
 	public:
-		
+
 		Merger();
 		~Merger();
 
@@ -15,7 +15,7 @@ class Config::Merger
 		static void	defLocation(Node<Token> * root);
 
 	private:
-	
+
 		Merger(const Merger &);
 		Merger & operator=(const Merger &);
 		static void	merge(Node<Token> *, Node<Token> *);
