@@ -49,7 +49,10 @@ std::string	UriHandler::buildPath(const std::string & uri, const LocationConfig 
 		loc_path = loc_path.substr(0, loc_path.size() - 1);
 
 	if (loc_path != "/" && uri.find(loc_path) == 0)
-		c_uri = uri.substr(loc_path.size());
+	{
+		if (uri.size() == loc_path.size() || uri[loc_path.size()] == '/')
+			c_uri = uri.substr(loc_path.size());
+	}
 
 	if (!c_uri.empty() && c_uri[0] != '/')
 		path += '/';
