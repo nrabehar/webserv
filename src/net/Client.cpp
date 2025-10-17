@@ -20,6 +20,8 @@ Client::~Client()
 		::close(_fd);
 	_fd = -1;
 	_req.cleanup();
+	if (_out)
+		delete [] _out;
 }
 
 void	Client::handle(short e)
@@ -91,6 +93,8 @@ void	Client::onWrite()
 
 	if (!_out || ((int)_handler.status() < 200 && (int)_handler.status() >= 600))
 	{
+		if (_handler.isError())
+			_handler.serveError(_handler.findLocation(_req.uri()), _res);
 		return ;
 	}
 	LOG("Client " + String::str(_fd) + ": " + _req.method() + " " +
@@ -153,5 +157,11 @@ bool	Client::keepAlive() const { return (_keep_alive); }
 void	Client::setKeepAlive(bool keep_alive) { _keep_alive = keep_alive; }
 Server *Client::getServer() const { return (_server); }
 char *	Client::out() const { return (_out); }
-void	Client::setOut(char *out, size_t size) { _out = out; _out_size = size; }
 size_t	Client::outSize() const { return (_out_size); }
+void	Client::setOut(char *out, size_t size)
+{
+	if (_out)
+		delete [] _out;
+	_out = out;
+	_out_size = size;
+}
