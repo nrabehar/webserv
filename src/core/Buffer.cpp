@@ -126,6 +126,16 @@ void	Buffer::append(const std::string & str)
 
 }
 
+void	Buffer::append(const char * data, size_t len)
+{
+
+	size_t old_size = _data.size();
+	_data.resize(old_size + len);
+	std::memcpy(&_data[old_size], data, len);
+	_wpos += len;
+
+}
+
 size_t Buffer::find(const std::string & s) const
 {
 	if (!readable() || s.empty())

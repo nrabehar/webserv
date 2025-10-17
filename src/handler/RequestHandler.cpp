@@ -213,6 +213,7 @@ void	RequestHandler::reset()
 }
 
 Net::Client *	RequestHandler::client() const { return (_client); }
+Http::Response *	RequestHandler::response() { return (_res); }
 
 void	RequestHandler::serveError(Status status, const LocationConfig * loc, Http::Response & res)
 {

@@ -58,6 +58,7 @@ namespace Handler
 			void	setStatus(Status state);
 			void  reset();
 			Net::Client * client() const;
+			Http::Response * response();
 			bool isError() const;
 			
 			void serveError(Status status, const LocationConfig * loc, Http::Response & res);

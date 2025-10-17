@@ -103,7 +103,7 @@ const std::vector<RequestBody> & Request::bodyFields() const
 
 void Request::appendBody(const std::string & body)
 {
-	_raw_body += body;
+	_raw_body.append(body);
 }
 
 void Request::addBodyField(const std::string & field, const std::string & filename, const std::string & value)
