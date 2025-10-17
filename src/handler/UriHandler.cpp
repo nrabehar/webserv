@@ -113,7 +113,11 @@ void	UriHandler::getIndexPath(std::string & path)
 
 	}
 	if (path != og_path)
+	{
+		if (isCgiPath(path))
+			_handler->setStatus(HS_CGI);
 		return ;
+	}
 	if (_loc->autoindex)
 		_handler->setStatus(HS_FOLDER_LISTING);
 	else
