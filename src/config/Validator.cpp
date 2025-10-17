@@ -359,7 +359,7 @@ void Config::Validator::checkUploadStore(Node<Token> * node)
 	_checked = true;
 
 	Directive upload_store(node);
-	upload_store.acceptParent("location")
+	upload_store.acceptParent("location server")
 	.argCount(1, 1).argType("string");
 
 	_valid = DirectiveChecker::check(upload_store);
