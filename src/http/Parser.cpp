@@ -553,7 +553,7 @@ bool Parser::bodyMultipartPart(Buffer & buf, Request & req)
 
 		std::string val = String::trim(std::string(buf.readPtr(), b_pos));
 		req.addBodyField(_field, _filename, parsePercentEncoding(val));
-		buf.hasRead(buf.readable());
+		buf.hasRead(b_pos);
 	}
 	return (false);
 

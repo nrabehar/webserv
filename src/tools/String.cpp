@@ -14,8 +14,8 @@ std::string String::trim(const std::string & s, const std::string & delim)
 	end = s.find_last_not_of(delim);
 
 	if (start == std::string::npos)
-		return (s);
-
+		return ("");
+	
 	return (s.substr(start, end - start + 1));
 
 }
