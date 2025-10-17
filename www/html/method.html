@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Simulation des Méthodes HTTP</title>
+</head>
+<body>
+
+    <h1>Test POST (vers Python CGI)</h1>
+    <form action="/cgi-bin/form.py" method="POST">
+        <label for="name_post">Nom:</label>
+        <input type="text" id="name_post" name="username_post" required><br><br>
+        <label for="message_post">Message:</label>
+        <input type="text" id="message_post" name="data_post" required><br><br>
+        <input type="submit" value="Envoyer POST (Python)">
+    </form>
+
+    <hr>
+
+    <h1>Test GET et POST (vers PHP)</h1>
+
+    <form action="/cgi-bin/form.php" method="GET">
+        <label for="name_get">Nom GET:</label>
+        <input type="text" id="name_get" name="username_get" required><br><br>
+        <input type="submit" value="Envoyer GET (PHP)">
+    </form>
+
+    <br>
+
+    <form action="/cgi-bin/form.php" method="POST">
+        <label for="name_php_post">Nom POST:</label>
+        <input type="text" id="name_php_post" name="username_post" required><br><br>
+        <input type="submit" value="Envoyer POST (PHP)">
+    </form>
+
+</body>
+</html>

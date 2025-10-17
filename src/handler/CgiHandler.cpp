@@ -24,7 +24,7 @@ CgiHandler::~CgiHandler()
 
 void CgiHandler::closeIn(Status st)
 {
-	if (_in.readable() && (int)st < 400 && (int)st > 600)
+	if (_in.readable() && (int)st < 200 && (int)st > 600)
 		return ;
 	_handler->delProcess(_stdin_h);
 	_stdin_h = NULL;
@@ -101,8 +101,8 @@ void CgiHandler::launch(const std::string & bin, const std::string & script)
 		_stdout_h = new CgiStdoutHandler(this, &_out, from_child[0]);
 		_stdin_h->setTimeout(_timeout);
 		_stdout_h->setTimeout(_timeout);
-		_handler->addProcess(_stdin_h, POLLOUT);
-		_handler->addProcess(_stdout_h, POLLIN);
+		_handler->addProcess(_stdin_h, POLLIN | POLLOUT);
+		_handler->addProcess(_stdout_h, POLLIN | POLLOUT);
 	}
 }
 
@@ -111,6 +111,11 @@ void	CgiHandler::initEnv()
 	_env.clear();
 	_env["REQUEST_METHOD"] = _req->method();
 	_env["REQUEST_URI"] = _req->uri();
+	_env["QUERY_STRING"] = "";
+	size_t qpos = _req->uri().find('?');
+	if (qpos != std::string::npos)
+		_env["QUERY_STRING"] = _req->uri().substr(qpos + 1);
+	_env["CONTENT_LENGTH"] = String::str(_req->contentLength());
 	_env["SERVER_PROTOCOL"] = _req->version();
 	_env["REDIRECT_STATUS"] = "200";
 	for (std::map<std::string, std::string>::const_iterator it = _req->header().begin(); it != _req->header().end(); ++it)
@@ -271,10 +276,8 @@ void CgiHandler::CgiStdinHandler::handle(short e)
 			if (n > 0)
 				_in->hasRead(n);
 			else
-			{
 				_in->hasRead(_in->readable());
-				return (_cgi->closeIn());
-			}
+			_cgi->closeIn();
 		}
 	}
 }
@@ -284,7 +287,6 @@ void CgiHandler::CgiStdinHandler::onTimeout()
 
 	if (Time::diff(_last_active, Time::now()) < _timeout)
 		return ;
-	ERR("CgiStdinHandler: CGI script timed out");
 	_in->hasRead(_in->readable());
 	_cgi->closeIn(Handler::HS_GATEWAY_TIMEOUT);
 

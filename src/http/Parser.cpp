@@ -248,7 +248,6 @@ bool Parser::parseUrlEncoded(Buffer & buf, Request & req)
 	if (_is_cgi)	
 	{
 		setStage(DONE);
-		_req_handler->cgiHandler()->closeIn(Handler::HS_OK);
 		return (false);
 	}
 	std::string body = req.body();
@@ -459,8 +458,6 @@ bool Parser::bodyMultipartBoundary(Buffer & buf, Request & req)
 		buf.hasRead(buf.readable());
 		setStage(DONE);
 		_mp_state = BS_DONE;
-		if (_is_cgi)
-			_req_handler->cgiHandler()->closeIn(Handler::HS_OK);
 		return (false);
 	}
 	_mp_state = BS_HEADER;
