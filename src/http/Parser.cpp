@@ -67,7 +67,7 @@ bool Parser::parseNext(Buffer & buf, Request & req, Response & res)
 				break;
 			case HEADERS:
 				ret = parseHeaders(buf, req, res);
-				break;
+				continue;
 			case BODY:
 				ret = parseBody(buf, req);
 				break;
@@ -155,22 +155,26 @@ bool Parser::parseHeaders(Buffer & buf, Request & req, Response & res)
 		std::string key = String::toCamelCase(String::trim(line.substr(0, colon)), '-');
 		std::string value = String::trim(line.substr(colon + 1));
 		req.setHeader(key, value);
-		if (key == "Content-Type")
-		{
-			req.setContentType(value);
-			if (value.find("multipart/form-data") == 0)
-			{
-				_boundary = getBoundary(value);
-				_body_type = MULTIPART;
-			}
-			else if (value.find("application/x-www-form-urlencoded") == 0)
-				_body_type = URLENCODED;
-		}
-		else if (key == "Content-Length")
-			req.setContentLength(static_cast<size_t>(std::atoi(value.c_str())));
-		else if (key == "Transfer-Encoding" && value.find("chunked") != std::string::npos)
-			_body_type = CHUNKED;
 	}
+	const std::string & ct = req.header("Content-Type");
+	const std::string & cl = req.header("Content-Length");
+	const std::string & te = req.header("Transfer-Encoding");
+	req.setContentLength(static_cast<size_t>(std::atoi(cl.c_str())));
+	req.setContentType(ct);
+	if (!ct.empty() && ct.find("multipart/form-data") == 0)
+	{
+		_boundary = getBoundary(ct);
+		if (_boundary.empty())
+		{
+			_req_handler->setStatus(Handler::HS_BAD_REQUEST);
+			return (false);
+		}
+		_body_type = MULTIPART;
+	}
+	else if (!ct.empty() && ct.find("application/x-www-form-urlencoded") == 0)
+		_body_type = URLENCODED;
+	if (!te.empty() && te.find("chunked") != std::string::npos)
+		_body_type = CHUNKED;
 	const LocationConfig * loc = _req_handler->findLocation(req.uri());
 	if (!loc->allowsMethod(req.method()))
 	{
@@ -192,7 +196,7 @@ bool Parser::parseHeaders(Buffer & buf, Request & req, Response & res)
 		_req_handler->setStatus(Handler::HS_REQUEST_ENTITY_TOO_LARGE);
 		return (false);
 	}
-	if (_is_cgi)
+	if (_is_cgi && _body_type != CHUNKED)
 	{
 		if (!_req_handler->initCgiHandler(req, res))
 		{
@@ -235,15 +239,13 @@ bool Parser::parseBody(Buffer & buf, Request & req)
 bool Parser::parseUrlEncoded(Buffer & buf, Request & req)
 {
 
-	if (req.body().size() < req.contentLength())
-	{
-		req.appendBody(std::string(buf.readPtr(), buf.readable()));
-		if (_is_cgi)
-			_req_handler->cgiHandler()->write(buf.readPtr(), buf.readable());
-		buf.hasRead(buf.readable());
-		return (true);
-	}
+	req.appendBody(std::string(buf.readPtr(), buf.readable()));
 	if (_is_cgi)
+		_req_handler->cgiHandler()->write(buf.readPtr(), buf.readable());
+	buf.hasRead(buf.readable());
+	if (req.body().size() < req.contentLength())
+		return (true);
+	if (_is_cgi)	
 	{
 		setStage(DONE);
 		_req_handler->cgiHandler()->closeIn(Handler::HS_OK);
@@ -255,7 +257,10 @@ bool Parser::parseUrlEncoded(Buffer & buf, Request & req)
 	{
 		size_t eq = pairs[i].find('=');
 		if (eq == std::string::npos)
-			continue ;
+		{
+			_req_handler->setStatus(Handler::HS_BAD_REQUEST);
+			return (false);
+		}
 		std::string key = parsePercentEncoding(pairs[i].substr(0, eq));
 		std::string value = parsePercentEncoding(pairs[i].substr(eq + 1));
 		req.addBodyField(key, "", value);
@@ -314,9 +319,9 @@ bool Parser::parseMultiPartBody(Buffer & buf, Request & req)
 bool Parser::parseChunkedBody(Buffer & buf, Request & req)
 {
 
+	static Buffer tmp_buf;
 	while (buf.readable())
 	{
-
 		size_t pos = buf.find("\r\n");
 		if (pos == std::string::npos)
 			return (true);
@@ -329,16 +334,22 @@ bool Parser::parseChunkedBody(Buffer & buf, Request & req)
 		{
 			setStage(DONE);
 			buf.hasRead(buf.readable());
-			if (_is_cgi)
-				_req_handler->cgiHandler()->closeIn(Handler::HS_OK);
+			req.setContentLength(req.body().size());
+			req.setHeader("Content-Length", String::str(req.contentLength()));
+			if (_is_cgi && !_req_handler->initCgiHandler(req, *_req_handler->response()))
+			{
+				tmp_buf.clear();
+				return (false);
+			}
+			if (req.contentType() == "application/x-www-form-urlencoded")
+				return (parseUrlEncoded(tmp_buf, req));
+			else if (req.contentType().find("multipart/form-data") == 0)
+				return (parseMultiPartBody(tmp_buf, req));
+			req.appendBody(tmp_buf.substr());
+			tmp_buf.clear();
 			return (false);
 		}
-		if (buf.readable() < chunk_size + 2)
-			return (true);
-		if (_is_cgi)
-			_req_handler->cgiHandler()->write(buf.readPtr(), chunk_size);
-		else
-			req.appendBody(std::string(buf.readPtr(), chunk_size));
+		tmp_buf.append(buf.readPtr(), chunk_size);
 		buf.hasRead(chunk_size + 2);
 	
 	}
