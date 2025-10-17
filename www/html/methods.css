@@ -54,7 +54,8 @@
 	padding: .4rem;
 }
 
-.test-form button {
+.test-form button,
+.test-form a {
 	align-self: flex-start;
 	padding: .6rem 1.2rem;
 	background: linear-gradient(135deg, #109e82, #4348d5);
@@ -64,8 +65,18 @@
 	cursor: pointer;
 }
 
-.test-form button:hover {
+.test-form button:hover,
+.test-form a:hover {
 	transform: translateY(-2px);
+}
+
+.python-action
+{
+	display: flex;
+	gap: 1rem;
+	justify-content: center;
+	align-items: center;
+	margin: auto;
 }
 
 @media (max-width: 768px) {
