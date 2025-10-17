@@ -208,6 +208,7 @@ void	RequestHandler::mergeHeaders(Http::Request & req, Http::Response & res)
 
 void	RequestHandler::reset()
 {
+	_req->cleanup();
 	_status = HS_WAITING;
 }
 

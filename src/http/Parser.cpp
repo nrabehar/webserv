@@ -11,6 +11,7 @@ Parser::Parser(Handler::RequestHandler * req_handler)
 
 Parser::~Parser()
 {
+	reset();
 }
 
 void Parser::setStage(Stage stage)
