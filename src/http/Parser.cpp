@@ -561,7 +561,6 @@ bool Parser::bodyMultipartPart(Buffer & buf, Request & req)
 bool	Parser::waitForRecycle(Buffer & buf, Request & req)
 {
 
-	LOG("Waiting for recycle...");
 	std::string c_type = req.contentType();
 	std::string te = req.header("Transfer-Encoding");
 

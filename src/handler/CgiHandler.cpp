@@ -331,7 +331,7 @@ void CgiHandler::CgiStdoutHandler::onTimeout()
 
 	if (Time::diff(_last_active, Time::now()) < _timeout)
 		return ;
-	ERR("CgiStdoutHandler: CGI script timed out");
+	ERR("CGI script timed out");
 	_cgi->closeOut(Handler::HS_GATEWAY_TIMEOUT);
 
 }

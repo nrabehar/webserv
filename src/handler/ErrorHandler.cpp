@@ -42,9 +42,11 @@ void	ErrorHandler::serveCustomPage(const std::string & path, Http::Response & re
 		return (loadHtmlErrorPage(res.status(), res));
 	}
 	if (static_handler->fd() != IN_MEMORY_FD)
-		EventLoop::instance().addHandler(static_handler, POLLIN);
-	else
-	  _handler->setStatus(HS_OK);
+	{
+		return (EventLoop::instance().addHandler(static_handler, POLLIN));
+	}
+	delete static_handler;
+	_handler->setStatus(HS_OK);
 }
 
 void	ErrorHandler::loadHtmlErrorPage(int status, Http::Response & res)

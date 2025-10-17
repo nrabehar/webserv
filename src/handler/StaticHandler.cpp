@@ -24,7 +24,10 @@ void	StaticHandler::handle(short e)
 		{
 			ssize_t n = _file->read();
 			if (n <= 0 && !_file->isComplete())
-			  return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
+			{
+				_handler->delProcess(this);
+				return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
+			}
 
 			_response->appendBody(_file->getData().substr(_offset, n));
 			_offset += n;
@@ -37,7 +40,7 @@ void	StaticHandler::handle(short e)
 		}
 		catch (std::exception & e)
 		{
-			ERR("StaticHandler::handle: " + std::string(e.what()));
+			_handler->delProcess(this);
 			return (_handler->setStatus(HS_INTERNAL_SERVER_ERROR));
 		}
 	}

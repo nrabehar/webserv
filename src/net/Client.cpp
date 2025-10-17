@@ -101,12 +101,8 @@ void	Client::onWrite()
 	ssize_t ret = ::send(_fd, buf, len, MSG_DONTWAIT);
 	if (ret <= 0)
 	{
-
-		if (ret < 0)
-			ERR("Write error on fd: " + String::str(_fd));
 		EventLoop::instance().delHandler(this);
 		return ;
-
 	}
 	_out.hasRead(ret);
 	reloadTimeout();
@@ -125,7 +121,7 @@ void	Client::onWrite()
 void	Client::onError()
 {
 
-	ERR("Client error on fd: " + String::str(_fd));
+	ERR("Client " + String::str(_fd) + " error");
 	EventLoop::instance().delHandler(this);
 
 }
@@ -146,12 +142,8 @@ bool	Client::readSocket()
 	ssize_t ret = ::recv(_fd, buf, cap, MSG_DONTWAIT);
 	if (ret <= 0)
 	{
-
-		if (ret < 0)
-			ERR("Read error on fd: " + String::str(_fd));
 		EventLoop::instance().delHandler(this);
 		return (false);
-
 	}
 	_in.hasWritten(ret);
 	return (true);
