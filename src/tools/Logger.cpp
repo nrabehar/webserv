@@ -29,5 +29,5 @@ void Logger::log(const std::string & m, e_LogLevel l)
 		case LOG_ERROR: os = &std::cerr; lvl = "ERROR"; break;
 		default: break;
 	}
-	(*os) << "[ " << lvl << " ]: " << m << std::endl;
+	(*os) << "[ " << Time::timeToStr(Time::now()) << " ] [ " << lvl << " ]: " << m << std::endl;
 }

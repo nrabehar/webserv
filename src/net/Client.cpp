@@ -25,17 +25,19 @@ Client::~Client()
 void	Client::handle(short e)
 {
 
+	if (e & POLLHUP)
+	{
+		EventLoop::instance().delHandler(this);
+		return ;
+	}
+	if (e & (POLLERR | POLLNVAL))
+		return (onError());
+
 	if (e & POLLIN)
 		onRead();
 
 	if (e & POLLOUT)
 		onWrite();
-
-	if (e & POLLHUP)
-		EventLoop::instance().delHandler(this);
-
-	if (e & (POLLERR | POLLHUP | POLLNVAL))
-		onError();
 
 }
 

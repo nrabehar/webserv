@@ -30,8 +30,8 @@ class EventHandler: public IEventHandler
 		~EventHandler();
 
 		virtual int 	fd() const;
-		virtual void	handle(short e) = 0;
-		virtual void	onTimeout() = 0;
+		virtual void	handle(short e);
+		virtual void	onTimeout();
 
 		time_t	lastActive() const;
 		void	setLastActive(time_t t = time(NULL));

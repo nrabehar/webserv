@@ -14,3 +14,5 @@ time_t EventHandler::lastActive() const { return (_last_active); }
 void EventHandler::setLastActive(time_t t) { _last_active = t; }
 void EventHandler::setTimeout(int timeout) { _timeout = timeout; }
 void EventHandler::reloadTimeout() { _last_active = time(NULL); }
+void EventHandler::handle(short e) {(void)e;}
+void EventHandler::onTimeout() {}

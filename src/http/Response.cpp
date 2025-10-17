@@ -73,7 +73,7 @@ const std::string & Response::body() const
 
 void Response::appendBody(const std::string & body)
 {
-	this->_body += body;
+	this->_body.append(body);
 }
 
 const std::string & Response::reason() const

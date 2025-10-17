@@ -109,26 +109,15 @@ const std::string & FileProxy::getPath() const { return _path; }
 
 const std::string & FileProxy::getData() const
 {
-
-	CacheManager::getInstance()->use(CAT_FILE);
-	if (CacheManager::getInstance()->exists(_path))
-		return (CacheManager::getInstance()->get(_path));
 	return (_file->getData());
-
 }
 
 FileFactory::~FileFactory() {}
 IFile*	FileFactory::create(const std::string &path, int oflag)
 {
-	CacheManager *cache = CacheManager::getInstance();
 	IFile	* file = NULL;
 
-	cache->use(CAT_FILE);
-
-	if (cache->exists(path))
-		file = new InMemoryFile(path, cache->get(path));
-	else
-		file = new LocalFile(path, oflag);
+	file = new LocalFile(path, oflag);
 
 	if (!file)
 		return (NULL);
@@ -138,5 +127,5 @@ IFile*	FileFactory::create(const std::string &path, int oflag)
 		delete file;
 		return (NULL);
 	}
-	return (new FileProxy(file));
+	return (file);
 }
