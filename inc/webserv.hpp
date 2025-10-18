@@ -65,10 +65,10 @@ class ISignal;
 
 enum e_LogLevel
 {
-	LOG_DEBUG,
-	LOG_INFO,
-	LOG_WARNING,
-	LOG_ERROR,
+  LOG_DEBUG,
+  LOG_INFO,
+  LOG_WARNING,
+  LOG_ERROR,
 };
 
 /* Type definitions ********************************************************* */
