@@ -32,6 +32,7 @@ TOOLSSRC += UI.cpp
 CORESRC += directive/Directive.cpp
 CORESRC += directive/DirectiveParser.cpp
 CORESRC += directive/DirectiveRegistry.cpp
+CORESRC += memory/memory.cpp
 CORESRC += EventLoop.cpp
 CORESRC += EventHandler.cpp
 CORESRC += Poller.cpp
