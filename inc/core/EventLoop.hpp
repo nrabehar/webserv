@@ -8,48 +8,48 @@ class Config;
 class EventLoop
 {
 
-	private:
+  private:
 
-		Poller	_poller;
-		bool	_running;
-		static EventLoop	*	_inst;
+    Poller  _poller;
+    bool  _running;
+    static EventLoop  * _inst;
 
-		enum OpType { OP_ADD, OP_MOD, OP_DEL };
-		struct PendingOp
-		{
+    enum OpType { OP_ADD, OP_MOD, OP_DEL };
+    struct PendingOp
+    {
 
-			OpType	type;
-			short	event;
-			IEventHandler *handler;
+      OpType  type;
+      short event;
+      IEventHandler *handler;
 
-		};
+    };
 
-		std::vector<PendingOp>	_pending;
-		Config *_conf;
+    std::vector<PendingOp>  _pending;
+    Config *_conf;
 
-	public:
+  public:
 
-		~EventLoop();
+    EventLoop();
+    ~EventLoop();
 
-		static EventLoop& instance();
-		static void destroy();
+    static EventLoop& instance();
+    static void destroy();
 
-		void addHandler(IEventHandler * h, short events);
-		void modHandler(IEventHandler * h, short events);
-		void delHandler(IEventHandler * h);
+    void addHandler(IEventHandler * h, short events);
+    void modHandler(IEventHandler * h, short events);
+    void delHandler(IEventHandler * h);
 
-		void run(int poll_timeout = -1);
-		void stop();
+    void run(int poll_timeout = -1);
+    void stop();
 
-		void setConfig(Config * conf);
+    void setConfig(Config * conf);
 
-	private:
+  private:
 
-		EventLoop();
-		EventLoop(const EventLoop &);
-		EventLoop & operator=(const EventLoop &);
+    EventLoop(const EventLoop &);
+    EventLoop & operator=(const EventLoop &);
 
-		void	applyPending();
+    void  applyPending();
 
 };
 
