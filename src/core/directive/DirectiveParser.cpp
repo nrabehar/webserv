@@ -1,122 +1,122 @@
 #include "webserv.hpp"
 
 DirectiveParser::DirectiveParser(ITokenStream & stream)
-	: _stream(stream) {};
+  : _stream(stream) {};
 DirectiveParser::~DirectiveParser() {}
 
 Node<Token> * DirectiveParser::parse()
 {
 
-	Node<Token> * base = new Node<Token>("base");
+  Node<Token> * base = ft::alloc<Node<Token> >("base");
 
-	try
-	{
+  try
+  {
 
-		while (!_stream.eof())
-			base->addChild(parseStatement());
+    while (!_stream.eof())
+      base->addChild(parseStatement());
 
-		return (base);
+    return (base);
 
-	}
-	catch(const std::exception& e)
-	{
+  }
+  catch(const std::exception& e)
+  {
 
-		delete base;
+    ft::free(base);
 
-		throw;
+    throw;
 
-	}
+  }
 
 };
 
 Node<Token> * DirectiveParser::parseStatement()
 {
 
-	std::vector<Token> args;
+  std::vector<Token> args;
 
-	if (_stream.eof())
-		return (NULL);
+  if (_stream.eof())
+    return (NULL);
 
-	Token t = _stream.peek();
-	std::string node_name = t.value;
+  Token t = _stream.peek();
+  std::string node_name = t.value;
 
-	if (!t.isType(TK_STRING))
-		throw std::runtime_error("Unexpected token `" + _stream.peek().value + "` at line " + line());
+  if (!t.isType(TK_STRING))
+    throw std::runtime_error("Unexpected token `" + _stream.peek().value + "` at line " + line());
 
-	t = _stream.next();
+  t = _stream.next();
 
-	while (t.type & (TK_STRING | TK_NUMBER | TK_SIZE | TK_ON | TK_OFF))
-	{
-		args.push_back(t);
-		t = _stream.next();
-	}
+  while (t.type & (TK_STRING | TK_NUMBER | TK_SIZE | TK_ON | TK_OFF))
+  {
+    args.push_back(t);
+    t = _stream.next();
+  }
 
-	if (t.isType(TK_SEMICOLON))
-		return (parseDirective(node_name, args));
+  if (t.isType(TK_SEMICOLON))
+    return (parseDirective(node_name, args));
 
-	if (t.isType(TK_BRACE_O))
-		return (parseBlock(node_name, args));
+  if (t.isType(TK_BRACE_O))
+    return (parseBlock(node_name, args));
 
-	return (parseStatement());
-
-}
-
-Node<Token>*	DirectiveParser::parseDirective(const std::string & name, const std::vector<Token> & arg)
-{
-
-	Node<Token> * directive = new Node<Token>(name);
-
-	for (size_t i = 0; i < arg.size() ; ++i)
-		directive->push(arg[i]);
-
-	_stream.skip();
-
-	return (directive);
+  return (parseStatement());
 
 }
 
-Node<Token>*	DirectiveParser::parseBlock(const std::string & name, const std::vector<Token> & arg)
+Node<Token>*  DirectiveParser::parseDirective(const std::string & name, const std::vector<Token> & arg)
 {
 
-	Node<Token> * block = NULL;
+  Node<Token> * directive = ft::alloc<Node<Token> >(name);
 
-	_stream.skip();
+  for (size_t i = 0; i < arg.size() ; ++i)
+    directive->push(arg[i]);
 
-	if (_stream.eof())
-		throw std::runtime_error("Unexpected end of file");
+  _stream.skip();
 
-	Token t = _stream.peek();
-
-	if (!t.isType(TK_STRING) && !t.isType(TK_BRACE_C))
-		throw std::runtime_error("Unexpected `" + t.value + "` at line " + line());
-
-	block = new Node<Token>(name);
-
-	for (size_t i = 0; i < arg.size(); ++i)
-		block->push(arg[i]);
-
-	while (!_stream.eof() && !_stream.peek().isType(TK_BRACE_C))
-		block->addChild(parseStatement());
-
-	if (_stream.eof())
-		throw std::runtime_error("Unexpected end of file last line " + line());
-
-	_stream.skip();
-
-	return (block);
+  return (directive);
 
 }
 
-std::string	DirectiveParser::line()
+Node<Token>*  DirectiveParser::parseBlock(const std::string & name, const std::vector<Token> & arg)
 {
 
-	std::ostringstream oss;
+  Node<Token> * block = NULL;
 
-	if (_stream.eof())
-		oss << _stream.prev().line;
-	else
-		oss << _stream.peek().line;
+  _stream.skip();
 
-	return (oss.str());
+  if (_stream.eof())
+    throw std::runtime_error("Unexpected end of file");
+
+  Token t = _stream.peek();
+
+  if (!t.isType(TK_STRING) && !t.isType(TK_BRACE_C))
+    throw std::runtime_error("Unexpected `" + t.value + "` at line " + line());
+
+  block = ft::alloc<Node<Token> >(name);
+
+  for (size_t i = 0; i < arg.size(); ++i)
+    block->push(arg[i]);
+
+  while (!_stream.eof() && !_stream.peek().isType(TK_BRACE_C))
+    block->addChild(parseStatement());
+
+  if (_stream.eof())
+    throw std::runtime_error("Unexpected end of file last line " + line());
+
+  _stream.skip();
+
+  return (block);
+
+}
+
+std::string DirectiveParser::line()
+{
+
+  std::ostringstream oss;
+
+  if (_stream.eof())
+    oss << _stream.prev().line;
+  else
+    oss << _stream.peek().line;
+
+  return (oss.str());
 
 }
