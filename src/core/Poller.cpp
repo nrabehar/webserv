@@ -1,108 +1,109 @@
 #include "webserv.hpp"
+#include "core/memory/memory.hpp"
 
 Poller::Poller() {}
 Poller::~Poller()
 {
 
-	std::map<int, IEventHandler * >::const_iterator it;
-	for (it = _handlers.begin(); it != _handlers.end(); ++it)
-		delete (it->second);
-	_pfds.clear();
-	_handlers.clear();
+  std::map<int, IEventHandler * >::iterator it;
+  for (it = _handlers.begin(); it != _handlers.end(); ++it)
+    ft::free(it->second);
+  _pfds.clear();
+  _handlers.clear();
 
 }
 
 void Poller::add(IEventHandler * h, short events)
 {
 
-	struct pollfd p;
+  struct pollfd p;
 
-	p.fd = h->fd();
-	p.events = events;
-	p.revents = 0;
+  p.fd = h->fd();
+  p.events = events;
+  p.revents = 0;
 
-	_pfds.push_back(p);
-	_handlers[p.fd] = h;
+  _pfds.push_back(p);
+  _handlers[p.fd] = h;
 
 }
 
 void Poller::mod(IEventHandler * h, short events)
 {
 
-	int	fd = h->fd();
+  int fd = h->fd();
 
-	for (size_t i = 0; i < _pfds.size(); ++i)
-	{
+  for (size_t i = 0; i < _pfds.size(); ++i)
+  {
 
-		if (_pfds[i].fd != fd)
-			continue;
-		_pfds[i].events = events;
-		return;
+    if (_pfds[i].fd != fd)
+      continue;
+    _pfds[i].events = events;
+    return;
 
-	}
+  }
 
-	add(h, events);
+  add(h, events);
 
 }
 
 void Poller::del(IEventHandler * h)
 {
-	int fd = h->fd();
+  int fd = h->fd();
 
-	std::vector<struct pollfd> pfds;
-	for (size_t i = 0; i < _pfds.size(); ++i)
-	{
+  std::vector<struct pollfd> pfds;
+  for (size_t i = 0; i < _pfds.size(); ++i)
+  {
 
-		if (_pfds[i].fd != fd)
-			pfds.push_back(_pfds[i]);
-		else
-		{
-			delete _handlers[_pfds[i].fd];
-			_handlers.erase(_pfds[i].fd);
-		}
+    if (_pfds[i].fd != fd)
+      pfds.push_back(_pfds[i]);
+    else
+    {
+      ft::free(_handlers[_pfds[i].fd]);
+      _handlers.erase(_pfds[i].fd);
+    }
 
-	}
+  }
 
-	_pfds.swap(pfds);
+  _pfds.swap(pfds);
 
 }
 
 std::vector<std::pair<IEventHandler *, short> > Poller::pollOnce(int timeout)
 {
 
-	std::vector<std::pair<IEventHandler *, short> > ready;
-	if (_pfds.empty())
-		return (ready);
+  std::vector<std::pair<IEventHandler *, short> > ready;
+  if (_pfds.empty())
+    return (ready);
 
-	int ret = ::poll(&_pfds[0], _pfds.size(), timeout);
-	if (ret <= 0)
-		return (ready);
+  int ret = ::poll(&_pfds[0], _pfds.size(), timeout);
+  if (ret <= 0)
+    return (ready);
 
-	for (size_t i = 0; i < _pfds.size(); ++i) {
+  for (size_t i = 0; i < _pfds.size(); ++i) {
 
-		if (_pfds[i].revents != 0)
-		{
+    if (_pfds[i].revents != 0)
+    {
 
-			int fd = _pfds[i].fd;
-			std::map<int, IEventHandler *>::iterator it = _handlers.find(fd);
-			if (it != _handlers.end())
-				ready.push_back(std::make_pair(it->second, _pfds[i].revents));
-			_pfds[i].revents = 0;
+      int fd = _pfds[i].fd;
+      std::map<int, IEventHandler *>::iterator it = _handlers.find(fd);
+      if (it != _handlers.end())
+        ready.push_back(std::make_pair(it->second, _pfds[i].revents));
+      _pfds[i].revents = 0;
 
-		}
+    }
 
-	}
+  }
 
-	return (ready);
+  return (ready);
 
 }
 
 void Poller::tick()
 {
-	std::map<int, IEventHandler *>::const_iterator it;
-	for (it = _handlers.begin(); it != _handlers.end(); ++it)
-	{
-		IEventHandler * h = it->second;
-		h->onTimeout();
-	}
+  std::map<int, IEventHandler *>::const_iterator it;
+  for (it = _handlers.begin(); it != _handlers.end(); ++it)
+  {
+    IEventHandler * h = it->second;
+    h->onTimeout();
+  }
 }

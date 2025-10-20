@@ -1,4 +1,5 @@
 #include "webserv.hpp"
+#include "core/memory/memory.hpp"
 
 using namespace Handler;
 
@@ -95,8 +96,8 @@ void CgiHandler::launch(const std::string & bin, const std::string & script)
   {
     ::close(to_child[0]);
     ::close(from_child[1]);
-    _stdin_h = new CgiStdinHandler(this, &_in, to_child[1]);
-    _stdout_h = new CgiStdoutHandler(this, &_out, from_child[0]);
+    _stdin_h = ft::alloc<CgiStdinHandler>(this, &_in, to_child[1]);
+    _stdout_h = ft::alloc<CgiStdoutHandler>(this, &_out, from_child[0]);
     _stdin_h->setTimeout(_timeout);
     _stdout_h->setTimeout(_timeout);
     _handler->addProcess(_stdin_h, POLLIN | POLLOUT);

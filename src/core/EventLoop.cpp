@@ -9,7 +9,7 @@ EventLoop::~EventLoop()
   for (it = _pending.begin(); it != _pending.end(); ++it)
   {
     if (it->type == OP_ADD)
-      delete (it->handler);
+      ft::free(it->handler);
   }
   _pending.clear();
   if (_conf)

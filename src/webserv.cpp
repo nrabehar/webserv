@@ -15,7 +15,7 @@ static void _run(const char * configfile)
     const std::vector<ServerConfig::Listen> & listens = servers[i].listen;
     for (size_t j = 0; j < listens.size(); ++j)
     {
-      Net::Server * server = new Net::Server(listens[j], servers[i]);
+      Net::Server * server = ft::alloc<Net::Server>(listens[j], &servers[i]);
       EventLoop::instance().addHandler(server, POLLIN);
     }
   }

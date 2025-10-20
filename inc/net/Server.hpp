@@ -17,14 +17,14 @@ class Server: public virtual IEventHandler
 
     int _fd;
 
-    const ServerConfig & _conf;
+    const ServerConfig * _conf;
     const ServerConfig::Listen & _listen;
 
     struct  addrinfo  *_infos;
 
   public:
 
-    Server(const ServerConfig::Listen & listen, const ServerConfig & conf);
+    Server(const ServerConfig::Listen & listen, const ServerConfig * conf);
     virtual ~Server();
 
     int fd() const;

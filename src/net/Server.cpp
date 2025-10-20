@@ -1,8 +1,9 @@
 #include "webserv.hpp"
+#include "core/memory/memory.hpp"
 
 using namespace Net;
 
-Server::Server(const ServerConfig::Listen & listen, const ServerConfig & conf)
+Server::Server(const ServerConfig::Listen & listen, const ServerConfig * conf)
   : _fd(-1), _conf(conf), _listen(listen), _infos(NULL)
 {
   setup();
@@ -84,11 +85,15 @@ bool  Server::acceptConnection()
   if (c_fd == -1)
     return (false);
 
-  Client * client = new Client(c_fd, this);
+  std::cout << __FILE__ << ": " << __LINE__ << ": " << this << std::endl;
+  Client * client = ft::alloc<Client>(c_fd, this);
   EventLoop::instance().addHandler(client, POLLIN | POLLOUT);
 
   return (true);
 
 }
 
-const ServerConfig & Server::getConfig() const { return (_conf); }
+const ServerConfig & Server::getConfig() const
+{
+  return (*_conf);
+}
