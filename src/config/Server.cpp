@@ -9,11 +9,24 @@ ServerConfig::ServerConfig()
 }
 
 ServerConfig::ServerConfig(const ServerConfig & other)
-  : keepalive_timeout(other.keepalive_timeout),
-    gateway_timeout(other.gateway_timeout),
-    listen(other.listen),
-    location(other.location)
+  : keepalive_timeout(30),
+    gateway_timeout(30),
+    listen(),
+    location()
 {
+  *this = other;
+}
+
+ServerConfig & ServerConfig::operator=(const ServerConfig & other)
+{
+  if (this != &other)
+  {
+    keepalive_timeout = other.keepalive_timeout;
+    gateway_timeout = other.gateway_timeout;
+    listen = other.listen;
+    location = other.location;
+  }
+  return (*this);
 }
 
 void  ServerConfig::print() const
@@ -56,8 +69,47 @@ LocationConfig::LocationConfig()
   : path(""),
     root(""),
     autoindex(false),
+    index(),
+    err_page(),
+    cgi(),
+    methods(),
     client_max_body_size(DEFAULT_MAX_BODY_SIZE),
-    redirect(std::make_pair(0, "")) {}
+    redirect(std::make_pair(0, "")),
+    upload_store("")
+{}
+
+LocationConfig::LocationConfig(const LocationConfig & other)
+  : path(""),
+    root(""),
+    autoindex(false),
+    index(),
+    err_page(),
+    cgi(),
+    methods(),
+    client_max_body_size(DEFAULT_MAX_BODY_SIZE),
+    redirect(std::make_pair(0, "")),
+    upload_store("")
+{
+  *this = other;
+}
+
+LocationConfig & LocationConfig::operator=(const LocationConfig & other)
+{
+  if (this != &other)
+  {
+    path = other.path;
+    root = other.root;
+    autoindex = other.autoindex;
+    index = other.index;
+    err_page = other.err_page;
+    cgi = other.cgi;
+    methods = other.methods;
+    client_max_body_size = other.client_max_body_size;
+    redirect = other.redirect;
+    upload_store = other.upload_store;
+  }
+  return (*this);
+}
 
 bool  LocationConfig::allowsMethod(const std::string & method) const
 {

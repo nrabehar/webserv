@@ -85,7 +85,6 @@ bool  Server::acceptConnection()
   if (c_fd == -1)
     return (false);
 
-  std::cout << __FILE__ << ": " << __LINE__ << ": " << this << std::endl;
   Client * client = ft::alloc<Client>(c_fd, this);
   EventLoop::instance().addHandler(client, POLLIN | POLLOUT);
 

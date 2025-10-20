@@ -31,7 +31,7 @@ void  Config::load()
     throw std::runtime_error(handler.getReason());
   _file->read();
   parse();
-  std::cout << "Configuration file loaded: " << _path << std::endl;
+  LOG("Configuration file loaded: " + _path);
 
 }
 

@@ -177,7 +177,6 @@ bool Parser::parseHeaders(Buffer & buf, Request & req, Response & res)
     _body_type = URLENCODED;
   if (!te.empty() && te.find("chunked") != std::string::npos)
     _body_type = CHUNKED;
-  std::cout << __FILE__ << ": " << __LINE__ << std::endl;
   const LocationConfig * loc = _req_handler->findLocation(req.uri());
   if (!loc->allowsMethod(req.method()))
   {
@@ -492,7 +491,6 @@ bool Parser::bodyMultipartHeader(Buffer & buf, Request & req)
   _filename = parseDisposition(hdr, "filename");
   if (!_filename.empty())
   {
-    std::cout << __FILE__ << ": " << __LINE__ << std::endl;
     const LocationConfig * loc = _req_handler->findLocation(req.uri());
     if (loc->upload_store.empty())
     {

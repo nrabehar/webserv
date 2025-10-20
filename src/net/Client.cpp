@@ -9,7 +9,6 @@ Client::Client(int fd, Server * server)
   _server(server), _handler(this, &_req, &_res), _parser(&_handler),
   _keep_alive(false), _out(NULL)
 {
-  std::cout << __FILE__ << ": " << __LINE__ << ": " << _server << std::endl;
   LOG("Client connected: " + String::str(fd));
 }
 
@@ -97,7 +96,6 @@ void  Client::onWrite()
   {
     if (_handler.isError())
     {
-      std::cout << __FILE__ << ": " << __LINE__ << std::endl;
       _handler.serveError(_handler.findLocation(_req.uri()), _res);
     }
     return ;

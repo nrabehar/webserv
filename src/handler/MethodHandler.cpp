@@ -23,7 +23,6 @@ void MethodHandler::handle(Http::Request & req, Http::Response & res)
 
 void MethodHandler::handleGet(Http::Request & req, Http::Response & res)
 {
-  std::cout << __FILE__ << ": " << __LINE__ << std::endl;
   const LocationConfig * loc = _handler->findLocation(req.uri());
   UriHandler uri_h(req.uri(), loc, _handler);
   _path = uri_h.buildPath();
@@ -139,7 +138,6 @@ void MethodHandler::handlePost(Http::Request & req, Http::Response & res)
 void MethodHandler::handleDelete(Http::Request & req, Http::Response & res)
 {
 
-  std::cout << __FILE__ << ": " << __LINE__ << std::endl;
   const LocationConfig * loc = _handler->findLocation(req.uri());
   UriHandler uri_h(req.uri(), loc, _handler);
   _path = uri_h.buildPath();

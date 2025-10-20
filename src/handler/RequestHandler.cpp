@@ -74,7 +74,6 @@ void  RequestHandler::handle(Http::Request & req, Http::Response & res)
   const std::string & uri = req.uri();
 
   mergeHeaders(req, res);
-  std::cout << __FILE__ << ": " << __LINE__ << std::endl;
   const LocationConfig * loc = findLocation(uri);
 
   if (isError())
@@ -99,7 +98,6 @@ void  RequestHandler::handle(Http::Request & req, Http::Response & res)
 bool  RequestHandler::isCgiRequest(Http::Request & req)
 {
 
-  std::cout << __FILE__ << ": " << __LINE__ << std::endl;
   const LocationConfig * loc = findLocation(req.uri());
 
   Status st = status();
@@ -115,7 +113,6 @@ bool  RequestHandler::isCgiRequest(Http::Request & req)
 bool  RequestHandler::initCgiHandler(Http::Request & req, Http::Response & res)
 {
 
-  std::cout << __FILE__ << ": " << __LINE__ << std::endl;
   const LocationConfig * loc = findLocation(req.uri());
   if (!loc)
   {
@@ -170,26 +167,22 @@ const LocationConfig *  RequestHandler::findLocation(const std::string & uri) co
   if (c_uri.find('?') != std::string::npos)
     c_uri = c_uri.substr(0, c_uri.find('?'));
   Net::Server * server = _client->getServer();
-  const ServerConfig conf = server->getConfig();
-  const std::vector<LocationConfig> loc = conf.location;
+  const ServerConfig & conf = server->getConfig();
+  const std::vector<LocationConfig> & loc = conf.location;
   const LocationConfig * best_match = NULL;
   size_t best_len = 0;
   std::vector<LocationConfig>::const_iterator it;
   for (it = loc.begin(); it != loc.end(); ++it)
   {
-    const LocationConfig * l = &(*it);
-    if (!l)
+    const LocationConfig & l = *it;
+    size_t len = l.path.length();
+    if (c_uri == l.path)
     {
-      break ;
+      return (&l);
     }
-    size_t len = l->path.length();
-    if (c_uri == l->path)
+    if (len > best_len && c_uri.compare(0, len, l.path) == 0)
     {
-      return (l);
-    }
-    if (len > best_len && c_uri.compare(0, len, l->path) == 0)
-    {
-      best_match = l;
+      best_match = &l;
       best_len = len;
     }
   }

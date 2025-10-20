@@ -23,6 +23,7 @@ struct ServerConfig
 
   ServerConfig();
   ServerConfig(const ServerConfig & other);
+  ServerConfig & operator=(const ServerConfig & other);
 
   void print() const;
 
@@ -42,6 +43,8 @@ struct LocationConfig
   std::string                                       upload_store;
 
   LocationConfig();
+  LocationConfig(const LocationConfig & other);
+  LocationConfig & operator=(const LocationConfig & other);
 
   bool allowsMethod(const std::string & method) const;
 
