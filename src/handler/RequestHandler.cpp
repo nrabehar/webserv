@@ -263,9 +263,18 @@ void RequestHandler::serveDirectory(const std::string & path, const std::string 
 void RequestHandler::redirect(const std::pair<int, std::string> & redirect, Http::Response & res)
 {
 
+  
   res.setStatus(redirect.first);
   res.setReason("Redirect");
   res.setHeader("Location", redirect.second);
+  std::string headers = res.str();
+  size_t total_size = headers.size() + 1;
+  char * buf = new char[total_size];
+  std::memset(buf, 0, total_size);
+  size_t offset = 0;
+  std::memmove(buf, headers.c_str(), headers.size());
+  offset += headers.size();
+  _client->setOut(buf, total_size);
   setStatus(HS_OK);
 
 }

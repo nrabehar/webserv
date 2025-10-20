@@ -230,8 +230,13 @@ bool Parser::parseBody(Buffer & buf, Request & req)
       return (parseChunkedBody(buf, req));
     default:
     {
-      req.appendBody(std::string(buf.readPtr(), buf.readable()));
+      if (_is_cgi)
+        _req_handler->cgiHandler()->write(buf.readPtr(), buf.readable());
+      else
+        req.appendBody(std::string(buf.readPtr(), buf.readable()));
       buf.hasRead(buf.readable());
+      if (req.body().size() >= req.contentLength())
+        setStage(DONE);
       return (buf.readable());
     }
   }
