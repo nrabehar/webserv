@@ -24,7 +24,7 @@ header('Content-Type: text/html; charset=UTF-8');
     }
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        echo "<h2>MMethod : POST</h2>";
+        echo "<h2>Method : POST</h2>";
 
         if (!empty($_POST['name'])) {
             $username = htmlspecialchars($_POST['name']);

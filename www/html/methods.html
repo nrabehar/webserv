@@ -43,14 +43,14 @@
 		<h1>PHP CGI Forms</h1>
 		<section class="forms-section">
 
-			<div action="/cgi-bin/form.php" method="get" class="test-form">
+			<form action="/cgi-bin/form.php" method="get" class="test-form">
 				<h3>Get Form | PHP</h3>
 				<label for="name">Name:</label>
 				<input type="text" id="name" name="name" required>
 				<button type="submit">Submit</button>
-			</div>
+			</form>
 
-			<form action="/upload" method="post" enctype="multipart/form-data" class="test-form">
+			<form action="/cgi-bin/form.php" method="post" enctype="multipart/form-data" class="test-form">
 				<h3>Post Form | PHP</h3>
 				<label for="name">Name:</label>
 				<input type="text" id="name" name="name" required>
