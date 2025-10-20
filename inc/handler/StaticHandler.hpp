@@ -6,32 +6,34 @@
 namespace Handler
 {
 
-	class StaticHandler : public EventHandler
-	{
+  class StaticHandler : public virtual IEventHandler
+  {
 
-		private:
+    private:
 
-			std::string	_path;
-			size_t		_offset;
-			IFile *	_file;
-			RequestHandler *	_handler;
-			Http::Response *	_response;
-			const LocationConfig *	_loc;
+      int _fd;
+      std::string _path;
+      size_t    _offset;
+      IFile * _file;
+      RequestHandler *  _handler;
+      Http::Response *  _response;
+      const LocationConfig *  _loc;
 
-		public:
+    public:
 
-			StaticHandler(RequestHandler * handler);
-			virtual ~StaticHandler();
-			virtual void	handle(short e);
-			virtual void	onTimeout();
-			bool handle(const std::string & path, Http::Response * res);
+      StaticHandler(RequestHandler * handler);
+      virtual ~StaticHandler();
+      int fd() const;
+      virtual void  handle(short e);
+      virtual void  onTimeout();
+      bool handle(const std::string & path, Http::Response * res);
 
-		private:
+    private:
 
-			StaticHandler(const StaticHandler &);
-			StaticHandler & operator=(const StaticHandler &);
+      StaticHandler(const StaticHandler &);
+      StaticHandler & operator=(const StaticHandler &);
 
-	};
+  };
 
 }
 

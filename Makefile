@@ -34,7 +34,6 @@ CORESRC += directive/DirectiveParser.cpp
 CORESRC += directive/DirectiveRegistry.cpp
 CORESRC += memory/memory.cpp
 CORESRC += EventLoop.cpp
-CORESRC += EventHandler.cpp
 CORESRC += Poller.cpp
 CORESRC += Buffer.cpp
 CORESRC += Cache.cpp

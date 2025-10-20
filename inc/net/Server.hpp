@@ -5,39 +5,42 @@
 #include "Client.hpp"
 #include <netdb.h>
 
-#define	LISTEN_BACKLOG	128
+#define LISTEN_BACKLOG  128
 
 namespace Net
 {
 
-class Server: public EventHandler
+class Server: public virtual IEventHandler
 {
 
-	private:
+  private:
 
-		const ServerConfig & _conf;
-		const ServerConfig::Listen & _listen;
+    int _fd;
 
-		struct 	addrinfo	*_infos;
+    const ServerConfig & _conf;
+    const ServerConfig::Listen & _listen;
 
-	public:
+    struct  addrinfo  *_infos;
 
-		Server(const ServerConfig::Listen & listen, const ServerConfig & conf);
-		virtual ~Server();
+  public:
 
-		void handle(short e);
-		void onTimeout();
-		const ServerConfig & getConfig() const;
+    Server(const ServerConfig::Listen & listen, const ServerConfig & conf);
+    virtual ~Server();
 
-	private:
+    int fd() const;
+    void handle(short e);
+    void onTimeout();
+    const ServerConfig & getConfig() const;
 
-		Server();
-		Server(const Server &);
-		Server & operator=(const Server &);
+  private:
 
-		void	setup();
-		int		getAddrInfo();
-		bool	acceptConnection();
+    Server();
+    Server(const Server &);
+    Server & operator=(const Server &);
+
+    void  setup();
+    int   getAddrInfo();
+    bool  acceptConnection();
 
 };
 

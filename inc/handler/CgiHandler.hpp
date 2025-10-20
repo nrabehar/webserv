@@ -15,95 +15,107 @@ class RequestHandler;
 class CgiHandler
 {
 
-	private:
+  private:
 
-		pid_t	_pid;
-		RequestHandler * _handler;
-		Http::Request * _req;
-		Http::Response * _res;
-		std::map<std::string, std::string> _env;
-		std::vector<const char *> _arg;
-		Buffer _in;
-		Buffer _out;
-		class CgiStdinHandler;
-		class CgiStdoutHandler;
+    pid_t _pid;
+    RequestHandler * _handler;
+    Http::Request * _req;
+    Http::Response * _res;
+    std::map<std::string, std::string> _env;
+    std::vector<const char *> _arg;
+    Buffer _in;
+    Buffer _out;
+    class CgiStdinHandler;
+    class CgiStdoutHandler;
 
-		CgiStdinHandler * _stdin_h;
-		CgiStdoutHandler * _stdout_h;
-		int _timeout;
+    CgiStdinHandler * _stdin_h;
+    CgiStdoutHandler * _stdout_h;
+    int _timeout;
 
-	public:
+  public:
 
-		CgiHandler();
-		CgiHandler(const CgiHandler &);
-		CgiHandler & operator=(const CgiHandler &);
-		CgiHandler(RequestHandler * handler, Http::Request * req, Http::Response * res, int timeout = 30);
-		~CgiHandler();
+    CgiHandler();
+    CgiHandler(const CgiHandler &);
+    CgiHandler & operator=(const CgiHandler &);
+    CgiHandler(RequestHandler * handler, Http::Request * req, Http::Response * res, int timeout = 30);
+    ~CgiHandler();
 
-		void closeIn(Status st = HS_OK);
-		void closeOut(Status st = HS_PROGRESS);
-		void write(const char *data, size_t len);
-		void launch(const std::string & bin, const std::string & script);
+    void closeIn(Status st = HS_OK);
+    void closeOut(Status st = HS_PROGRESS);
+    void write(const char *data, size_t len);
+    void launch(const std::string & bin, const std::string & script);
 
-	private:
+  private:
 
-		void	initEnv();
-		const char **	getArg(const std::string & bin, const std::string & script);
-		char **	mapToCArray(const std::map<std::string, std::string> & m) const;
-		void	freeCArray(char ** arr) const;
-		std::string headerKeyToEnv(const std::string & key) const;
+    void  initEnv();
+    const char ** getArg(const std::string & bin, const std::string & script);
+    char ** mapToCArray(const std::map<std::string, std::string> & m) const;
+    void  freeCArray(char ** arr) const;
+    std::string headerKeyToEnv(const std::string & key) const;
 
-		void processOutput();
-		bool parseHeaders();
-		bool parseBody();
+    void processOutput();
+    bool parseHeaders();
+    bool parseBody();
 
-		class CgiStdinHandler : public EventHandler
-		{
+    class CgiStdinHandler : public virtual IEventHandler
+    {
 
-			private:
+      private:
 
-				CgiHandler * _cgi;
-				Buffer * _in;
-				size_t _offset;
+        int _fd;
+        int _timeout;
+        time_t  _last_active;
+        CgiHandler * _cgi;
+        Buffer * _in;
+        size_t _offset;
 
-			public:
+      public:
 
-				CgiStdinHandler(CgiHandler * cgi, Buffer * in, int fd);
-				~CgiStdinHandler();
-				virtual void handle(short e);
-				virtual void onTimeout();
+        CgiStdinHandler(CgiHandler * cgi, Buffer * in, int fd);
+        ~CgiStdinHandler();
+        int fd() const;
+        virtual void handle(short e);
+        virtual void onTimeout();
 
-			private:
+        void setTimeout(int timeout = 30);
 
-				CgiStdinHandler();
-				CgiStdinHandler(const CgiStdinHandler &);
-				CgiStdinHandler & operator=(const CgiStdinHandler &);
+      private:
 
-		};
+        CgiStdinHandler();
+        CgiStdinHandler(const CgiStdinHandler &);
+        CgiStdinHandler & operator=(const CgiStdinHandler &);
 
-		class CgiStdoutHandler : public EventHandler
-		{
+    };
 
-			private:
+    class CgiStdoutHandler : public virtual IEventHandler
+    {
 
-				CgiHandler * _cgi;
-				Buffer * _out;
-				size_t _offset;
+      private:
 
-			public:
+        int _fd;
+        int _timeout;
+        time_t  _last_active;
+        CgiHandler * _cgi;
+        Buffer * _out;
+        size_t _offset;
 
-				CgiStdoutHandler(CgiHandler * cgi, Buffer * out, int fd);
-				~CgiStdoutHandler();
-				virtual void handle(short e);
-				virtual void onTimeout();
+      public:
 
-			private:
+        CgiStdoutHandler(CgiHandler * cgi, Buffer * out, int fd);
+        ~CgiStdoutHandler();
+        int fd() const;
+        virtual void handle(short e);
+        virtual void onTimeout();
 
-				CgiStdoutHandler();
-				CgiStdoutHandler(const CgiStdoutHandler &);
-				CgiStdoutHandler & operator=(const CgiStdoutHandler &);
+        void setTimeout(int timeout = 30);
 
-		};
+      private:
+
+        CgiStdoutHandler();
+        CgiStdoutHandler(const CgiStdoutHandler &);
+        CgiStdoutHandler & operator=(const CgiStdoutHandler &);
+
+    };
 
 };
 

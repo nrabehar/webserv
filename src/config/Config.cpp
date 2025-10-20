@@ -5,7 +5,7 @@ Config::Config(const std::string &path)
 Config::~Config()
 {
   if (_file)
-    delete _file;
+    ft::free(_file);
   if (_root)
     ft::free(_root);
 }

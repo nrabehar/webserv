@@ -11,52 +11,60 @@
 namespace Net
 {
 
-	class Server;
+  class Server;
 
-	class Client: public EventHandler
-	{
+  class Client: public virtual IEventHandler
+  {
 
-		private:
+    private:
 
-			Server *	_server;
-			Handler::RequestHandler _handler;
+      int _fd;
+      int _timeout;
+      time_t  _last_active;
 
-			Buffer   _in;
+      Server *  _server;
+      Handler::RequestHandler _handler;
 
-			Http::Parser	_parser;
-			Http::Request	_req;
-			Http::Response	_res;
+      Buffer   _in;
 
-			bool 		_keep_alive;
-			char  *	_out;
-			size_t	_out_size;
+      Http::Parser  _parser;
+      Http::Request _req;
+      Http::Response  _res;
 
-		public:
+      bool    _keep_alive;
+      char  * _out;
+      size_t  _out_size;
 
-			Client(int _fd, Server * server);
-			~Client();
+    public:
 
-			void	handle(short e);
-			void	onTimeout();
-			bool	keepAlive() const;
-			void	setKeepAlive(bool keep_alive);
-			Server *getServer() const;
-			char *	out() const;
-			void	setOut(char *out, size_t size);
-			size_t	outSize() const;
+      Client(int _fd, Server * server);
+      ~Client();
 
-		private:
+      int fd() const;
+      void  handle(short e);
+      void  onTimeout();
+      bool  keepAlive() const;
+      void  setKeepAlive(bool keep_alive);
+      Server *getServer() const;
+      char *  out() const;
+      void  setOut(char *out, size_t size);
+      size_t  outSize() const;
 
-			Client(const Client &);
-			Client & operator=(const Client &);
+    private:
 
-			void	onRead();
-			void	onWrite();
-			void	onError();
+      Client(const Client &);
+      Client & operator=(const Client &);
 
-			bool	readSocket();
+      void  onRead();
+      void  onWrite();
+      void  onError();
 
-	};
+      bool  readSocket();
+
+      void  setLastActive(time_t t = time(NULL));
+      void reloadTimeout();
+
+  };
 
 }
 
